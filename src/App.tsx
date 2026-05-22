@@ -51,6 +51,12 @@ const works: WorkItem[] = [
     caption: 'Visual identity',
     className: 'work-square',
   },
+  {
+    src: '/assets/work000.png',
+    title: 'Digital object',
+    caption: 'Motion study',
+    className: 'work-offset',
+  },
 ]
 
 const sections: PortfolioSection[] = [

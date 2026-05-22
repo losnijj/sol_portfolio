@@ -46,7 +46,7 @@ const works: WorkItem[] = [
     className: 'work-wide',
   },
   {
-    src: '/assets/work3.png',
+    src: '/assets/work03.png',
     title: 'Brand system',
     caption: 'Visual identity',
     className: 'work-square',

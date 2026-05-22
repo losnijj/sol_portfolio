@@ -1,0 +1,366 @@
+html,
+body,
+#root,
+.app {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
+  background: url('/assets/bg.png') center/cover no-repeat;
+  color: #111111;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(15, 14, 18, 0.18);
+  pointer-events: none;
+}
+
+button {
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-panel {
+  position: relative;
+  width: 94vw;
+  height: 90vh;
+  max-width: 1880px;
+  max-height: 960px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1.12fr 1.54fr 0.94fr;
+  gap: clamp(16px, 1.55vw, 32px);
+  padding: clamp(20px, 2.5vh, 34px) clamp(22px, 1.9vw, 38px) clamp(20px, 2.6vh, 36px);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.portfolio-section {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-align: left;
+  transition:
+    background 0.45s ease,
+    filter 0.45s ease,
+    transform 0.45s ease;
+}
+
+.section-inner {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-inner h1 {
+  margin: 0 0 clamp(14px, 1.8vh, 22px);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(64px, 5.1vw, 98px);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: 0.08em;
+}
+
+.column-losnij h1 {
+  font-size: clamp(70px, 5.6vw, 106px);
+}
+
+.section-media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  background: #eeeeee;
+}
+
+.section-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.45s ease;
+}
+
+.section-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    scale 0.45s ease,
+    filter 0.45s ease;
+}
+
+.section-media figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.section-media strong,
+.section-media span {
+  display: block;
+}
+
+.section-media strong {
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.section-media span {
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.portfolio-section:hover {
+  background: #f5f5f5;
+}
+
+.portfolio-section:hover h1 {
+  transform: translateY(-4px);
+}
+
+.portfolio-section:hover .section-media img {
+  scale: 0.97;
+  filter: brightness(0.78);
+}
+
+.portfolio-section:hover .section-media::after {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.portfolio-section:hover .section-media figcaption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-inner h1 {
+  transition: transform 0.45s ease;
+}
+
+.portrait-media {
+  flex: 1;
+  min-height: 0;
+}
+
+.portrait-media img {
+  object-position: 49% 36%;
+}
+
+.works-collage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.02fr 0.82fr 0.78fr;
+  grid-template-rows: 1.18fr 0.78fr 1.08fr 0.84fr;
+  gap: clamp(10px, 0.8vw, 16px);
+  align-content: start;
+}
+
+.work-tall {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+}
+
+.work-wide {
+  grid-column: 2 / span 2;
+  grid-row: 3 / span 2;
+  margin-top: clamp(6px, 0.8vh, 12px);
+}
+
+.work-square {
+  grid-column: 1 / span 1;
+  grid-row: 3 / span 2;
+  height: 72%;
+  align-self: start;
+}
+
+.work-tall img {
+  object-position: 50% 42%;
+}
+
+.work-wide img {
+  object-position: 50% 45%;
+}
+
+.work-square img {
+  object-position: 50% 50%;
+}
+
+.column-more {
+  justify-content: flex-start;
+}
+
+.more-media {
+  flex: 1;
+  min-height: 0;
+}
+
+.more-media img {
+  object-position: 50% 24%;
+}
+
+.column-more p {
+  max-width: 240px;
+  margin: clamp(12px, 1.6vh, 20px) 0 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(19px, 1.35vw, 24px);
+  line-height: 1.24;
+}
+
+.zoom-scroll {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+.section-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  background: transparent;
+  transform-origin: top left;
+  transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.zoom-scroll-space {
+  width: 1px;
+  pointer-events: none;
+}
+
+.more-scroll-page {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: clamp(42px, 7vh, 96px) clamp(34px, 5vw, 92px) clamp(60px, 10vh, 120px);
+  display: flex;
+  align-items: center;
+  background: #202020;
+  color: #f7f4ed;
+  transform-origin: bottom center;
+  transform: translate3d(0, calc((1 - var(--more-progress, 0)) * 100%), 0);
+  opacity: clamp(0, calc(var(--more-progress, 0) * 8), 1);
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.08);
+  will-change: transform, opacity;
+  contain: layout paint;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.magazine-detail {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+}
+
+.magazine-detail > p {
+  margin: 0 0 18px;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.magazine-detail h2 {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(54px, 8.4vw, 148px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+}
+
+.magazine-grid {
+  margin-top: clamp(34px, 6vh, 84px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.62fr) minmax(260px, 0.38fr);
+  gap: clamp(28px, 5vw, 88px);
+  align-items: end;
+}
+
+.magazine-grid img {
+  width: 100%;
+  height: min(62vh, 680px);
+  object-fit: cover;
+  object-position: 50% 24%;
+}
+
+.magazine-grid span {
+  display: block;
+  font-size: clamp(18px, 1.6vw, 28px);
+  line-height: 1.35;
+}
+
+.magazine-grid small {
+  display: block;
+  margin-top: 28px;
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.zoom-panel {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+}
+
+.section-close {
+  position: fixed;
+  top: 28px;
+  right: 34px;
+  z-index: 11;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  line-height: 44px;
+  color: #ffffff;
+  text-align: center;
+  mix-blend-mode: difference;
+}

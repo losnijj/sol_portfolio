@@ -1,11 +1,12 @@
-import { type CSSProperties, type RefObject, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
 
 type SectionId = 'losnij' | 'works' | 'more'
 
 type WorkItem = {
   src: string
   title: string
-  caption: string
+  category: string
+  role: string
   className: string
 }
 
@@ -35,27 +36,31 @@ type ActiveSection = {
 const works: WorkItem[] = [
   {
     src: '/assets/work01.png',
-    title: 'Fashion capsule',
-    caption: 'Editorial campaign',
-    className: 'work-tall',
-  },
-  {
-    src: '/assets/work02.png',
-    title: 'Product launch',
-    caption: 'UX direction',
+    title: 'Simmons',
+    category: 'Global Web Redesign',
+    role: 'Brand · UX · Web',
     className: 'work-wide',
   },
   {
+    src: '/assets/work02.png',
+    title: 'Joohap',
+    category: 'AI Pairing App',
+    role: 'Mobile · Community · AI',
+    className: 'work-large',
+  },
+  {
     src: '/assets/work03.png',
-    title: 'Brand system',
-    caption: 'Visual identity',
-    className: 'work-square',
+    title: 'Hospital',
+    category: 'Hospital Web Redesign',
+    role: 'IA · UX · Web',
+    className: 'work-stack',
   },
   {
     src: '/assets/work000.png',
-    title: 'Digital object',
-    caption: 'Motion study',
-    className: 'work-offset',
+    title: 'Fashion Archive',
+    category: 'Personal App',
+    role: 'Curation · App · UI',
+    className: 'work-small',
   },
 ]
 
@@ -63,18 +68,18 @@ const sections: PortfolioSection[] = [
   {
     id: 'losnij',
     title: 'LOSNIJ',
-    intro: 'A quiet portrait study for visual direction.',
+    intro: 'Portrait direction',
     className: 'column-losnij',
   },
   {
     id: 'works',
     title: 'WORKS',
-    intro: 'Selected editorial campaigns, product systems, and visual identities.',
+    intro: 'Selected editorial fragments.',
     className: 'column-works',
   },
   {
     id: 'more',
-    title: 'MORE',
+    title: 'INDEX',
     intro: 'Everything we imagine can be made.',
     className: 'column-more',
   },
@@ -94,6 +99,9 @@ function App() {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [isSettled, setIsSettled] = useState(false)
+  const setSectionRef = (id: SectionId, node: HTMLButtonElement | null) => {
+    sectionRefs.current[id] = node
+  }
 
   const openSection = (id: SectionId) => {
     const section = sectionRefs.current[id]
@@ -123,7 +131,7 @@ function App() {
         width: panelRect.width,
         height: panelRect.height,
       },
-      expandedTransform: `translate(${targetX}px, ${targetY}px) scale(${scale})`,
+      expandedTransform: `translate3d(${targetX}px, ${targetY}px, 0) scale(${scale})`,
       expandedHeight: panelRect.height * scale,
     })
     setIsClosing(false)
@@ -180,7 +188,7 @@ function App() {
       sectionWidth: nextSectionRect.width,
       sectionHeight: nextSectionRect.height,
       panelRect: nextPanelRect,
-      expandedTransform: `translate(${targetX}px, ${targetY}px) scale(${scale})`,
+      expandedTransform: `translate3d(${targetX}px, ${targetY}px, 0) scale(${scale})`,
       expandedHeight: nextPanelRect.height * scale,
     })
     setIsSettled(false)
@@ -230,14 +238,14 @@ function App() {
       : {
           width: activeSection.panelRect.width,
           height: activeSection.panelRect.height,
-          transform: `translate(${activeSection.panelRect.left}px, ${activeSection.panelRect.top}px) scale(1)`,
+          transform: `translate3d(${activeSection.panelRect.left}px, ${activeSection.panelRect.top}px, 0) scale(1)`,
         }
     : undefined
 
   return (
     <div className="app">
       <main className="main-panel" aria-label="Losnij portfolio showroom" ref={panelRef}>
-        <PanelContent openSection={openSection} sectionRefs={sectionRefs} />
+        <PanelContent openSection={openSection} setSectionRef={setSectionRef} />
       </main>
 
       {activeSection && (
@@ -312,33 +320,52 @@ function App() {
 
 function PanelContent({
   openSection,
-  sectionRefs,
+  setSectionRef,
 }: {
   openSection?: (id: SectionId) => void
-  sectionRefs?: RefObject<Record<SectionId, HTMLButtonElement | null>>
+  setSectionRef?: (id: SectionId, node: HTMLButtonElement | null) => void
 }) {
   return (
-    <>
-      {sections.map((section) =>
-        openSection && sectionRefs ? (
-          <button
-            className={`portfolio-section ${section.className}`}
-            key={section.id}
-            type="button"
-            onClick={() => openSection(section.id)}
-            ref={(node) => {
-              sectionRefs.current[section.id] = node
-            }}
-          >
-            <SectionContent section={section} />
-          </button>
-        ) : (
-          <div className={`portfolio-section ${section.className}`} key={section.id}>
-            <SectionContent section={section} />
-          </div>
-        ),
-      )}
-    </>
+    <div className="book-pages">
+      <section className="book-page book-page-left">
+        <InteractiveSection section={sections[0]} openSection={openSection} setSectionRef={setSectionRef} />
+      </section>
+      <section className="book-page book-page-right">
+        <InteractiveSection section={sections[1]} openSection={openSection} setSectionRef={setSectionRef} />
+        <InteractiveSection section={sections[2]} openSection={openSection} setSectionRef={setSectionRef} />
+      </section>
+    </div>
+  )
+}
+
+function InteractiveSection({
+  section,
+  openSection,
+  setSectionRef,
+}: {
+  section: PortfolioSection
+  openSection?: (id: SectionId) => void
+  setSectionRef?: (id: SectionId, node: HTMLButtonElement | null) => void
+}) {
+  if (openSection && setSectionRef) {
+    return (
+      <button
+        className={`portfolio-section ${section.className}`}
+        type="button"
+        onClick={() => openSection(section.id)}
+        ref={(node) => {
+          setSectionRef(section.id, node)
+        }}
+      >
+        <SectionContent section={section} />
+      </button>
+    )
+  }
+
+  return (
+    <div className={`portfolio-section ${section.className}`}>
+      <SectionContent section={section} />
+    </div>
   )
 }
 
@@ -351,11 +378,8 @@ function SectionContent({ section }: { section: PortfolioSection }) {
         <>
           <figure className="section-media portrait-media">
             <img src="/assets/main-person.png" alt="LOSNIJ portrait" />
-            <figcaption>
-              <strong>Portrait direction</strong>
-              <span>{section.intro}</span>
-            </figcaption>
           </figure>
+          <p className="losnij-caption">Designing quiet but intentional digital experiences.</p>
         </>
       )}
 
@@ -365,10 +389,12 @@ function SectionContent({ section }: { section: PortfolioSection }) {
             {works.map((work) => (
               <figure className={`section-media ${work.className}`} key={work.title}>
                 <img src={work.src} alt={work.title} />
-                <figcaption>
+                <figcaption>{work.title}</figcaption>
+                <div className="work-tag" aria-hidden="true">
                   <strong>{work.title}</strong>
-                  <span>{work.caption}</span>
-                </figcaption>
+                  <span>{work.category}</span>
+                  <small>{work.role}</small>
+                </div>
               </figure>
             ))}
           </div>
@@ -379,10 +405,6 @@ function SectionContent({ section }: { section: PortfolioSection }) {
         <>
           <figure className="section-media more-media">
             <img src="/assets/more.png" alt="More work" />
-            <figcaption>
-              <strong>Studio archive</strong>
-              <span>{section.intro}</span>
-            </figcaption>
           </figure>
           <p>{section.intro}</p>
         </>

@@ -1,4 +1,4 @@
-import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 
 type SectionId = 'losnij' | 'works' | 'more'
 
@@ -164,11 +164,8 @@ function App() {
     }
 
     openFrameRef.current = window.requestAnimationFrame(() => {
-      openDelayRef.current = window.setTimeout(() => {
-        setIsExpanded(true)
-        openFrameRef.current = null
-        openDelayRef.current = null
-      }, 95)
+      setIsExpanded(true)
+      openFrameRef.current = null
     })
   }
 
@@ -219,6 +216,13 @@ function App() {
         openFrameRef.current = null
       })
     })
+  }
+
+  const goToWorks = () => {
+    closeSection()
+    window.setTimeout(() => {
+      openSection('works')
+    }, 460)
   }
 
   const handleZoomScroll = () => {
@@ -312,8 +316,16 @@ function App() {
         }
     : undefined
 
+  const appClassName = [
+    'app',
+    activeSection ? 'is-section-open' : '',
+    activeSection && (!isSettled || isClosing) ? 'is-zooming' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div className={`app ${activeSection ? 'is-section-open' : ''}`}>
+    <div className={appClassName}>
       <CustomCursor />
       <button
         className="contact-trigger"
@@ -332,7 +344,9 @@ function App() {
       {activeSection && (
         <>
           <div
-            className={`zoom-scroll ${isExpanded ? 'is-expanded' : ''} ${isClosing ? 'is-closing' : ''}`}
+            className={`zoom-scroll ${isExpanded ? 'is-expanded' : ''} ${isClosing ? 'is-closing' : ''} ${
+              isSettled ? 'is-settled' : ''
+            }`}
             role="dialog"
             aria-modal="true"
             ref={scrollRef}
@@ -367,26 +381,211 @@ function App() {
               </main>
             </div>
             <div
-              className="zoom-scroll-space"
+              className={`zoom-detail-canvas ${activeSection.id === 'losnij' ? 'has-losnij-detail' : ''}`}
               style={{
-                height: isExpanded
-                  ? Math.max(activeSection.expandedHeight + window.innerHeight * 0.45, window.innerHeight * 1.8)
-                  : '100vh',
+                marginTop: isExpanded ? activeSection.expandedHeight : '100vh',
+                minHeight:
+                  activeSection.id === 'losnij'
+                    ? 'auto'
+                    : isExpanded
+                      ? Math.max(window.innerHeight, 720)
+                      : '100vh',
               }}
-            />
+            >
+              {activeSection.id === 'losnij' ? (
+                <LosnijDetailPage isVisible={isExpanded && isSettled && !isClosing} onBack={closeSection} onNext={goToWorks} />
+              ) : (
+                <section className="zoom-detail-placeholder" aria-hidden="true" />
+              )}
+            </div>
           </div>
-          <button className="section-close" type="button" aria-label="Close" onClick={closeSection}>
-            <span className="section-close-label">CLOSE</span>
-            <span className="section-close-icon" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-          </button>
+          {!isClosing && (
+            <button className="section-close" type="button" aria-label="Close section" onClick={closeSection}>
+              <span className="section-close-icon" aria-hidden="true">
+                <span />
+                <span />
+              </span>
+            </button>
+          )}
         </>
       )}
       <ContactModal isClosing={isContactClosing} isOpen={isContactOpen} onClose={closeContact} />
     </div>
+  )
+}
+
+const attitudeCards = [
+  ['Clarity', '정보를 쉽게 이해할 수 있도록 정리합니다.'],
+  ['Flow', '사용자의 행동이 자연스럽게 이어지도록 설계합니다.'],
+  ['Mood', '브랜드의 분위기가 화면 안에서 일관되게 느껴지도록 다듬습니다.'],
+]
+
+const designItems = [
+  [
+    'Web Design',
+    '브랜드의 이야기를 구조화하고 사용자가 필요한 정보를 자연스럽게 탐색할 수 있는 웹 경험을 설계합니다.',
+  ],
+  ['Mobile App', '사용자의 상황과 목적에 맞춰 간결하고 명확한 모바일 흐름을 구성합니다.'],
+  ['Brand Experience', '브랜드의 태도와 분위기가 디지털 화면 안에서 일관되게 느껴지도록 디자인합니다.'],
+]
+
+const workSteps = [
+  ['Discover', '사용자와 브랜드가 가진 문제를 파악합니다.'],
+  ['Structure', '정보의 우선순위와 화면 흐름을 정리합니다.'],
+  ['Design', '와이어프레임과 UI를 통해 경험을 구체화합니다.'],
+  ['Refine', '여백, 타이포그래피, 이미지, 인터랙션을 다듬어 완성도를 높입니다.'],
+]
+
+function LosnijDetailPage({
+  isVisible,
+  onBack,
+  onNext,
+}: {
+  isVisible: boolean
+  onBack: () => void
+  onNext: () => void
+}) {
+  const detailRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const root = detailRef.current
+
+    if (!root || !isVisible) {
+      return
+    }
+
+    const reveals = Array.from(root.querySelectorAll<HTMLElement>('.losnij-reveal'))
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.18 },
+    )
+
+    reveals.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [isVisible])
+
+  return (
+    <article className={`losnij-about ${isVisible ? 'is-visible' : ''}`} ref={detailRef}>
+      <header className="losnij-about-hero losnij-reveal">
+        <p>Hero</p>
+        <h2>ABOUT LOSNIJ</h2>
+      </header>
+
+      <DetailSection title="Editor’s Note">
+        <p>
+          LOSNIJ는 UI/UX 디자이너 진솔의 포트폴리오입니다. 화려한 표현보다 사용자가 자연스럽게 이해하고
+          머무를 수 있는 흐름을 중요하게 생각합니다.
+        </p>
+        <p>
+          브랜드의 분위기, 사용자의 행동, 정보의 구조를 함께 바라보며 하나의 경험으로 정리하는 디자인을
+          지향합니다.
+        </p>
+      </DetailSection>
+
+      <DetailSection title="Design Attitude">
+        <p>
+          좋은 디자인은 먼저 이해되어야 한다고 생각합니다. 사용자가 망설이지 않고 다음 행동으로 이어질 수
+          있도록 정보의 순서와 화면의 흐름을 정리합니다.
+        </p>
+        <p>
+          눈에 강하게 남는 장면보다, 오래 보아도 편안하고 필요한 순간에 정확히 작동하는 화면을 만들고자
+          합니다.
+        </p>
+        <div className="losnij-card-grid">
+          {attitudeCards.map(([title, body]) => (
+            <section className="losnij-card" key={title}>
+              <h4>{title}</h4>
+              <p>{body}</p>
+            </section>
+          ))}
+        </div>
+      </DetailSection>
+
+      <DetailSection title="What I Design">
+        <p>
+          웹사이트, 모바일 앱, 브랜드 기반 디지털 경험을 중심으로 디자인합니다. 정보 구조를 정리하고, 사용자
+          흐름을 설계하며, 화면의 시각적 톤과 인터랙션 방향까지 함께 고민합니다.
+        </p>
+        <div className="losnij-list">
+          {designItems.map(([title, body]) => (
+            <section className="losnij-list-item" key={title}>
+              <h4>{title}</h4>
+              <p>{body}</p>
+            </section>
+          ))}
+        </div>
+      </DetailSection>
+
+      <DetailSection title="How I Work">
+        <div className="losnij-process">
+          {workSteps.map(([title, body], index) => (
+            <section className="losnij-step" key={title}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <h4>{title}</h4>
+              <p>{body}</p>
+            </section>
+          ))}
+        </div>
+      </DetailSection>
+
+      <DetailSection title="Short Profile">
+        <div className="losnij-profile">
+          <dl>
+            <div>
+              <dt>Name</dt>
+              <dd>진솔</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd>UI/UX Designer</dd>
+            </div>
+            <div>
+              <dt>About</dt>
+              <dd>
+                브랜드와 사용자를 연결하는 디지털 경험을 디자인합니다. 정보를 정리하고, 흐름을 만들고,
+                조용하지만 오래 남는 화면을 만드는 일에 관심이 있습니다.
+              </dd>
+            </div>
+            <div>
+              <dt>Interest</dt>
+              <dd>UI/UX Design · Web Design · Mobile App Design · Brand Experience · Visual Direction</dd>
+            </div>
+            <div>
+              <dt>Tools</dt>
+              <dd>Figma · Photoshop · Illustrator · HTML · CSS · JavaScript</dd>
+            </div>
+          </dl>
+        </div>
+      </DetailSection>
+
+      <footer className="losnij-detail-actions losnij-reveal">
+        <button type="button" onClick={onBack}>
+          Back to Main
+        </button>
+        <button type="button" onClick={onNext}>
+          Next: Works
+        </button>
+      </footer>
+    </article>
+  )
+}
+
+function DetailSection({ children, title }: { children: ReactNode; title: string }) {
+  return (
+    <section className="losnij-detail-section losnij-reveal">
+      <div className="losnij-detail-title">
+        <h3>{title}</h3>
+      </div>
+      <div className="losnij-detail-body">{children}</div>
+    </section>
   )
 }
 
@@ -467,41 +666,118 @@ function CustomCursor() {
   const frameRef = useRef<number | null>(null)
   const hoverTargetRef = useRef<EventTarget | null>(null)
   const positionRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
+  const scaleRef = useRef({ current: 1, target: 1 })
+  const initializedRef = useRef(false)
 
   useEffect(() => {
     const cursor = cursorRef.current
-    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    const app = cursor?.parentElement
 
-    if (!cursor || !canHover) {
+    if (!cursor || !app) {
       return
     }
 
-    const moveCursor = () => {
+    const paintCursor = () => {
       const position = positionRef.current
-      position.x += (position.targetX - position.x) * 0.22
-      position.y += (position.targetY - position.y) * 0.22
-      cursor.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`
-      frameRef.current = window.requestAnimationFrame(moveCursor)
+      const scale = scaleRef.current
+      cursor.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%) scale(${
+        scale.current
+      })`
     }
 
-    const handleMouseMove = (event: MouseEvent) => {
+    const renderCursor = () => {
+      const position = positionRef.current
+      const scale = scaleRef.current
+      position.x = position.targetX
+      position.y = position.targetY
+      scale.current += (scale.target - scale.current) * 0.52
+
+      if (Math.abs(scale.target - scale.current) < 0.006) {
+        scale.current = scale.target
+      }
+
+      paintCursor()
+
+      const shouldContinue = scale.current !== scale.target
+      frameRef.current = shouldContinue ? window.requestAnimationFrame(renderCursor) : null
+    }
+
+    const scheduleCursor = () => {
+      if (!frameRef.current) {
+        frameRef.current = window.requestAnimationFrame(renderCursor)
+      }
+    }
+
+    const hideCursor = () => {
+      hoverTargetRef.current = null
+      scaleRef.current.target = 1
+      initializedRef.current = false
+      cursor.classList.remove('is-visible', 'is-hover', 'is-hidden')
+    }
+
+    const handlePointerEnter = (event: globalThis.PointerEvent) => {
+      handlePointerMove(event)
+    }
+
+    const handlePointerMove = (event: globalThis.PointerEvent) => {
+      const target = document.elementFromPoint(event.clientX, event.clientY)
+      const isCursorArea = Boolean(target?.closest('.main-panel:not(.zoom-panel), .contact-trigger'))
+
+      if (!isCursorArea) {
+        hideCursor()
+        return
+      }
+
       const position = positionRef.current
       position.targetX = event.clientX
       position.targetY = event.clientY
 
+      const hoverTarget = target?.closest('a, button, .works-collage .section-media, [role="button"]') ?? null
+
+      if (hoverTarget !== hoverTargetRef.current) {
+        hoverTargetRef.current = hoverTarget
+
+        if (hoverTarget) {
+          scaleRef.current.target = 1.28
+          cursor.classList.add('is-hover')
+
+          if (hoverTarget.matches('.works-collage .section-media')) {
+            cursor.classList.add('is-hidden')
+          } else {
+            cursor.classList.remove('is-hidden')
+          }
+        } else {
+          scaleRef.current.target = 1
+          cursor.classList.remove('is-hover', 'is-hidden')
+        }
+      }
+
       if (!cursor.classList.contains('is-visible')) {
-        position.x = event.clientX
-        position.y = event.clientY
+        position.x = position.targetX
+        position.y = position.targetY
+        scaleRef.current.current = scaleRef.current.target
+        initializedRef.current = true
         cursor.classList.add('is-visible')
       }
 
-      if (!frameRef.current) {
-        frameRef.current = window.requestAnimationFrame(moveCursor)
+      if (!initializedRef.current) {
+        position.x = position.targetX
+        position.y = position.targetY
+        initializedRef.current = true
       }
+
+      position.x = position.targetX
+      position.y = position.targetY
+      paintCursor()
+      scheduleCursor()
     }
 
     const handleMouseLeave = () => {
-      cursor.classList.remove('is-visible', 'is-hover', 'is-hidden')
+      hideCursor()
+      if (frameRef.current) {
+        window.cancelAnimationFrame(frameRef.current)
+        frameRef.current = null
+      }
     }
 
     const handleMouseOver = (event: MouseEvent) => {
@@ -513,7 +789,9 @@ function CustomCursor() {
       }
 
       hoverTargetRef.current = hoverTarget
+      scaleRef.current.target = 1.28
       cursor.classList.add('is-hover')
+      scheduleCursor()
 
       if (hoverTarget.matches('.works-collage .section-media')) {
         cursor.classList.add('is-hidden')
@@ -536,19 +814,32 @@ function CustomCursor() {
       }
 
       hoverTargetRef.current = null
+      scaleRef.current.target = 1
       cursor.classList.remove('is-hover', 'is-hidden')
+      scheduleCursor()
     }
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseleave', handleMouseLeave)
-    document.addEventListener('mouseover', handleMouseOver)
-    document.addEventListener('mouseout', handleMouseOut)
+    const moveEventName = 'onpointerrawupdate' in window ? 'pointerrawupdate' : 'pointermove'
+    const handlePointerUpdate = handlePointerMove as EventListener
+
+    window.addEventListener('pointerenter', handlePointerEnter, { passive: true })
+    window.addEventListener(moveEventName, handlePointerUpdate, { passive: true })
+    if (moveEventName !== 'pointermove') {
+      window.addEventListener('pointermove', handlePointerMove, { passive: true })
+    }
+    window.addEventListener('pointerleave', handleMouseLeave)
+    app.addEventListener('mouseover', handleMouseOver, { passive: true })
+    app.addEventListener('mouseout', handleMouseOut, { passive: true })
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseleave', handleMouseLeave)
-      document.removeEventListener('mouseover', handleMouseOver)
-      document.removeEventListener('mouseout', handleMouseOut)
+      window.removeEventListener('pointerenter', handlePointerEnter)
+      window.removeEventListener(moveEventName, handlePointerUpdate)
+      if (moveEventName !== 'pointermove') {
+        window.removeEventListener('pointermove', handlePointerMove)
+      }
+      window.removeEventListener('pointerleave', handleMouseLeave)
+      app.removeEventListener('mouseover', handleMouseOver)
+      app.removeEventListener('mouseout', handleMouseOut)
 
       if (frameRef.current) {
         window.cancelAnimationFrame(frameRef.current)
@@ -633,6 +924,7 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
   const tagRef = useRef<HTMLDivElement | null>(null)
   const frameRef = useRef<number | null>(null)
   const initializedRef = useRef(false)
+  const boundsRef = useRef<DOMRect | null>(null)
   const positionRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
 
   const stopTracking = () => {
@@ -641,6 +933,7 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
       frameRef.current = null
     }
     initializedRef.current = false
+    boundsRef.current = null
   }
 
   const moveTag = () => {
@@ -652,16 +945,26 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
     }
 
     const position = positionRef.current
-    position.x += (position.targetX - position.x) * 0.18
-    position.y += (position.targetY - position.y) * 0.18
+    position.x += (position.targetX - position.x) * 0.46
+    position.y += (position.targetY - position.y) * 0.46
     tag.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, 14px) rotate(-3deg)`
 
     const shouldContinue = Math.abs(position.targetX - position.x) > 0.1 || Math.abs(position.targetY - position.y) > 0.1
     frameRef.current = shouldContinue ? window.requestAnimationFrame(moveTag) : null
   }
 
+  const startTracking = (event: PointerEvent<HTMLElement>) => {
+    boundsRef.current = event.currentTarget.getBoundingClientRect()
+    updateTagPosition(event)
+  }
+
   const updateTagPosition = (event: PointerEvent<HTMLElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect()
+    const bounds = boundsRef.current
+
+    if (!bounds) {
+      return
+    }
+
     const position = positionRef.current
 
     position.targetX = event.clientX - bounds.left
@@ -694,7 +997,7 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
       data-title={work.title}
       data-desc={work.category}
       data-keywords={work.role}
-      onPointerEnter={updateTagPosition}
+      onPointerEnter={startTracking}
       onPointerMove={updateTagPosition}
       onPointerLeave={stopTracking}
     >

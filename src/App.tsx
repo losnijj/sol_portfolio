@@ -161,61 +161,86 @@ const indexPages = [
     number: '01',
     title: 'Design Process',
     eyebrow: 'How each project takes shape',
-    description:
-      '좋은 화면은 장식보다 이해에서 시작합니다. 문제를 정리하고, 흐름을 만들고, 필요한 움직임만 남기는 과정을 반복합니다.',
-    columns: [
-      { title: 'Discover', items: ['Context Research', 'User Needs', 'Reference Study'] },
-      { title: 'Structure', items: ['Information Architecture', 'User Flow', 'Content Priority'] },
-      { title: 'Refine', items: ['Visual Direction', 'Interaction', 'Detailed Finish'] },
-    ],
   },
   {
     id: 'tools-skills',
     number: '02',
     title: 'Tools & Skills',
     eyebrow: 'A practical design toolkit',
-    description:
-      '기획에서 프로토타입, 구현 검토까지 한 흐름으로 연결합니다. 도구는 결과를 또렷하게 만드는 방식으로 선택합니다.',
-    columns: [
-      { title: 'Design', items: ['Figma', 'Photoshop', 'Illustrator'] },
-      { title: 'Web', items: ['HTML & CSS', 'JavaScript', 'React'] },
-      { title: 'Focus', items: ['UI/UX Design', 'Web Design', 'Interaction'] },
-    ],
   },
   {
     id: 'resume',
     number: '03',
     title: 'Resume',
     eyebrow: 'Selected profile',
-    description:
-      '차분한 구조와 분명한 사용 경험을 만드는 UI/UX 디자이너입니다. 브랜드의 분위기와 실제 사용성을 함께 다룹니다.',
-    columns: [
-      { title: 'Profile', items: ['Jin Sol', 'UI/UX Designer', 'Seoul, Korea'] },
-      { title: 'Selected', items: ['Web Design', 'App Design', 'Visual Direction'] },
-      { title: 'Edition', items: ['Selected Portfolio', '2026', 'Available for work'] },
-    ],
   },
   {
     id: 'contact',
     number: '04',
     title: 'Contact',
     eyebrow: 'Let us make something useful',
-    description:
-      '새로운 프로젝트와 협업 이야기를 기다립니다. 아래 채널을 통해 편하게 연락해 주세요.',
-    columns: [
-      { title: 'Email', items: ['wlsthf796@naver.com'] },
-      { title: 'Social', items: ['GitHub', 'Instagram'] },
-      { title: 'Document', items: ['Resume', 'Portfolio'] },
-    ],
   },
 ] satisfies Array<{
   id: IndexPageId
   number: string
   title: string
   eyebrow: string
-  description: string
-  columns: Array<{ title: string; items: string[] }>
 }>
+
+const designProcessSteps = [
+  {
+    title: 'Research',
+    description: '브랜드, 사용자, 경쟁 서비스, 레퍼런스를 조사합니다.',
+  },
+  {
+    title: 'Define',
+    description: '서비스의 목적과 핵심 문제를 정리합니다.',
+  },
+  {
+    title: 'Structure',
+    description: 'IA, 사용자 흐름, 와이어프레임을 통해 화면 구조를 설계합니다.',
+  },
+  {
+    title: 'Visual Design',
+    description: '컬러, 타이포그래피, 이미지, 레이아웃을 바탕으로 실제 UI를 디자인합니다.',
+  },
+  {
+    title: 'Refinement',
+    description: '여백, 정렬, 반응형, 인터랙션 디테일을 다듬습니다.',
+  },
+]
+
+const toolSkills = [
+  { title: 'Figma', description: 'UI Design / Wireframe / Prototype / Component' },
+  { title: 'Photoshop', description: 'Image Editing / Mood Visual / Mockup' },
+  { title: 'Illustrator', description: 'Logo / Icon / Vector Graphic' },
+  { title: 'UI/UX', description: 'User Flow / IA / Design System / Responsive Web' },
+  { title: 'Development Understanding', description: 'HTML / CSS / JavaScript / React Basic / GitHub' },
+  { title: 'AI Tools', description: 'Codex / Midjourney / Gemini / Claude' },
+]
+
+const resumeProjects = [
+  {
+    title: 'Jeju National University Hospital Redesign',
+    description: '신뢰감 있는 의료 정보를 전달하는 병원 웹 리디자인',
+  },
+  {
+    title: 'SIMMONS Global Website Redesign',
+    description: '브랜드 헤리티지를 전달하는 글로벌 웹 리디자인',
+  },
+  {
+    title: 'JUHAP',
+    description: '상황과 취향에 맞는 주류 페어링 앱',
+  },
+  {
+    title: 'ARCHE',
+    description: '개인의 옷장과 취향을 기록하는 패션 아카이브 앱',
+  },
+  {
+    title: 'LOSNIJ Portfolio',
+    description: '매거진과 쇼룸 컨셉의 개인 포트폴리오 웹사이트',
+  },
+]
 
 function App() {
   const isMacOS = typeof navigator !== 'undefined' && /Macintosh|MacIntel|Mac OS X/.test(navigator.userAgent)
@@ -226,6 +251,7 @@ function App() {
   const scrollFrameRef = useRef<number | null>(null)
   const openFrameRef = useRef<number | null>(null)
   const indexCloseTimeoutRef = useRef<number | null>(null)
+  const sectionCloseFrameRef = useRef<number | null>(null)
   const sectionRefs = useRef<Record<SectionId, HTMLButtonElement | null>>({
     losnij: null,
     works: null,
@@ -239,6 +265,8 @@ function App() {
   const [isContactOpen, setIsContactOpen] = useState(false)
   const [isContactClosing, setIsContactClosing] = useState(false)
   const [isIndexCollapsing, setIsIndexCollapsing] = useState(false)
+  const [isSectionScrollingToTop, setIsSectionScrollingToTop] = useState(false)
+  const [introPhase, setIntroPhase] = useState<'title' | 'panel' | 'complete'>('title')
   const setSectionRef = (id: SectionId, node: HTMLButtonElement | null) => {
     sectionRefs.current[id] = node
   }
@@ -284,6 +312,7 @@ function App() {
     setIsClosing(false)
     setIsSettled(false)
     setIsIndexCollapsing(false)
+    setIsSectionScrollingToTop(false)
     setClosingTransform(null)
 
     if (openFrameRef.current) {
@@ -299,6 +328,49 @@ function App() {
 
   const closeSection = () => {
     if (!activeSection) {
+      return
+    }
+
+    if (
+      activeSection.id !== 'more' &&
+      isSettled &&
+      !isSectionScrollingToTop &&
+      (scrollRef.current?.scrollTop ?? 0) > 0
+    ) {
+      const scroll = scrollRef.current
+      const initialScrollTop = scroll?.scrollTop ?? 0
+      let startedAt: number | null = null
+      const duration = 980
+
+      setIsSectionScrollingToTop(true)
+
+      const scrollToTop = (now: number) => {
+        startedAt ??= now
+
+        if (!scrollRef.current) {
+          sectionCloseFrameRef.current = null
+          setIsSectionScrollingToTop(false)
+          closeSectionImmediately()
+          return
+        }
+
+        const progress = Math.min((now - startedAt) / duration, 1)
+        const easedProgress = progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2
+
+        scrollRef.current.scrollTop = initialScrollTop * (1 - easedProgress)
+
+        if (progress < 1) {
+          sectionCloseFrameRef.current = window.requestAnimationFrame(scrollToTop)
+          return
+        }
+
+        scrollRef.current.scrollTop = 0
+        sectionCloseFrameRef.current = null
+        setIsSectionScrollingToTop(false)
+        closeSectionImmediately()
+      }
+
+      sectionCloseFrameRef.current = window.requestAnimationFrame(scrollToTop)
       return
     }
 
@@ -332,6 +404,9 @@ function App() {
     if (scrollRef.current && scrollTop > 0) {
       scrollRef.current.scrollTop = 0
     }
+    if (scrollRef.current) {
+      scrollRef.current.style.setProperty('--losnij-info-scroll', '0px')
+    }
     if (morePageRef.current) {
       morePageRef.current.style.setProperty('--more-progress', '0')
     }
@@ -343,8 +418,13 @@ function App() {
       window.cancelAnimationFrame(openFrameRef.current)
       openFrameRef.current = null
     }
+    if (sectionCloseFrameRef.current) {
+      window.cancelAnimationFrame(sectionCloseFrameRef.current)
+      sectionCloseFrameRef.current = null
+    }
     setIsSettled(false)
     setIsIndexCollapsing(false)
+    setIsSectionScrollingToTop(false)
     setClosingTransform(compensatedTransform)
     setIsClosing(true)
     openFrameRef.current = window.requestAnimationFrame(() => {
@@ -356,10 +436,29 @@ function App() {
   }
 
   const goToWorks = () => {
+    const shouldScrollToTop = activeSection?.id === 'losnij' && isSettled && (scrollRef.current?.scrollTop ?? 0) > 0
+
     closeSection()
     window.setTimeout(() => {
       openSection('works')
-    }, 460)
+    }, shouldScrollToTop ? 1440 : 460)
+  }
+
+  const navigateToSection = (id: SectionId) => {
+    if (activeSection?.id === id) {
+      scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    closeSection()
+    window.setTimeout(() => {
+      openSection(id)
+    }, activeSection && isSettled ? 1440 : 460)
+  }
+
+  const openContact = () => {
+    setIsContactClosing(false)
+    setIsContactOpen(true)
   }
 
   const handleZoomScroll = () => {
@@ -381,27 +480,69 @@ function App() {
         const imageScrollLimit = Math.max(activeSection.expandedHeight - window.innerHeight, 0)
         const infoScroll = Math.min(Math.max(scrollRef.current.scrollTop, 0), imageScrollLimit)
         const hero = scrollRef.current.querySelector<HTMLElement>('.losnij-soro-hero')
+        const heroEntry = scrollRef.current.querySelector<HTMLElement>('.losnij-soro-entry')
+        const servicesReveal = scrollRef.current.querySelector<HTMLElement>('.losnij-services-reveal')
 
         scrollRef.current.style.setProperty('--losnij-info-scroll', `${infoScroll}px`)
 
+        if (heroEntry) {
+          const entryProgress = Math.min(Math.max((window.innerHeight - heroEntry.getBoundingClientRect().top) / window.innerHeight, 0), 1)
+          const easedEntryProgress = entryProgress * entryProgress * (3 - 2 * entryProgress)
+
+          heroEntry.style.setProperty('--about-entry-shift', `${((1 - easedEntryProgress) * 14).toFixed(2)}vh`)
+        }
+
+        if (servicesReveal) {
+          const revealProgress = Math.min(
+            Math.max((window.innerHeight - servicesReveal.getBoundingClientRect().top) / window.innerHeight, 0),
+            1,
+          )
+          const easedRevealProgress = revealProgress * revealProgress * (3 - 2 * revealProgress)
+
+          servicesReveal.style.setProperty('--services-reveal-shift', `${((1 - easedRevealProgress) * 100).toFixed(2)}vh`)
+        }
+
         if (hero) {
           const heroProgress = Math.min(Math.max(-hero.getBoundingClientRect().top / (hero.offsetHeight - window.innerHeight), 0), 1)
-          const frameWidth = 220 + (window.innerWidth - 220) * heroProgress
-          const frameHeight = 220 + (window.innerHeight - 220) * heroProgress
-          const contentProgress = Math.min(Math.max((heroProgress - 0.52) / 0.28, 0), 1)
+          const isCompactViewport = window.innerWidth <= 720
+          const initialFrameWidth = isCompactViewport ? 38 : 30
+          const initialFrameHeight = isCompactViewport ? 32 : 38
+          const initialFrameTop = isCompactViewport ? 56 : 51
+          const smoothstep = (progress: number) => progress * progress * (3 - 2 * progress)
+          const gatherProgress = smoothstep(Math.min(heroProgress / 0.68, 1))
+          const coverProgress = smoothstep(Math.min(Math.max((heroProgress - 0.28) / 0.72, 0), 1))
+          const gatheredFrameWidth = isCompactViewport ? 54 : 44
+          const gatheredFrameHeight = isCompactViewport ? 40 : 50
+          const downwardTravel = isCompactViewport ? 7 : 9
+          const frameWidth =
+            initialFrameWidth +
+            (gatheredFrameWidth - initialFrameWidth) * gatherProgress +
+            (100 - gatheredFrameWidth) * coverProgress
+          const frameHeight =
+            initialFrameHeight +
+            (gatheredFrameHeight - initialFrameHeight) * gatherProgress +
+            (100 - gatheredFrameHeight) * coverProgress
+          const frameTop = initialFrameTop + downwardTravel * gatherProgress - (initialFrameTop + downwardTravel) * coverProgress
+          const bottomTypeOffset = (isCompactViewport ? 12 : 19) * gatherProgress
 
-          hero.style.setProperty('--about-frame-width', `${frameWidth.toFixed(2)}px`)
-          hero.style.setProperty('--about-frame-height', `${frameHeight.toFixed(2)}px`)
-          hero.style.setProperty('--about-frame-radius', `${(18 * (1 - heroProgress)).toFixed(2)}px`)
-          hero.style.setProperty('--about-content-opacity', contentProgress.toFixed(4))
+          hero.style.setProperty('--about-frame-width', `${frameWidth.toFixed(2)}vw`)
+          hero.style.setProperty('--about-frame-height', `${frameHeight.toFixed(2)}vh`)
+          hero.style.setProperty('--about-frame-top', `${frameTop.toFixed(2)}vh`)
+          hero.style.setProperty('--about-bottom-type-offset', `${bottomTypeOffset.toFixed(2)}vw`)
           hero.style.setProperty('--about-scroll-opacity', (1 - Math.min(heroProgress * 2.4, 1)).toFixed(4))
         }
 
-        scrollRef.current.querySelectorAll<HTMLElement>('.losnij-service-card').forEach((card) => {
+        const serviceCards = Array.from(scrollRef.current.querySelectorAll<HTMLElement>('.losnij-service-card'))
+
+        serviceCards.forEach((card, index) => {
           const rect = card.getBoundingClientRect()
           const progress = Math.min(Math.max((window.innerHeight - rect.top) / window.innerHeight, 0), 1)
+          const nextCard = serviceCards[index + 1]
+          const nextCardTop = nextCard?.getBoundingClientRect().top ?? window.innerHeight
+          const stackProgress = Math.min(Math.max((window.innerHeight - nextCardTop) / window.innerHeight, 0), 1)
 
           card.style.setProperty('--service-image-scale', (1.4 - progress * 0.4).toFixed(4))
+          card.style.setProperty('--service-stack-progress', stackProgress.toFixed(4))
         })
       }
 
@@ -426,6 +567,16 @@ function App() {
       setIsContactClosing(false)
     }, 520)
   }
+
+  useEffect(() => {
+    const panelTimer = window.setTimeout(() => setIntroPhase('panel'), 1650)
+    const completeTimer = window.setTimeout(() => setIntroPhase('complete'), 3650)
+
+    return () => {
+      window.clearTimeout(panelTimer)
+      window.clearTimeout(completeTimer)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isMacOS) {
@@ -471,6 +622,9 @@ function App() {
       if (indexCloseTimeoutRef.current) {
         window.clearTimeout(indexCloseTimeoutRef.current)
       }
+      if (sectionCloseFrameRef.current) {
+        window.cancelAnimationFrame(sectionCloseFrameRef.current)
+      }
     },
     [],
   )
@@ -496,6 +650,7 @@ function App() {
   const appClassName = [
     'app',
     isMacOS ? 'is-macos' : '',
+    introPhase !== 'complete' ? `is-intro-${introPhase}` : '',
     activeSection ? 'is-section-open' : '',
     activeSection && (!isSettled || isClosing) ? 'is-zooming' : '',
   ]
@@ -505,14 +660,18 @@ function App() {
 
   return (
     <div className={appClassName} style={appStyle}>
+      {introPhase !== 'complete' && (
+        <div className="site-intro" aria-hidden="true">
+          <div className="site-intro-title-mask">
+            <strong>losnij</strong>
+          </div>
+        </div>
+      )}
       <CustomCursor />
       <button
         className="contact-trigger"
         type="button"
-        onClick={() => {
-          setIsContactClosing(false)
-          setIsContactOpen(true)
-        }}
+        onClick={openContact}
       >
         CONTACT
       </button>
@@ -578,7 +737,14 @@ function App() {
               }}
             >
               {activeSection.id === 'losnij' ? (
-                <LosnijDetailPage isVisible={isExpanded && isSettled && !isClosing} onBack={closeSection} onNext={goToWorks} />
+                <LosnijDetailPage
+                  isVisible={isExpanded && isSettled && !isClosing}
+                  onBack={closeSection}
+                  onContact={openContact}
+                  onNavigate={navigateToSection}
+                  onNext={goToWorks}
+                  onTop={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+                />
               ) : activeSection.id === 'more' ? (
                 <IndexDetailPage
                   isMenuOpen={isExpanded && isSettled && !isClosing && !isIndexCollapsing}
@@ -586,7 +752,14 @@ function App() {
                   pageRef={morePageRef}
                 />
               ) : (
-                <section className="zoom-detail-placeholder" aria-hidden="true" />
+                <>
+                  <section className="zoom-detail-placeholder" aria-hidden="true" />
+                  <PortfolioFooter
+                    onContact={openContact}
+                    onNavigate={navigateToSection}
+                    onTop={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+                  />
+                </>
               )}
             </div>
           </div>
@@ -672,11 +845,9 @@ function IndexDetailPage({
               onClick={() => openSubpage(page.id)}
             >
               <span>{page.title}</span>
-              <span aria-hidden="true">→</span>
             </button>
           ))}
         </nav>
-
       </div>
 
       {activePage && (
@@ -696,18 +867,9 @@ function IndexDetailPage({
               </header>
 
               <div className="index-subpage-body">
-                <p>{activePage.description}</p>
-                <div className="index-subpage-columns">
-                  {activePage.columns.map((column) => (
-                    <section key={column.title}>
-                      <h3>{column.title}</h3>
-                      {column.items.map((item) => (
-                        <span key={item}>{item}</span>
-                      ))}
-                    </section>
-                  ))}
-                </div>
+                <IndexSubpageContent pageId={activePage.id} />
               </div>
+
             </div>
         </section>
       )}
@@ -716,21 +878,196 @@ function IndexDetailPage({
   )
 }
 
-function LosnijDetailPage({ onBack, onNext }: { isVisible: boolean; onBack: () => void; onNext: () => void }) {
+function IndexSubpageContent({ pageId }: { pageId: IndexPageId }) {
+  if (pageId === 'design-process') {
+    return <DesignProcessContent />
+  }
+
+  if (pageId === 'tools-skills') {
+    return <ToolsSkillsContent />
+  }
+
+  if (pageId === 'resume') {
+    return <ResumeContent />
+  }
+
+  return <ContactContent />
+}
+
+function DesignProcessContent() {
+  return (
+    <div className="design-process-content">
+      <div className="design-process-intro">
+        <p>My design process begins with understanding the purpose of the service and the user’s flow.</p>
+        <p>화면을 만들기 전, 서비스의 목적과 사용자가 필요한 정보를 먼저 정리합니다.</p>
+      </div>
+
+      <div className="design-process-grid">
+        {designProcessSteps.map((step, index) => (
+          <section className="design-process-step" key={step.title}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </section>
+        ))}
+      </div>
+
+      <p className="design-process-closing">From structure to mood, I build clear and usable interfaces.</p>
+    </div>
+  )
+}
+
+function ToolsSkillsContent() {
+  return (
+    <div className="editorial-content">
+      <div className="editorial-intro">
+        <p>I use design tools to create interfaces, visual systems, and brand mood.</p>
+        <p>UI/UX 디자인을 중심으로 화면 구조, 프로토타입, 비주얼 방향을 설계합니다.</p>
+      </div>
+
+      <div className="editorial-card-grid">
+        {toolSkills.map((tool, index) => (
+          <section className="editorial-card" key={tool.title}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h3>{tool.title}</h3>
+            <p>{tool.description}</p>
+          </section>
+        ))}
+      </div>
+
+      <p className="editorial-closing">Tools are used to turn ideas into clear visual systems.</p>
+    </div>
+  )
+}
+
+function ResumeContent() {
+  return (
+    <div className="editorial-content resume-content">
+      <div className="resume-profile">
+        <div>
+          <p>Jin Sol</p>
+          <span>UI/UX Designer</span>
+        </div>
+        <p>
+          사용자의 흐름을 이해하고, 브랜드의 분위기를 화면 안에 정리하는 디자이너를 지향합니다.
+          <br />
+          정보를 보기 쉽게 구성하는 구조와 감도 있는 비주얼의 균형을 중요하게 생각합니다.
+        </p>
+      </div>
+
+      <section className="resume-section">
+        <h3>Education</h3>
+        <div className="resume-education">
+          <span>Jeju National University</span>
+          <span>UI/UX Design Course, EZEN Academy</span>
+        </div>
+      </section>
+
+      <section className="resume-section">
+        <h3>Selected Projects</h3>
+        <div className="resume-project-grid">
+          {resumeProjects.map((project, index) => (
+            <article key={project.title}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <h4>{project.title}</h4>
+              <p>{project.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="resume-strength">
+        <h3>Strength</h3>
+        <p>Information Structure / Visual Direction / Detail-Oriented Design</p>
+      </section>
+    </div>
+  )
+}
+
+function ContactContent() {
+  return (
+    <div className="editorial-content contact-content">
+      <div className="contact-index-intro">
+        <h3>Let’s Connect</h3>
+        <p>
+          좋은 디자인은 작은 관심에서 시작된다고 생각합니다.
+          <br />
+          사용자, 브랜드, 화면의 흐름을 세심하게 바라보며 더 나은 경험을 만들고 싶습니다.
+        </p>
+      </div>
+
+      <div className="contact-index-grid">
+        <section>
+          <span>Name</span>
+          <p>Jin Sol</p>
+        </section>
+        <section>
+          <span>Email</span>
+          <p>wlsthf796@naver.com</p>
+        </section>
+        <section>
+          <span>Role</span>
+          <p>UI/UX Designer</p>
+        </section>
+        <section>
+          <span>Portfolio</span>
+          <p>LOSNIJ</p>
+        </section>
+      </div>
+
+      <p className="editorial-closing">Thank you for visiting LOSNIJ.</p>
+    </div>
+  )
+}
+
+function LosnijDetailPage({
+  onBack,
+  onContact,
+  onNavigate,
+  onNext,
+  onTop,
+}: {
+  isVisible: boolean
+  onBack: () => void
+  onContact: () => void
+  onNavigate: (id: SectionId) => void
+  onNext: () => void
+  onTop: () => void
+}) {
   return (
     <article className="losnij-about">
-      <section className="losnij-soro-hero">
-        <div className="losnij-soro-hero-sticky">
-          <div className="losnij-soro-frame">
-            <img src="/assets/main-person.png" alt="" />
-            <div className="losnij-soro-frame-overlay" />
-            <div className="losnij-soro-frame-content">
-              <p>Design with Meaning</p>
-              <h2>About LOSNIJ</h2>
-              <span>브랜드와 사람 사이의 자연스러운 경험을 디자인합니다.</span>
+      <div className="losnij-soro-entry">
+        <section className="losnij-soro-hero">
+          <div className="losnij-soro-hero-sticky">
+            <div className="losnij-soro-frame">
+              <img src="/assets/main-person.png" alt="" />
             </div>
+            <div className="losnij-soro-type" aria-label="Welcome to Losnij">
+              <span>WELCOME TO</span>
+              <span className="losnij-soro-type-bottom">
+                <b>LOS</b>
+                <i className="losnij-soro-type-image-slot" aria-hidden="true" />
+                <b>NIJ</b>
+              </span>
+            </div>
+            <small>( Scroll Down )</small>
           </div>
-          <small>( Scroll Down )</small>
+        </section>
+      </div>
+
+      <section className="losnij-services-reveal">
+        <div className="losnij-services-intro">
+          <div className="losnij-services-intro-top">
+            <p>
+              <span>● LOSNIJ CREATIVE</span>
+              <span>(LOSNIJ — 01)</span>
+            </p>
+            <h2>
+              Clear structure and thoughtful details create interfaces that feel natural to use.
+            </h2>
+          </div>
+          <strong>SERVICES</strong>
+          <p className="losnij-services-intro-bottom">My process and capabilities include:</p>
         </div>
       </section>
 
@@ -766,7 +1103,73 @@ function LosnijDetailPage({ onBack, onNext }: { isVisible: boolean; onBack: () =
           Next: Works
         </button>
       </footer>
+      <PortfolioFooter onContact={onContact} onNavigate={onNavigate} onTop={onTop} />
     </article>
+  )
+}
+
+function PortfolioFooter({
+  onContact,
+  onNavigate,
+  onTop,
+}: {
+  onContact: () => void
+  onNavigate: (id: SectionId) => void
+  onTop: () => void
+}) {
+  return (
+    <footer className="portfolio-footer">
+      <div className="portfolio-footer-links">
+        <section>
+          <p>(FOLLOW)</p>
+          <div>
+            <a className="portfolio-footer-menu-item" data-label="INSTAGRAM" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+              <span>INSTAGRAM</span>
+            </a>
+            <a className="portfolio-footer-menu-item" data-label="EMAIL" href="mailto:wlsthf796@naver.com">
+              <span>EMAIL</span>
+            </a>
+          </div>
+        </section>
+
+        <button className="portfolio-footer-top" type="button" onClick={onTop}>
+          BACK TO TOP
+        </button>
+
+        <section className="portfolio-footer-navigation">
+          <p>(NAVIGATION)</p>
+          <div>
+            <button className="portfolio-footer-menu-item" data-label="ABOUT" type="button" onClick={() => onNavigate('losnij')}>
+              <span>ABOUT</span>
+            </button>
+            <button className="portfolio-footer-menu-item" data-label="WORKS" type="button" onClick={() => onNavigate('works')}>
+              <span>WORKS</span>
+            </button>
+            <button className="portfolio-footer-menu-item" data-label="INDEX" type="button" onClick={() => onNavigate('more')}>
+              <span>INDEX</span>
+            </button>
+            <button className="portfolio-footer-menu-item" data-label="CONTACT" type="button" onClick={onContact}>
+              <span>CONTACT</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div className="portfolio-footer-marquee" aria-label="Thank you for visiting">
+        <div>
+          <span>THANK YOU FOR VISITING</span>
+          <span>THANK YOU FOR VISITING</span>
+        </div>
+      </div>
+
+      <div className="portfolio-footer-meta">
+        <div>
+          <span>SEOUL, KR</span>
+          <span>LOSNIJ PORTFOLIO</span>
+        </div>
+        <span>©2026 ALL RIGHTS RESERVED</span>
+      </div>
+    </footer>
   )
 }
 
@@ -1204,7 +1607,14 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
 function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; section: PortfolioSection }) {
   return (
     <div className={`section-inner ${isExpandedView ? 'is-expanded-view' : ''}`}>
-      <h1 data-title={section.title}>{section.title}</h1>
+      <h1 data-title={section.title}>
+        {section.title}
+        {section.id === 'losnij' && (
+          <span className="section-mark" aria-label="Signature mark">
+            S
+          </span>
+        )}
+      </h1>
 
       {section.id === 'losnij' && (
         <>

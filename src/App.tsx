@@ -74,7 +74,7 @@ const works: WorkItem[] = [
     className: 'work-large',
   },
   {
-    src: '/assets/work03.png',
+    src: '/assets/work03.webp',
     title: 'Hospital',
     subtitle: 'Medical Service Website Redesign',
     category: 'Hospital Website Renewal',
@@ -114,43 +114,57 @@ const sections: PortfolioSection[] = [
 
 const aboutServices = [
   {
-    title: 'Clear Structure',
-    description:
-      '정보의 우선순위를 정리하고 사용자가 자연스럽게 다음 화면을 이해할 수 있는 구조를 설계합니다.',
-    tags: ['Information Architecture', 'Content Flow', 'User Journey', 'Clarity'],
-    image: '/assets/work01.png',
+    title: 'About LOSNIJ',
+    korean: [
+      'LOSNIJ는 Jin Sol을 뒤집어 만든 개인 포트폴리오 브랜드입니다. 익숙한 이름을 다른 방향으로 바라보듯, 나의 작업도 화면과 정보를 새로운 시선으로 정리하는 과정에서 시작됩니다.',
+      '이 공간은 작업물을 단순히 모아둔 곳이 아니라, 내가 디자인을 바라보는 방식과 화면을 구성하는 태도를 담은 개인 아카이브입니다.',
+    ],
+    english: [
+      'LOSNIJ is a personal portfolio brand created by reversing the name Jin Sol. Just as a familiar name can be seen from a different direction, my work begins by reorganizing screens and information through a new perspective.',
+      'This space is not simply a collection of projects. It is a personal archive that reflects how I approach design and how I build visual structure on screen.',
+    ],
     tone: 'white',
   },
   {
-    title: 'UI/UX Experience Design',
-    description:
-      '브랜드의 분위기를 유지하면서도 다양한 화면에서 편안하게 사용할 수 있는 인터페이스를 만듭니다.',
-    tags: ['UI Design', 'UX Design', 'Responsive UI', 'Prototype'],
-    image: '/assets/work03.png',
+    title: 'Design View',
+    korean: [
+      '나는 디자인을 예쁜 화면을 만드는 일에서 끝내지 않습니다. 사용자가 어떤 정보를 먼저 보고, 어디에 머무르며, 어떤 흐름으로 이동하는지를 함께 고민합니다.',
+      '분위기 있는 비주얼과 명확한 구조가 균형을 이룰 때, 더 오래 기억되는 화면이 만들어진다고 생각합니다.',
+    ],
+    english: [
+      'I don’t see design as simply making a screen look beautiful. I also consider what information users see first, where they pause, and how they move through the flow.',
+      'I believe that when atmospheric visuals and a clear structure are well balanced, a screen becomes more memorable and lasting.',
+    ],
     tone: 'beige',
   },
   {
-    title: 'Useful Interaction',
-    description:
-      '움직임은 장식보다 흐름을 돕는 역할에 집중합니다. 필요한 순간에만 자연스럽게 작동하도록 다듬습니다.',
-    tags: ['Interaction', 'Motion Direction', 'Micro UX', 'Scroll Flow'],
-    image: '/assets/work02.png',
+    title: 'Attitude',
+    subtitle: 'Quiet but Clear',
+    korean: [
+      '나는 과하게 설명하기보다, 조용하지만 분명하게 전달되는 디자인을 좋아합니다.',
+      '여백, 정렬, 타이포그래피, 이미지의 분위기처럼 작은 요소들이 자연스럽게 맞물릴 때 사용자가 더 편하게 이해할 수 있다고 생각합니다.',
+    ],
+    english: [
+      'I prefer design that communicates quietly but clearly, rather than explaining too much.',
+      'I believe users can understand more comfortably when small elements such as spacing, alignment, typography, and the mood of images come together naturally.',
+    ],
     tone: 'yellow',
   },
   {
-    title: 'Web Design & Direction',
-    description:
-      '콘텐츠, 이미지, 타이포그래피의 리듬을 하나의 경험으로 연결해 브랜드가 또렷하게 보이도록 합니다.',
-    tags: ['Web Design', 'Visual Direction', 'Editorial Layout', 'Brand Mood'],
-    image: '/assets/more.png',
+    title: 'Keywords',
+    keywords: [
+      ['Structure', '정보가 자연스럽게 읽히는 구조', 'A structure that lets information read naturally'],
+      ['Mood', '브랜드의 분위기를 담는 감각', 'A sense for capturing the brand’s atmosphere'],
+      ['Flow', '사용자가 막힘없이 이동하는 흐름', 'A seamless flow that helps users move without friction'],
+      ['Balance', '감성과 사용성 사이의 균형', 'A balance between emotion and usability'],
+      ['Detail', '작은 요소까지 살피는 태도', 'An attitude of carefully observing even the smallest elements'],
+    ],
     tone: 'black',
   },
   {
-    title: 'Detailed Finish',
-    description:
-      '작은 여백과 정렬, 반응형 비율과 전환 속도까지 반복해서 점검하며 화면의 완성도를 높입니다.',
-    tags: ['Refinement', 'Responsive Detail', 'Consistency', 'Finish'],
-    image: '/assets/work000.png',
+    title: 'Closing',
+    korean: ['LOSNIJ는 지금의 내가 디자인을 바라보는 방식이자, 앞으로 쌓아갈 작업의 출발점입니다.'],
+    english: ['Designed with structure, mood, and flow.'],
     tone: 'white',
   },
 ]
@@ -540,9 +554,16 @@ function App() {
           const nextCard = serviceCards[index + 1]
           const nextCardTop = nextCard?.getBoundingClientRect().top ?? window.innerHeight
           const stackProgress = Math.min(Math.max((window.innerHeight - nextCardTop) / window.innerHeight, 0), 1)
+          const smoothstep = (value: number) => value * value * (3 - 2 * value)
+          const reveal = (start: number, duration: number) =>
+            smoothstep(Math.min(Math.max((progress - start) / duration, 0), 1))
 
           card.style.setProperty('--service-image-scale', (1.4 - progress * 0.4).toFixed(4))
           card.style.setProperty('--service-stack-progress', stackProgress.toFixed(4))
+          card.style.setProperty('--service-number-reveal', reveal(0.04, 0.36).toFixed(4))
+          card.style.setProperty('--service-title-reveal', reveal(0.1, 0.42).toFixed(4))
+          card.style.setProperty('--service-primary-reveal', reveal(0.22, 0.48).toFixed(4))
+          card.style.setProperty('--service-secondary-reveal', reveal(0.34, 0.52).toFixed(4))
         })
       }
 
@@ -1074,22 +1095,36 @@ function LosnijDetailPage({
       <section className="losnij-service-stack">
         {aboutServices.map((service, index) => (
           <section className={`losnij-service-card is-${service.tone}`} key={service.title}>
-            <figure>
-              <div>
-                <img src={service.image} alt="" />
-              </div>
-            </figure>
             <div className="losnij-service-content">
               <h2>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                {service.title}
+                <span>{String(index + 1).padStart(2, '0')}.</span>
+                <b>{service.title}</b>
               </h2>
-              <p>{service.description}</p>
-              <div className="losnij-service-tags">
-                {service.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
+              {'subtitle' in service && <h3>{service.subtitle}</h3>}
+              {'keywords' in service ? (
+                <div className="losnij-service-keywords">
+                  {service.keywords?.map(([keyword, korean, english]) => (
+                    <div key={keyword}>
+                      <strong>{keyword}</strong>
+                      <p>{korean}</p>
+                      <p>{english}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="losnij-service-copy">
+                  <div lang="ko">
+                    {service.korean.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                  <div lang="en">
+                    {service.english.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         ))}
@@ -1189,8 +1224,7 @@ function ContactModal({ isClosing, isOpen, onClose }: { isClosing: boolean; isOp
       <article className="contact-card">
         <div className="contact-card-header">
           <h2>
-            AVAILABLE
-            <span>FOR PROJECTS</span>
+            LET&apos;S CONTACT
           </h2>
           <div className="contact-actions">
             <button type="button" onClick={onClose}>
@@ -1595,10 +1629,7 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
         </span>
       </figcaption>
       <div className="project-hover-tag" aria-hidden="true" ref={tagRef}>
-        <small>{String(index + 1).padStart(2, '0')}</small>
-        <strong>{work.title}</strong>
-        <span>{work.category}</span>
-        <em>{work.role}</em>
+        <img src={`/assets/tag${index + 1}.png`} alt="" />
       </div>
     </figure>
   )

@@ -1359,9 +1359,9 @@ button {
 .section-overlay.is-expanded.is-losnij .column-losnij .section-inner,
 .section-overlay.is-expanded.is-works .column-works .section-inner,
 .section-overlay.is-expanded.is-more .column-more .section-inner {
-  --expanded-page-gutter: clamp(10px, 0.72vw, 16px);
-  --expanded-title-gap: clamp(38px, 3.2vw, 64px);
-  --expanded-media-gap: clamp(12px, 0.9vw, 18px);
+  --expanded-page-gutter: 12px;
+  --expanded-title-gap: 52px;
+  --expanded-media-gap: 14px;
   padding:
     calc(var(--expanded-page-gutter) * var(--expanded-content-inverse))
     calc(var(--expanded-page-gutter) * var(--expanded-content-inverse))
@@ -1373,8 +1373,9 @@ button {
 .section-overlay.is-expanded.is-works .column-works h1,
 .section-overlay.is-expanded.is-more .column-more h1 {
   margin-top: -0.1em;
-  font-size: calc(clamp(230px, 20vw, 360px) * var(--expanded-content-inverse));
+  font-size: calc(360px * var(--expanded-content-inverse));
   line-height: 0.86;
+  white-space: nowrap;
 }
 
 .section-overlay.is-expanded.is-losnij .column-losnij h1 {
@@ -1388,7 +1389,7 @@ button {
       var(--expanded-page-gutter) * var(--expanded-content-inverse)
   );
   left: calc(var(--expanded-page-gutter) * var(--expanded-content-inverse));
-  column-gap: calc(clamp(30px, 2.4vw, 48px) * var(--expanded-content-inverse));
+  column-gap: calc(40px * var(--expanded-content-inverse));
   transform: translate3d(
     0,
     calc(var(--losnij-info-scroll, 0px) * var(--expanded-content-inverse)),
@@ -1803,6 +1804,7 @@ button {
 
 .losnij-soro-type > span {
   display: block;
+  white-space: nowrap;
 }
 
 .losnij-soro-type-bottom {
@@ -2547,6 +2549,7 @@ button {
 
 .index-page-menu button span {
   display: block;
+  white-space: nowrap;
   transform: translateY(-0.035em);
 }
 
@@ -2668,6 +2671,7 @@ button {
   font-weight: 600;
   line-height: 0.86;
   letter-spacing: -0.075em;
+  white-space: nowrap;
   transform: translateY(-0.035em);
 }
 
@@ -3236,6 +3240,28 @@ button {
 .app.is-macos .column-more p {
   margin-top: 4.608px;
   font-size: 18px;
+}
+
+@media (min-width: 901px) {
+  .app.is-macos .losnij-soro-type {
+    font-size: min(432px, 27vw);
+  }
+
+  .app.is-macos .losnij-services-intro > strong {
+    font-size: min(358px, 22.4vw);
+  }
+
+  .app.is-macos .losnij-service-content h2 {
+    font-size: min(205px, 12.8vw);
+  }
+
+  .app.is-macos .index-page-menu button {
+    font-size: min(160px, 10vw);
+  }
+
+  .app.is-macos .index-subpage header h2 {
+    font-size: min(117px, 7.33vw);
+  }
 }
 
 @media (max-width: 1200px), (max-height: 760px) {

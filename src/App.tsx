@@ -45,16 +45,16 @@ type ZoomOverlayStyle = CSSProperties & {
 }
 
 type AppStyle = CSSProperties & {
-  '--mac-main-scale'?: number
+  '--main-canvas-scale'?: number
 }
 
-const MAC_PANEL_WIDTH = 1575
-const MAC_PANEL_HEIGHT = (MAC_PANEL_WIDTH * 7.9) / 16
+const PANEL_CANVAS_WIDTH = 1575
+const PANEL_CANVAS_HEIGHT = (PANEL_CANVAS_WIDTH * 7.9) / 16
 
-const getMacMainScale = () =>
+const getMainCanvasScale = () =>
   typeof window === 'undefined'
     ? 1
-    : Math.min((window.innerWidth * 0.82) / MAC_PANEL_WIDTH, (window.innerHeight * 0.81) / MAC_PANEL_HEIGHT, 1)
+    : Math.min((window.innerWidth * 0.82) / PANEL_CANVAS_WIDTH, (window.innerHeight * 0.81) / PANEL_CANVAS_HEIGHT, 1)
 
 const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}assets/${fileName}`
 
@@ -259,8 +259,7 @@ const resumeProjects = [
 ]
 
 function App() {
-  const isMacOS = typeof navigator !== 'undefined' && /Macintosh|MacIntel|Mac OS X/.test(navigator.userAgent)
-  const [macMainScale, setMacMainScale] = useState(getMacMainScale)
+  const [mainCanvasScale, setMainCanvasScale] = useState(getMainCanvasScale)
   const panelRef = useRef<HTMLElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const morePageRef = useRef<HTMLElement | null>(null)
@@ -602,15 +601,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!isMacOS) {
-      return
-    }
+    const updateMainCanvasScale = () => setMainCanvasScale(getMainCanvasScale())
 
-    const updateMacMainScale = () => setMacMainScale(getMacMainScale())
-
-    window.addEventListener('resize', updateMacMainScale)
-    return () => window.removeEventListener('resize', updateMacMainScale)
-  }, [isMacOS])
+    window.addEventListener('resize', updateMainCanvasScale)
+    return () => window.removeEventListener('resize', updateMainCanvasScale)
+  }, [])
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -672,14 +667,13 @@ function App() {
 
   const appClassName = [
     'app',
-    isMacOS ? 'is-macos' : '',
     introPhase !== 'complete' ? `is-intro-${introPhase}` : '',
     activeSection ? 'is-section-open' : '',
     activeSection && (!isSettled || isClosing) ? 'is-zooming' : '',
   ]
     .filter(Boolean)
     .join(' ')
-  const appStyle: AppStyle | undefined = isMacOS ? { '--mac-main-scale': macMainScale } : undefined
+  const appStyle: AppStyle = { '--main-canvas-scale': mainCanvasScale }
 
   return (
     <div className={appClassName} style={appStyle}>

@@ -1,6 +1,28 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
+:root {
+  --canvas-width: 1600px;
+  --canvas-height: 800px;
+  --panel-canvas-width: 1575px;
+  --panel-canvas-height: 777.65625px;
+  --main-canvas-scale: 1;
+  --font-sans: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
+  --font-display: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --title-size: 132px;
+  --detail-title-size: 360px;
+  --body-size: 20px;
+  --panel-padding: 12px;
+  --detail-padding: 44px;
+  --section-gap: 52px;
+  --detail-copy-width: 680px;
+  --detail-hero-type-size: min(432px, 27vw);
+  --detail-intro-type-size: min(358px, 22.4vw);
+  --detail-service-title-size: min(205px, 12.8vw);
+  --detail-index-menu-size: min(160px, 10vw);
+  --detail-index-title-size: min(117px, 7.33vw);
+}
+
 html,
 body,
 #root,
@@ -12,7 +34,7 @@ body,
 }
 
 body {
-  font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
+  font-family: var(--font-sans);
   background: #d7d5cf;
   color: #000000;
   font-synthesis: none;
@@ -1352,15 +1374,11 @@ button {
   --expanded-content-inverse: var(--zoom-inverse, 1);
 }
 
-.app.is-macos .section-overlay {
-  --expanded-content-inverse: calc(var(--zoom-inverse, 1) / var(--mac-main-scale, 1));
-}
-
 .section-overlay.is-expanded.is-losnij .column-losnij .section-inner,
 .section-overlay.is-expanded.is-works .column-works .section-inner,
 .section-overlay.is-expanded.is-more .column-more .section-inner {
-  --expanded-page-gutter: 12px;
-  --expanded-title-gap: 52px;
+  --expanded-page-gutter: var(--panel-padding);
+  --expanded-title-gap: var(--section-gap);
   --expanded-media-gap: 14px;
   padding:
     calc(var(--expanded-page-gutter) * var(--expanded-content-inverse))
@@ -1373,7 +1391,7 @@ button {
 .section-overlay.is-expanded.is-works .column-works h1,
 .section-overlay.is-expanded.is-more .column-more h1 {
   margin-top: -0.1em;
-  font-size: calc(360px * var(--expanded-content-inverse));
+  font-size: calc(var(--detail-title-size) * var(--expanded-content-inverse));
   line-height: 0.86;
   white-space: nowrap;
 }
@@ -1582,7 +1600,7 @@ button {
 
 .losnij-detail-body > p {
   margin: 0;
-  max-width: 680px;
+  max-width: var(--detail-copy-width);
   font-size: clamp(16px, 1.18vw, 21px);
   font-weight: 350;
   line-height: 1.62;
@@ -1793,9 +1811,8 @@ button {
   box-sizing: border-box;
   padding: clamp(18px, 2.4vw, 46px);
   color: #111111;
-  font-family: 'Monument Extended UltraBold', 'Monument Extended', Anton, Impact, Haettenschweiler, 'Arial Narrow Bold',
-    sans-serif;
-  font-size: clamp(172px, 27vw, 520px);
+  font-family: var(--font-display);
+  font-size: var(--detail-hero-type-size);
   font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.025em;
@@ -1899,9 +1916,8 @@ button {
   display: block;
   margin: auto -0.035em -0.13em;
   color: #ffffff;
-  font-family: 'Monument Extended UltraBold', 'Monument Extended', Anton, Impact, Haettenschweiler, 'Arial Narrow Bold',
-    sans-serif;
-  font-size: clamp(134px, 22.4vw, 430px);
+  font-family: var(--font-display);
+  font-size: var(--detail-intro-type-size);
   font-weight: 800;
   line-height: 0.78;
   letter-spacing: -0.055em;
@@ -2002,7 +2018,7 @@ button {
   display: flex;
   gap: 0.16em;
   margin: 0;
-  font-size: clamp(88px, 12.8vw, 246px);
+  font-size: var(--detail-service-title-size);
   font-weight: 500;
   line-height: 0.84;
   letter-spacing: -0.085em;
@@ -2237,8 +2253,7 @@ button {
 .portfolio-footer-marquee span {
   display: block;
   padding: 0 clamp(28px, 2.8vw, 54px);
-  font-family: 'Monument Extended UltraBold', 'Monument Extended', Anton, Impact, Haettenschweiler, 'Arial Narrow Bold',
-    sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(180px, 25vw, 480px);
   font-weight: 400;
   line-height: 0.78;
@@ -3142,125 +3157,163 @@ button {
   flex: 0 0 auto;
 }
 
-/* Preserve the Windows composition on macOS by scaling the complete canvas once. */
-.app.is-macos .main-panel-stage {
-  position: relative;
-  display: block;
-  flex: 0 0 auto;
-  width: calc(1575px * var(--mac-main-scale));
-  height: calc(777.65625px * var(--mac-main-scale));
-}
-
-.app.is-macos .main-panel-stage > .main-panel {
-  --panel-grid-gap: 12px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1575px;
-  height: 777.65625px;
-  min-width: 0;
-  max-width: none;
-  max-height: none;
-  transform: scale(var(--mac-main-scale));
-  transform-origin: top left;
-}
-
-.app.is-macos .section-overlay .zoom-panel {
-  width: 1575px;
-  height: 777.65625px;
-  transform: scale(var(--mac-main-scale));
-  transform-origin: top left;
-}
-
-.app.is-macos .main-panel::before {
-  width: 104px;
-}
-
-.app.is-macos .book-page-left {
-  padding: 0;
-}
-
-.app.is-macos .book-page-right {
-  gap: 12px;
-  padding: 12px 12px 9.6px 6px;
-}
-
-.app.is-macos .book-page-right .section-inner {
-  --section-gutter: 1.536px;
-  --title-media-gap: 5px;
-  padding-top: 2.304px;
-}
-
-.app.is-macos .column-more .section-inner {
-  --title-media-gap: 7px;
-}
-
-.app.is-macos .section-inner {
-  --section-gutter: 4.8px;
-  --title-media-gap: 8.448px;
-  padding-top: 5.376px;
-}
-
-.app.is-macos .section-inner h1 {
-  font-size: 68px;
-}
-
-.app.is-macos .column-losnij,
-.app.is-macos .site-intro {
-  --losnij-title-size: 132px;
-}
-
-.app.is-macos .column-losnij h1 {
-  font-size: var(--losnij-title-size);
-}
-
-.app.is-macos .column-works h1,
-.app.is-macos .column-more h1 {
-  font-size: 63px;
-}
-
-.app.is-macos .losnij-caption {
-  margin-top: 6.72px;
-  font-size: 9px;
-}
-
-.app.is-macos .works-collage {
-  column-gap: 12px;
-  row-gap: 6.24px;
-}
-
-.app.is-macos .works-collage .section-media {
-  gap: 6px;
-}
-
-.app.is-macos .works-collage figcaption {
-  font-size: 7px;
-}
-
-.app.is-macos .column-more p {
-  margin-top: 4.608px;
-  font-size: 18px;
-}
-
+/* Use the same desktop canvas on every OS, then scale the complete composition once. */
 @media (min-width: 901px) {
-  .app.is-macos .losnij-soro-type {
-    font-size: min(432px, 27vw);
+  .main-panel-stage {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    width: calc(var(--panel-canvas-width) * var(--main-canvas-scale));
+    height: calc(var(--panel-canvas-height) * var(--main-canvas-scale));
   }
 
-  .app.is-macos .losnij-services-intro > strong {
-    font-size: min(358px, 22.4vw);
+  .main-panel-stage > .main-panel {
+    --panel-grid-gap: var(--panel-padding);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--panel-canvas-width);
+    height: var(--panel-canvas-height);
+    min-width: 0;
+    max-width: none;
+    max-height: none;
+    transform: scale(var(--main-canvas-scale));
+    transform-origin: top left;
   }
 
-  .app.is-macos .losnij-service-content h2 {
-    font-size: min(205px, 12.8vw);
+  .section-overlay {
+    --expanded-content-inverse: calc(var(--zoom-inverse, 1) / var(--main-canvas-scale));
   }
 
-  .app.is-macos .index-page-menu button {
-    font-size: min(160px, 10vw);
+  .section-overlay .zoom-panel {
+    width: var(--panel-canvas-width);
+    height: var(--panel-canvas-height);
+    transform: scale(var(--main-canvas-scale));
+    transform-origin: top left;
   }
 
-  .app.is-macos .index-subpage header h2 {
-    font-size: min(117px, 7.33vw);
+  .main-panel::before {
+    width: 104px;
+  }
+
+  .book-page-left {
+    padding: 0;
+  }
+
+  .book-page-right {
+    gap: var(--panel-padding);
+    padding: var(--panel-padding) var(--panel-padding) 9.6px 6px;
+  }
+
+  .book-page-right .section-inner {
+    --section-gutter: 1.536px;
+    --title-media-gap: 5px;
+    padding-top: 2.304px;
+  }
+
+  .column-more .section-inner {
+    --title-media-gap: 7px;
+  }
+
+  .section-inner {
+    --section-gutter: 4.8px;
+    --title-media-gap: 8.448px;
+    padding-top: 5.376px;
+  }
+
+  .section-inner h1 {
+    font-size: 68px;
+  }
+
+  .column-losnij,
+  .site-intro {
+    --losnij-title-size: var(--title-size);
+  }
+
+  .column-losnij h1 {
+    font-size: var(--losnij-title-size);
+  }
+
+  .column-works h1,
+  .column-more h1 {
+    font-size: 63px;
+  }
+
+  .losnij-caption {
+    margin-top: 6.72px;
+    font-size: 9px;
+  }
+
+  .works-collage {
+    column-gap: 12px;
+    row-gap: 6.24px;
+  }
+
+  .works-collage .section-media {
+    gap: 6px;
+  }
+
+  .works-collage figcaption {
+    font-size: 7px;
+  }
+
+  .column-more p {
+    margin-top: 4.608px;
+    font-size: 18px;
+  }
+
+  .losnij-soro-type {
+    font-size: var(--detail-hero-type-size);
+  }
+
+  .losnij-services-intro {
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+  }
+
+  .losnij-services-intro > strong {
+    font-size: var(--detail-intro-type-size);
+  }
+
+  .losnij-service-card {
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+  }
+
+  .losnij-service-content h2 {
+    font-size: var(--detail-service-title-size);
+  }
+
+  .losnij-service-copy p,
+  .losnij-service-keywords p {
+    font-size: var(--body-size);
+  }
+
+  .index-page-menu button {
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+    font-size: var(--detail-index-menu-size);
+  }
+
+  .index-page-menu button:hover,
+  .index-page-menu button:focus-visible {
+    padding-left: calc(var(--detail-padding) + 28px);
+  }
+
+  .index-subpage-inner {
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+  }
+
+  .index-subpage header {
+    margin-right: calc(var(--detail-padding) * -1);
+    margin-left: calc(var(--detail-padding) * -1);
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+  }
+
+  .index-subpage header h2 {
+    font-size: var(--detail-index-title-size);
   }
 }
 

@@ -56,9 +56,11 @@ const getMacMainScale = () =>
     ? 1
     : Math.min((window.innerWidth * 0.82) / MAC_PANEL_WIDTH, (window.innerHeight * 0.81) / MAC_PANEL_HEIGHT, 1)
 
+const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}assets/${fileName}`
+
 const works: WorkItem[] = [
   {
-    src: '/assets/work01.png',
+    src: assetPath('work01.png'),
     title: 'Simmons',
     subtitle: 'Global Brand Website Redesign',
     category: 'Global Website Renewal',
@@ -66,7 +68,7 @@ const works: WorkItem[] = [
     className: 'work-wide',
   },
   {
-    src: '/assets/work02.png',
+    src: assetPath('work02.png'),
     title: 'Juchap',
     subtitle: 'AI Liquor Pairing App',
     category: 'Pairing Community App',
@@ -74,7 +76,7 @@ const works: WorkItem[] = [
     className: 'work-large',
   },
   {
-    src: '/assets/work03.webp',
+    src: assetPath('work03.webp'),
     title: 'Hospital',
     subtitle: 'Medical Service Website Redesign',
     category: 'Hospital Website Renewal',
@@ -82,7 +84,7 @@ const works: WorkItem[] = [
     className: 'work-stack',
   },
   {
-    src: '/assets/work000.png',
+    src: assetPath('work000.png'),
     title: 'ARCHE',
     subtitle: 'Personal Fashion Archive App',
     category: 'Fashion Curation App',
@@ -1061,7 +1063,7 @@ function LosnijDetailPage({
         <section className="losnij-soro-hero">
           <div className="losnij-soro-hero-sticky">
             <div className="losnij-soro-frame">
-              <img src="/assets/main-person.png" alt="" />
+              <img src={assetPath('main-person.png')} alt="" />
             </div>
             <div className="losnij-soro-type" aria-label="Welcome to Losnij">
               <span>WELCOME TO</span>
@@ -1266,7 +1268,7 @@ function ContactModal({ isClosing, isOpen, onClose }: { isClosing: boolean; isOp
               <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">
                 Instagram
               </a>
-              <a href="/" aria-label="Portfolio home">
+              <a href={import.meta.env.BASE_URL} aria-label="Portfolio home">
                 Portfolio
               </a>
             </div>
@@ -1629,7 +1631,7 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
         </span>
       </figcaption>
       <div className="project-hover-tag" aria-hidden="true" ref={tagRef}>
-        <img src={`/assets/tag${index + 1}.png`} alt="" />
+        <img src={assetPath(`tag${index + 1}.png`)} alt="" />
       </div>
     </figure>
   )
@@ -1650,7 +1652,7 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
       {section.id === 'losnij' && (
         <>
           <figure className="section-media portrait-media">
-            <img src="/assets/main-person.png" alt="LOSNIJ portrait" />
+            <img src={assetPath('main-person.png')} alt="LOSNIJ portrait" />
           </figure>
           <div className="losnij-cover-info" aria-label="Portfolio cover information">
             <CoverInfoGroup title="Issue" items={['Selected Portfolio', 'UI/UX Designer', '2026 Edition']} />
@@ -1674,7 +1676,7 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
       {section.id === 'more' && (
         <>
           <figure className="section-media more-media">
-            <img src="/assets/more.png" alt="More work" />
+            <img src={assetPath('more.png')} alt="More work" />
           </figure>
           <p data-zoom-text={section.intro}>{section.intro}</p>
         </>

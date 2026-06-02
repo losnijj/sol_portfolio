@@ -88,17 +88,18 @@ button {
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 0.34em 0.08em 0.4em;
+  padding: 0.34em 0.08em 0.62em;
   text-align: center;
 }
 
 .site-intro strong {
-  display: block;
+  display: inline-flex;
+  align-items: flex-start;
   color: #111111;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
   font-size: var(--losnij-title-size);
   font-weight: var(--losnij-title-weight);
-  line-height: 0.98;
+  line-height: 1.08;
   letter-spacing: 0;
   opacity: 1;
   transform: translate3d(0, 145%, 0);

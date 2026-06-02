@@ -686,7 +686,10 @@ function App() {
       {introPhase !== 'complete' && (
         <div className="site-intro" aria-hidden="true">
           <div className="site-intro-title-mask">
-            <strong>losnij</strong>
+            <strong>
+              losnij
+              <span className="section-mark">S</span>
+            </strong>
           </div>
         </div>
       )}

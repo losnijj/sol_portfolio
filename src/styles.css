@@ -10,17 +10,17 @@
   --font-sans: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
   --font-display: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   --title-size: 132px;
-  --detail-title-size: 360px;
+  --detail-title-size: 260px;
   --body-size: 20px;
   --panel-padding: 12px;
   --detail-padding: 44px;
   --section-gap: 52px;
   --detail-copy-width: 680px;
-  --detail-hero-type-size: min(432px, 27vw);
-  --detail-intro-type-size: min(358px, 22.4vw);
-  --detail-service-title-size: min(205px, 12.8vw);
-  --detail-index-menu-size: min(160px, 10vw);
-  --detail-index-title-size: min(117px, 7.33vw);
+  --detail-hero-type-size: clamp(292px, 25.8vw, 416px);
+  --detail-intro-type-size: clamp(238px, 21.25vw, 340px);
+  --detail-service-title-size: clamp(148px, 12.4vw, 198px);
+  --detail-index-menu-size: clamp(112px, 9.6vw, 154px);
+  --detail-index-title-size: clamp(82px, 7vw, 112px);
 }
 
 html,
@@ -527,14 +527,15 @@ button {
 .book-page-right {
   display: grid;
   grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
-  gap: var(--panel-grid-gap);
-  padding: var(--panel-grid-gap) var(--panel-grid-gap) clamp(7px, 1vmin, 12px) calc(var(--panel-grid-gap) / 2);
+  gap: calc(var(--panel-grid-gap) - clamp(2px, 0.32vmin, 6px));
+  padding: var(--panel-grid-gap) var(--panel-grid-gap) clamp(7px, 1vmin, 12px) var(--panel-grid-gap);
   background: #ffffff;
 }
 
 .book-page-right .section-inner {
   --section-gutter: clamp(1px, 0.16vmin, 3px);
   --title-media-gap: 5px;
+  --right-page-media-top: calc(clamp(2px, 0.24vh, 3px) + clamp(63px, 6.15vmin, 106px) * 0.88 + 5px);
   --overlay-works-top: calc(
     clamp(2px, 0.24vh, 3px) + clamp(63px, 6.15vmin, 106px) * 0.88 + var(--title-media-gap)
   );
@@ -542,8 +543,8 @@ button {
 }
 
 .column-more .section-inner {
-  --title-media-gap: 7px;
-  --overlay-more-bottom: calc(18px * 1.08 + clamp(4px, 0.48vh, 7px) + 8px);
+  --title-media-gap: 5px;
+  --overlay-more-bottom: calc(16px * 1.02 + clamp(2px, 0.28vh, 4px) + 3px);
 }
 
 .portfolio-section {
@@ -997,17 +998,21 @@ button {
   padding: 0;
 }
 
+.book-page-right .column-more .more-media {
+  margin-top: -2px;
+}
+
 .more-media img {
   object-position: 50% 24%;
 }
 
 .column-more p {
   grid-row: 3;
-  margin: clamp(4px, 0.48vh, 7px) 0 0;
+  margin: clamp(2px, 0.28vh, 4px) 0 0;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.02;
   color: #000000;
   text-shadow: none;
   -webkit-text-stroke: 0;
@@ -1145,6 +1150,8 @@ button {
   bottom: 0;
   left: var(--section-gutter);
   transition:
+    right 0.96s cubic-bezier(0.54, 0.15, 0.15, 1),
+    left 0.96s cubic-bezier(0.54, 0.15, 0.15, 1),
     column-gap 0.96s cubic-bezier(0.54, 0.15, 0.15, 1),
     row-gap 0.96s cubic-bezier(0.54, 0.15, 0.15, 1),
     transform 0.96s cubic-bezier(0.14, 1, 0.22, 1);
@@ -1164,9 +1171,16 @@ button {
 
 .section-overlay.is-closing .works-collage {
   transition:
+    right 0.86s cubic-bezier(0.85, 0, 0.45, 0.85),
+    left 0.86s cubic-bezier(0.85, 0, 0.45, 0.85),
     column-gap 0.86s cubic-bezier(0.85, 0, 0.45, 0.85),
     row-gap 0.86s cubic-bezier(0.85, 0, 0.45, 0.85),
     transform 0.86s cubic-bezier(0.85, 0, 0.45, 0.85);
+}
+
+.section-overlay.is-closing.is-works .works-collage {
+  right: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
+  left: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
 }
 
 .section-overlay .section-inner h1,
@@ -1392,12 +1406,45 @@ button {
 .section-overlay.is-expanded.is-more .column-more h1 {
   margin-top: -0.1em;
   font-size: calc(var(--detail-title-size) * var(--expanded-content-inverse));
-  line-height: 0.86;
+  line-height: 0.92;
   white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 .section-overlay.is-expanded.is-losnij .column-losnij h1 {
   margin-top: 0;
+}
+
+.section-overlay.is-expanded.is-works .column-works h1,
+.section-overlay.is-expanded.is-more .column-more h1,
+.section-overlay.is-closing.is-works .column-works h1,
+.section-overlay.is-closing.is-more .column-more h1 {
+  color: transparent;
+}
+
+.section-overlay.is-expanded.is-works .column-works h1::after,
+.section-overlay.is-expanded.is-more .column-more h1::after,
+.section-overlay.is-closing.is-works .column-works h1::after,
+.section-overlay.is-closing.is-more .column-more h1::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #000000;
+  font: inherit;
+  font-size: calc(1em * var(--zoom-scale, 1));
+  line-height: inherit;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  filter: none;
+  transform: scale(var(--zoom-inverse, 1));
+  transform-origin: left top;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  pointer-events: none;
 }
 
 .section-overlay.is-expanded:not(.is-closing).is-losnij .losnij-cover-info {
@@ -1432,16 +1479,34 @@ button {
 }
 
 .section-overlay.is-expanded:not(.is-closing).is-works .works-collage {
+  right: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
+  left: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
   column-gap: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
   row-gap: calc(var(--expanded-media-gap) * var(--expanded-content-inverse));
 }
 
+.section-overlay.is-expanded:not(.is-closing).is-more .column-more,
+.section-overlay.is-expanded:not(.is-closing).is-more .column-more .section-inner {
+  overflow: visible;
+}
+
 .section-overlay.is-expanded:not(.is-closing).is-more .more-media {
+  right: calc(-220px * var(--expanded-content-inverse));
+  left: 0;
+  padding: 0;
   transform: translate3d(0, calc(-76px * var(--expanded-content-inverse)), 0);
 }
 
 .section-overlay.is-expanded.is-settled:not(.is-closing):not(.is-index-collapsing).is-more .more-media {
   transform: translate3d(0, calc(clamp(456px, 66.8vh, 648px) * var(--expanded-content-inverse)), 0);
+}
+
+.section-overlay.is-expanded:not(.is-closing).is-more .more-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.025);
+  transform-origin: center;
 }
 
 .section-overlay.is-closing.is-more .more-media {
@@ -2459,7 +2524,7 @@ button {
 
 .more-scroll-page {
   position: fixed;
-  top: clamp(264px, 31vh, 332px);
+  top: clamp(246px, 29vh, 312px);
   right: 0;
   bottom: 0;
   left: 0;
@@ -2525,7 +2590,7 @@ button {
 }
 
 .index-page-menu {
-  padding-top: clamp(14px, 1.2vw, 24px);
+  padding-top: clamp(6px, 0.65vw, 14px);
   max-height: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -2536,13 +2601,13 @@ button {
 }
 
 .more-scroll-page.is-menu-open .index-page-menu {
-  max-height: calc(100vh - clamp(264px, 31vh, 332px));
+  max-height: calc(100vh - clamp(246px, 29vh, 312px));
 }
 
 .index-page-menu button {
   width: 100%;
-  min-height: calc((100vh - clamp(264px, 31vh, 332px) - clamp(14px, 1.2vw, 24px)) / 4);
-  padding: clamp(12px, 1.2vh, 18px) clamp(18px, 2.1vw, 40px);
+  min-height: calc((100vh - clamp(246px, 29vh, 312px) - clamp(6px, 0.65vw, 14px)) / 4);
+  padding: clamp(8px, 0.9vh, 14px) clamp(18px, 2.1vw, 40px);
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -2551,7 +2616,7 @@ button {
   background: #ffffff;
   color: #0b0b0b;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(82px, 10vw, 192px);
+  font-size: clamp(78px, 9.45vw, 180px);
   font-weight: 600;
   line-height: 0.86;
   letter-spacing: -0.075em;
@@ -3201,8 +3266,8 @@ button {
   }
 
   .book-page-right {
-    gap: var(--panel-padding);
-    padding: var(--panel-padding) var(--panel-padding) 9.6px 6px;
+    gap: calc(var(--panel-padding) - 3.072px);
+    padding: var(--panel-padding) var(--panel-padding) 9.6px var(--panel-padding);
   }
 
   .book-page-right .section-inner {
@@ -3212,7 +3277,7 @@ button {
   }
 
   .column-more .section-inner {
-    --title-media-gap: 7px;
+    --title-media-gap: 5px;
   }
 
   .section-inner {
@@ -3258,8 +3323,9 @@ button {
   }
 
   .column-more p {
-    margin-top: 4.608px;
-    font-size: 18px;
+    margin-top: 2.688px;
+    font-size: 16px;
+    line-height: 1.02;
   }
 
   .losnij-soro-type {
@@ -3314,6 +3380,150 @@ button {
 
   .index-subpage header h2 {
     font-size: var(--detail-index-title-size);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1599px) {
+  .app {
+    --detail-title-size: 236px;
+    --detail-padding: 36px;
+    --section-gap: 42px;
+    --detail-copy-width: 620px;
+    --body-size: 18px;
+    --detail-hero-type-size: clamp(292px, 20vw, 330px);
+    --detail-intro-type-size: clamp(238px, 16.6vw, 284px);
+    --detail-service-title-size: clamp(148px, 9.6vw, 168px);
+    --detail-index-menu-size: clamp(112px, 7.4vw, 132px);
+    --detail-index-title-size: clamp(82px, 5.6vw, 100px);
+  }
+
+  .losnij-about-hero,
+  .losnij-detail-section {
+    gap: clamp(18px, 3.2vw, 56px);
+  }
+
+  .losnij-about-hero h2 {
+    font-size: clamp(58px, 8.6vw, 132px);
+  }
+
+  .losnij-detail-section {
+    padding: clamp(26px, 3.8vw, 54px) 0;
+  }
+
+  .losnij-detail-title h3 {
+    font-size: clamp(18px, 1.7vw, 28px);
+  }
+
+  .losnij-detail-body {
+    gap: clamp(14px, 1.6vw, 24px);
+  }
+
+  .losnij-detail-body > p {
+    font-size: clamp(15px, 1.05vw, 18px);
+    line-height: 1.58;
+  }
+
+  .losnij-services-intro {
+    padding-right: var(--detail-padding);
+    padding-left: var(--detail-padding);
+  }
+
+  .losnij-services-intro-top {
+    column-gap: clamp(24px, 4.2vw, 68px);
+  }
+
+  .losnij-services-intro-top p {
+    font-size: clamp(14px, 1.05vw, 18px);
+  }
+
+  .losnij-services-intro-top h2 {
+    font-size: clamp(32px, 3.8vw, 64px);
+    letter-spacing: -0.045em;
+  }
+
+  .losnij-services-intro-bottom {
+    font-size: clamp(16px, 1.5vw, 28px);
+  }
+
+  .losnij-service-copy {
+    column-gap: clamp(26px, 3.2vw, 58px);
+    row-gap: clamp(24px, 3.4vw, 56px);
+    padding-top: clamp(24px, 2.8vw, 50px);
+  }
+
+  .losnij-service-content h3 {
+    font-size: clamp(28px, 3.4vw, 58px);
+  }
+
+  .losnij-service-keywords {
+    gap: clamp(12px, 1.6vw, 28px);
+  }
+
+  .losnij-service-keywords strong {
+    font-size: clamp(22px, 2vw, 34px);
+  }
+
+  .index-page-header h2 {
+    font-size: clamp(180px, 19.6vw, 314px);
+  }
+
+  .index-page-header p {
+    top: clamp(20px, 4vh, 42px);
+    left: clamp(238px, 17.5vw, 300px);
+    font-size: clamp(14px, 1vw, 18px);
+  }
+
+  .more-scroll-page.is-menu-open .index-page-menu {
+    max-height: calc(100vh - clamp(226px, 26.2vh, 284px));
+  }
+
+  .index-page-menu {
+    padding-top: clamp(6px, 0.62vw, 12px);
+  }
+
+  .index-page-menu button {
+    min-height: calc((100vh - clamp(226px, 26.2vh, 284px) - clamp(6px, 0.62vw, 12px)) / 4);
+    padding-right: 36px;
+    padding-left: 36px;
+    font-size: clamp(104px, 7vw, 124px);
+  }
+
+  .index-page-menu button:hover,
+  .index-page-menu button:focus-visible {
+    padding-left: 60px;
+  }
+
+  .index-subpage {
+    top: clamp(144px, 17.5vh, 170px);
+  }
+
+  .index-subpage-inner {
+    padding-right: 36px;
+    padding-left: 36px;
+  }
+
+  .index-subpage header {
+    margin-right: -36px;
+    margin-left: -36px;
+    padding-right: 36px;
+    padding-left: 36px;
+  }
+
+  .index-subpage header h2 {
+    min-height: clamp(104px, 14.8vh, 142px);
+    font-size: clamp(82px, 5.6vw, 100px);
+  }
+
+  .index-subpage-body {
+    margin-top: clamp(22px, 2.4vw, 42px);
+  }
+
+  .index-subpage-body > p {
+    font-size: clamp(18px, 1.55vw, 28px);
+  }
+
+  .index-subpage-columns {
+    margin-top: clamp(72px, 12vh, 132px);
   }
 }
 

@@ -51,10 +51,18 @@ type AppStyle = CSSProperties & {
 const PANEL_CANVAS_WIDTH = 1575
 const PANEL_CANVAS_HEIGHT = (PANEL_CANVAS_WIDTH * 7.9) / 16
 
-const getMainCanvasScale = () =>
-  typeof window === 'undefined'
+const getMainCanvasScale = () => {
+  if (typeof window === 'undefined') {
+    return 1
+  }
+
+  const widthScale = (window.innerWidth * 0.82) / PANEL_CANVAS_WIDTH
+  const heightScale = window.innerWidth >= 901 && window.innerHeight >= 700
     ? 1
-    : Math.min((window.innerWidth * 0.82) / PANEL_CANVAS_WIDTH, (window.innerHeight * 0.81) / PANEL_CANVAS_HEIGHT, 1)
+    : (window.innerHeight * 0.94) / PANEL_CANVAS_HEIGHT
+
+  return Math.min(widthScale, heightScale, 1)
+}
 
 const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}assets/${fileName}`
 

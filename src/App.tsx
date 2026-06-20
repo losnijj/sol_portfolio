@@ -108,66 +108,9 @@ const sections: PortfolioSection[] = [
   },
   {
     id: 'more',
-    title: 'Index',
+    title: 'Archive',
     intro: 'Quiet but Clear.',
     className: 'column-more',
-  },
-]
-
-const aboutServices = [
-  {
-    title: 'About LOSNIJ',
-    korean: [
-      'LOSNIJ는 Jin Sol을 뒤집어 만든 개인 포트폴리오 브랜드입니다. 익숙한 이름을 다른 방향으로 바라보듯, 나의 작업도 화면과 정보를 새로운 시선으로 정리하는 과정에서 시작됩니다.',
-      '이 공간은 작업물을 단순히 모아둔 곳이 아니라, 내가 디자인을 바라보는 방식과 화면을 구성하는 태도를 담은 개인 아카이브입니다.',
-    ],
-    english: [
-      'LOSNIJ is a personal portfolio brand created by reversing the name Jin Sol. Just as a familiar name can be seen from a different direction, my work begins by reorganizing screens and information through a new perspective.',
-      'This space is not simply a collection of projects. It is a personal archive that reflects how I approach design and how I build visual structure on screen.',
-    ],
-    tone: 'white',
-  },
-  {
-    title: 'Design View',
-    korean: [
-      '나는 디자인을 예쁜 화면을 만드는 일에서 끝내지 않습니다. 사용자가 어떤 정보를 먼저 보고, 어디에 머무르며, 어떤 흐름으로 이동하는지를 함께 고민합니다.',
-      '분위기 있는 비주얼과 명확한 구조가 균형을 이룰 때, 더 오래 기억되는 화면이 만들어진다고 생각합니다.',
-    ],
-    english: [
-      'I don’t see design as simply making a screen look beautiful. I also consider what information users see first, where they pause, and how they move through the flow.',
-      'I believe that when atmospheric visuals and a clear structure are well balanced, a screen becomes more memorable and lasting.',
-    ],
-    tone: 'beige',
-  },
-  {
-    title: 'Attitude',
-    subtitle: 'Quiet but Clear',
-    korean: [
-      '나는 과하게 설명하기보다, 조용하지만 분명하게 전달되는 디자인을 좋아합니다.',
-      '여백, 정렬, 타이포그래피, 이미지의 분위기처럼 작은 요소들이 자연스럽게 맞물릴 때 사용자가 더 편하게 이해할 수 있다고 생각합니다.',
-    ],
-    english: [
-      'I prefer design that communicates quietly but clearly, rather than explaining too much.',
-      'I believe users can understand more comfortably when small elements such as spacing, alignment, typography, and the mood of images come together naturally.',
-    ],
-    tone: 'yellow',
-  },
-  {
-    title: 'Keywords',
-    keywords: [
-      ['Structure', '정보가 자연스럽게 읽히는 구조', 'A structure that lets information read naturally'],
-      ['Mood', '브랜드의 분위기를 담는 감각', 'A sense for capturing the brand’s atmosphere'],
-      ['Flow', '사용자가 막힘없이 이동하는 흐름', 'A seamless flow that helps users move without friction'],
-      ['Balance', '감성과 사용성 사이의 균형', 'A balance between emotion and usability'],
-      ['Detail', '작은 요소까지 살피는 태도', 'An attitude of carefully observing even the smallest elements'],
-    ],
-    tone: 'black',
-  },
-  {
-    title: 'Closing',
-    korean: ['LOSNIJ는 지금의 내가 디자인을 바라보는 방식이자, 앞으로 쌓아갈 작업의 출발점입니다.'],
-    english: ['Designed with structure, mood, and flow.'],
-    tone: 'white',
   },
 ]
 
@@ -267,6 +210,12 @@ function App() {
   const openFrameRef = useRef<number | null>(null)
   const indexCloseTimeoutRef = useRef<number | null>(null)
   const sectionCloseFrameRef = useRef<number | null>(null)
+  const losnijScrollMetricsRef = useRef<{
+    viewportWidth: number
+    viewportHeight: number
+    maxInnerScroll: number
+    minHeight: number
+  } | null>(null)
   const sectionRefs = useRef<Record<SectionId, HTMLButtonElement | null>>({
     losnij: null,
     works: null,
@@ -329,6 +278,7 @@ function App() {
     setIsIndexCollapsing(false)
     setIsSectionScrollingToTop(false)
     setClosingTransform(null)
+    losnijScrollMetricsRef.current = null
 
     if (openFrameRef.current) {
       window.cancelAnimationFrame(openFrameRef.current)
@@ -421,7 +371,10 @@ function App() {
     }
     if (scrollRef.current) {
       scrollRef.current.style.setProperty('--losnij-info-scroll', '0px')
+      scrollRef.current.style.setProperty('--losnij-cover-pin-offset', '0px')
+      scrollRef.current.classList.remove('is-losnij-cover-pinned')
     }
+    losnijScrollMetricsRef.current = null
     if (morePageRef.current) {
       morePageRef.current.style.setProperty('--more-progress', '0')
     }
@@ -492,80 +445,65 @@ function App() {
       }
 
       if (activeSection.id === 'losnij') {
-        const imageScrollLimit = Math.max(activeSection.expandedHeight - window.innerHeight, 0)
-        const infoScroll = Math.min(Math.max(scrollRef.current.scrollTop, 0), imageScrollLimit)
-        const hero = scrollRef.current.querySelector<HTMLElement>('.losnij-soro-hero')
-        const heroEntry = scrollRef.current.querySelector<HTMLElement>('.losnij-soro-entry')
-        const servicesReveal = scrollRef.current.querySelector<HTMLElement>('.losnij-services-reveal')
+        const nextPage = scrollRef.current.querySelector<HTMLElement>('.losnij-rising-page')
+        const nextPageContent = scrollRef.current.querySelector<HTMLElement>('.losnij-rising-content')
+        const footerMeta = scrollRef.current.querySelector<HTMLElement>('.losnij-rising-content .portfolio-footer-meta')
+        const aboutPage = scrollRef.current.querySelector<HTMLElement>('.losnij-about')
+        const coverPinStart = Math.max(activeSection.expandedHeight - window.innerHeight, 0)
+        const imageFullySeenAt = activeSection.expandedHeight
+        const riseDelay = window.innerHeight * 0.08
+        const riseDistance = window.innerHeight * 0.72
+        const riseStart = imageFullySeenAt + riseDelay
+        let metrics = losnijScrollMetricsRef.current
 
-        scrollRef.current.style.setProperty('--losnij-info-scroll', `${infoScroll}px`)
+        if (
+          !metrics ||
+          metrics.viewportWidth !== window.innerWidth ||
+          metrics.viewportHeight !== window.innerHeight
+        ) {
+          const footerEnd = footerMeta && nextPageContent
+            ? footerMeta.getBoundingClientRect().bottom - nextPageContent.getBoundingClientRect().top
+            : nextPageContent?.scrollHeight ?? 0
+          const maxInnerScroll = nextPageContent ? Math.max(footerEnd - window.innerHeight, 0) : 0
 
-        if (heroEntry) {
-          const entryProgress = Math.min(Math.max((window.innerHeight - heroEntry.getBoundingClientRect().top) / window.innerHeight, 0), 1)
-          const easedEntryProgress = entryProgress * entryProgress * (3 - 2 * entryProgress)
+          metrics = {
+            viewportWidth: window.innerWidth,
+            viewportHeight: window.innerHeight,
+            maxInnerScroll,
+            minHeight: Math.ceil(riseDelay + riseDistance + maxInnerScroll + window.innerHeight),
+          }
+          losnijScrollMetricsRef.current = metrics
 
-          heroEntry.style.setProperty('--about-entry-shift', `${((1 - easedEntryProgress) * 14).toFixed(2)}vh`)
+          if (aboutPage) {
+            aboutPage.style.minHeight = `${metrics.minHeight}px`
+          }
         }
 
-        if (servicesReveal) {
-          const revealProgress = Math.min(
-            Math.max((window.innerHeight - servicesReveal.getBoundingClientRect().top) / window.innerHeight, 0),
-            1,
-          )
-          const easedRevealProgress = revealProgress * revealProgress * (3 - 2 * revealProgress)
+        const maxInnerScroll = metrics.maxInnerScroll
+        const rawNextPageProgress = Math.min(Math.max((scrollRef.current.scrollTop - riseStart) / riseDistance, 0), 1)
+        const coverHoldProgress = Math.min(Math.max((scrollRef.current.scrollTop - imageFullySeenAt) / riseDelay, 0), 1)
+        const easedHold = coverHoldProgress * coverHoldProgress * (3 - 2 * coverHoldProgress)
+        const nextPageProgress = rawNextPageProgress ** 2.35
+        const isNextPagePinned = rawNextPageProgress >= 1
+        const nextPageOffset = isNextPagePinned ? 0 : (1 - nextPageProgress) * 100
+        const isCoverPinned = scrollRef.current.scrollTop >= coverPinStart
+        const innerScroll = isNextPagePinned
+          ? Math.min(Math.max(scrollRef.current.scrollTop - riseStart - riseDistance, 0), maxInnerScroll)
+          : 0
 
-          servicesReveal.style.setProperty('--services-reveal-shift', `${((1 - easedRevealProgress) * 100).toFixed(2)}vh`)
+        scrollRef.current.style.setProperty('--losnij-info-scroll', `${Math.min(scrollRef.current.scrollTop, coverPinStart)}px`)
+        scrollRef.current.style.setProperty('--losnij-cover-pin-offset', `${coverPinStart}px`)
+        scrollRef.current.style.setProperty('--losnij-cover-hold-progress', easedHold.toFixed(4))
+        scrollRef.current.classList.toggle('is-losnij-cover-pinned', isCoverPinned)
+
+        if (nextPage) {
+          nextPage.style.setProperty('--about-rise-progress', nextPageProgress.toFixed(4))
+          nextPage.style.setProperty('--about-page-y', `${nextPageOffset.toFixed(3)}vh`)
+          nextPage.style.setProperty('--about-inner-scroll', `${innerScroll}px`)
+          nextPage.classList.toggle('is-pinned', isNextPagePinned)
         }
-
-        if (hero) {
-          const heroProgress = Math.min(Math.max(-hero.getBoundingClientRect().top / (hero.offsetHeight - window.innerHeight), 0), 1)
-          const isCompactViewport = window.innerWidth <= 720
-          const initialFrameWidth = isCompactViewport ? 38 : 30
-          const initialFrameHeight = isCompactViewport ? 32 : 38
-          const initialFrameTop = isCompactViewport ? 56 : 51
-          const smoothstep = (progress: number) => progress * progress * (3 - 2 * progress)
-          const gatherProgress = smoothstep(Math.min(heroProgress / 0.68, 1))
-          const coverProgress = smoothstep(Math.min(Math.max((heroProgress - 0.28) / 0.72, 0), 1))
-          const gatheredFrameWidth = isCompactViewport ? 54 : 44
-          const gatheredFrameHeight = isCompactViewport ? 40 : 50
-          const downwardTravel = isCompactViewport ? 7 : 9
-          const frameWidth =
-            initialFrameWidth +
-            (gatheredFrameWidth - initialFrameWidth) * gatherProgress +
-            (100 - gatheredFrameWidth) * coverProgress
-          const frameHeight =
-            initialFrameHeight +
-            (gatheredFrameHeight - initialFrameHeight) * gatherProgress +
-            (100 - gatheredFrameHeight) * coverProgress
-          const frameTop = initialFrameTop + downwardTravel * gatherProgress - (initialFrameTop + downwardTravel) * coverProgress
-          const bottomTypeOffset = (isCompactViewport ? 12 : 19) * gatherProgress
-
-          hero.style.setProperty('--about-frame-width', `${frameWidth.toFixed(2)}vw`)
-          hero.style.setProperty('--about-frame-height', `${frameHeight.toFixed(2)}vh`)
-          hero.style.setProperty('--about-frame-top', `${frameTop.toFixed(2)}vh`)
-          hero.style.setProperty('--about-bottom-type-offset', `${bottomTypeOffset.toFixed(2)}vw`)
-          hero.style.setProperty('--about-scroll-opacity', (1 - Math.min(heroProgress * 2.4, 1)).toFixed(4))
-        }
-
-        const serviceCards = Array.from(scrollRef.current.querySelectorAll<HTMLElement>('.losnij-service-card'))
-
-        serviceCards.forEach((card, index) => {
-          const rect = card.getBoundingClientRect()
-          const progress = Math.min(Math.max((window.innerHeight - rect.top) / window.innerHeight, 0), 1)
-          const nextCard = serviceCards[index + 1]
-          const nextCardTop = nextCard?.getBoundingClientRect().top ?? window.innerHeight
-          const stackProgress = Math.min(Math.max((window.innerHeight - nextCardTop) / window.innerHeight, 0), 1)
-          const smoothstep = (value: number) => value * value * (3 - 2 * value)
-          const reveal = (start: number, duration: number) =>
-            smoothstep(Math.min(Math.max((progress - start) / duration, 0), 1))
-
-          card.style.setProperty('--service-image-scale', (1.4 - progress * 0.4).toFixed(4))
-          card.style.setProperty('--service-stack-progress', stackProgress.toFixed(4))
-          card.style.setProperty('--service-number-reveal', reveal(0.04, 0.36).toFixed(4))
-          card.style.setProperty('--service-title-reveal', reveal(0.1, 0.42).toFixed(4))
-          card.style.setProperty('--service-primary-reveal', reveal(0.22, 0.48).toFixed(4))
-          card.style.setProperty('--service-secondary-reveal', reveal(0.34, 0.52).toFixed(4))
-        })
+      } else {
+        scrollRef.current.classList.remove('is-losnij-cover-pinned')
       }
 
       if (activeSection.id === 'more' && morePageRef.current) {
@@ -706,7 +644,7 @@ function App() {
           <div
             className={`zoom-scroll ${isExpanded ? 'is-expanded' : ''} ${isClosing ? 'is-closing' : ''} ${
               isSettled ? 'is-settled' : ''
-            } ${activeSection.id === 'more' ? 'is-index-open' : ''}`}
+            } ${activeSection.id === 'losnij' ? 'is-losnij-open' : ''} ${activeSection.id === 'more' ? 'is-index-open' : ''}`}
             role="dialog"
             aria-modal="true"
             ref={scrollRef}
@@ -759,7 +697,6 @@ function App() {
               {activeSection.id === 'losnij' ? (
                 <LosnijDetailPage
                   isVisible={isExpanded && isSettled && !isClosing}
-                  onBack={closeSection}
                   onContact={openContact}
                   onNavigate={navigateToSection}
                   onNext={goToWorks}
@@ -783,14 +720,19 @@ function App() {
               )}
             </div>
           </div>
-          {!isClosing && (
-            <button className="section-close" type="button" aria-label="Close section" onClick={closeSection}>
-              <span className="section-close-icon" aria-hidden="true">
-                <span />
-                <span />
-              </span>
-            </button>
-          )}
+          <button
+            className={`section-close ${isExpanded && !isClosing ? 'is-visible' : ''} ${isClosing ? 'is-closing' : ''}`}
+            type="button"
+            aria-label="Close section"
+            data-cursor-label="Menu"
+            onClick={closeSection}
+          >
+            <span className="section-close-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
         </>
       )}
       <ContactModal isClosing={isContactClosing} isOpen={isContactOpen} onClose={closeContact} />
@@ -854,7 +796,7 @@ function IndexDetailPage({
       <div className="index-page-scroll">
         <header className="index-page-header">
           <p>Menu</p>
-          <h2>Index</h2>
+          <h2>Archive</h2>
         </header>
 
         <nav className="index-page-menu" aria-label="Portfolio index">
@@ -873,14 +815,14 @@ function IndexDetailPage({
       {activePage && (
         <section className={`index-subpage ${isSubpageOpen ? 'is-open' : ''}`} aria-hidden={!isSubpageOpen}>
             <button className="index-subpage-close" type="button" onClick={closeSubpage}>
-              <span>Back to Index</span>
+              <span>Back to Archive</span>
               <i aria-hidden="true">×</i>
             </button>
 
             <div className="index-subpage-inner">
               <header>
                 <p>
-                  Index / {activePage.number}
+                  Archive / {activePage.number}
                   <span>{activePage.eyebrow}</span>
                 </p>
                 <h2>{activePage.title}</h2>
@@ -1041,14 +983,12 @@ function ContactContent() {
 }
 
 function LosnijDetailPage({
-  onBack,
   onContact,
   onNavigate,
   onNext,
   onTop,
 }: {
   isVisible: boolean
-  onBack: () => void
   onContact: () => void
   onNavigate: (id: SectionId) => void
   onNext: () => void
@@ -1056,88 +996,57 @@ function LosnijDetailPage({
 }) {
   return (
     <article className="losnij-about">
-      <div className="losnij-soro-entry">
-        <section className="losnij-soro-hero">
-          <div className="losnij-soro-hero-sticky">
-            <div className="losnij-soro-frame">
-              <img src={assetPath('main-person.png')} alt="" />
-            </div>
-            <div className="losnij-soro-type" aria-label="Welcome to Losnij">
-              <span>WELCOME TO</span>
-              <span className="losnij-soro-type-bottom">
-                <b>LOS</b>
-                <i className="losnij-soro-type-image-slot" aria-hidden="true" />
-                <b>NIJ</b>
-              </span>
-            </div>
-            <small>( Scroll Down )</small>
-          </div>
-        </section>
-      </div>
+      <section className="losnij-rising-page">
+        <header className="losnij-rising-header" aria-hidden="true" />
 
-      <section className="losnij-services-reveal">
-        <div className="losnij-services-intro">
-          <div className="losnij-services-intro-top">
-            <p>
-              <span>● LOSNIJ CREATIVE</span>
-              <span>(LOSNIJ — 01)</span>
-            </p>
-            <h2>
-              Clear structure and thoughtful details create interfaces that feel natural to use.
-            </h2>
+        <div className="losnij-rising-content">
+          <div className="losnij-rising-body">
+            <h2>Quiet but Clear.</h2>
+            <div>
+              <p>
+                LOSNIJ는 Jin Sol을 뒤집어 만든 개인 포트폴리오 브랜드입니다. 익숙한 이름을 다른 방향으로
+                바라보듯, 화면과 정보를 새로운 시선으로 정리합니다.
+              </p>
+              <p>
+                이 공간은 작업물을 단순히 모아둔 곳이 아니라, 디자인을 바라보는 방식과 화면을 구성하는
+                태도를 담은 개인 아카이브입니다.
+              </p>
+            </div>
           </div>
-          <strong>SERVICES</strong>
-          <p className="losnij-services-intro-bottom">My process and capabilities include:</p>
+
+          <div className="losnij-rising-grid">
+            <section>
+              <span>01</span>
+              <h3>Structure</h3>
+              <p>정보가 자연스럽게 읽히는 구조를 만듭니다.</p>
+            </section>
+            <section>
+              <span>02</span>
+              <h3>Mood</h3>
+              <p>브랜드의 분위기를 화면 안에 담습니다.</p>
+            </section>
+            <section>
+              <span>03</span>
+              <h3>Flow</h3>
+              <p>사용자가 막힘없이 이동하는 흐름을 설계합니다.</p>
+            </section>
+          </div>
+
+          <footer className="losnij-rising-actions">
+            <button type="button" onClick={onNext}>
+              Next: Works
+            </button>
+            <button type="button" onClick={onContact}>
+              Contact
+            </button>
+            <button type="button" onClick={() => onNavigate('more')}>
+              Archive
+            </button>
+          </footer>
+
+          <PortfolioFooter onContact={onContact} onNavigate={onNavigate} onTop={onTop} />
         </div>
       </section>
-
-      <section className="losnij-service-stack">
-        {aboutServices.map((service, index) => (
-          <section className={`losnij-service-card is-${service.tone}`} key={service.title}>
-            <div className="losnij-service-content">
-              <h2>
-                <span>{String(index + 1).padStart(2, '0')}.</span>
-                <b>{service.title}</b>
-              </h2>
-              {'subtitle' in service && <h3>{service.subtitle}</h3>}
-              {'keywords' in service ? (
-                <div className="losnij-service-keywords">
-                  {service.keywords?.map(([keyword, korean, english]) => (
-                    <div key={keyword}>
-                      <strong>{keyword}</strong>
-                      <p>{korean}</p>
-                      <p>{english}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="losnij-service-copy">
-                  <div lang="ko">
-                    {service.korean.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                  <div lang="en">
-                    {service.english.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        ))}
-      </section>
-
-      <footer className="losnij-detail-actions">
-        <button type="button" onClick={onBack}>
-          Back to Main
-        </button>
-        <button type="button" onClick={onNext}>
-          Next: Works
-        </button>
-      </footer>
-      <PortfolioFooter onContact={onContact} onNavigate={onNavigate} onTop={onTop} />
     </article>
   )
 }
@@ -1282,6 +1191,7 @@ function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement | null>(null)
   const frameRef = useRef<number | null>(null)
   const hoverTargetRef = useRef<EventTarget | null>(null)
+  const labelTargetRef = useRef<Element | null>(null)
   const positionRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
   const scaleRef = useRef({ current: 1, target: 1 })
   const initializedRef = useRef(false)
@@ -1327,9 +1237,29 @@ function CustomCursor() {
 
     const hideCursor = () => {
       hoverTargetRef.current = null
+      labelTargetRef.current = null
       scaleRef.current.target = 1
       initializedRef.current = false
-      cursor.classList.remove('is-visible', 'is-hover', 'is-hidden')
+      cursor.removeAttribute('data-cursor-label')
+      cursor.classList.remove('is-visible', 'is-hover', 'is-hidden', 'has-label')
+    }
+
+    const setCursorLabel = (labelTarget: Element | null) => {
+      if (labelTarget === labelTargetRef.current) {
+        return
+      }
+
+      labelTargetRef.current = labelTarget
+      const label = labelTarget?.getAttribute('data-cursor-label') ?? ''
+
+      if (label) {
+        cursor.setAttribute('data-cursor-label', label)
+        cursor.classList.add('has-label')
+        return
+      }
+
+      cursor.removeAttribute('data-cursor-label')
+      cursor.classList.remove('has-label')
     }
 
     const handlePointerEnter = (event: globalThis.PointerEvent) => {
@@ -1338,7 +1268,7 @@ function CustomCursor() {
 
     const handlePointerMove = (event: globalThis.PointerEvent) => {
       const target = document.elementFromPoint(event.clientX, event.clientY)
-      const isCursorArea = Boolean(target?.closest('.main-panel:not(.zoom-panel), .contact-trigger'))
+      const isCursorArea = Boolean(target?.closest('.app, .contact-modal, .more-scroll-page'))
 
       if (!isCursorArea) {
         hideCursor()
@@ -1350,15 +1280,21 @@ function CustomCursor() {
       position.targetY = event.clientY
 
       const hoverTarget = target?.closest('a, button, .works-collage .section-media, [role="button"]') ?? null
+      const isWorkImageTarget = Boolean(hoverTarget?.matches('.works-collage .section-media'))
+      const labelTarget = isWorkImageTarget
+        ? null
+        : target?.closest('.section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]') ?? null
+
+      setCursorLabel(labelTarget)
 
       if (hoverTarget !== hoverTargetRef.current) {
         hoverTargetRef.current = hoverTarget
 
         if (hoverTarget) {
-          scaleRef.current.target = 1.28
+          scaleRef.current.target = labelTarget ? 1 : 1.28
           cursor.classList.add('is-hover')
 
-          if (hoverTarget.matches('.works-collage .section-media')) {
+          if (isWorkImageTarget) {
             cursor.classList.add('is-hidden')
           } else {
             cursor.classList.remove('is-hidden')
@@ -1400,17 +1336,23 @@ function CustomCursor() {
     const handleMouseOver = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target : null
       const hoverTarget = target?.closest('a, button, .works-collage .section-media, [role="button"]')
+      const isWorkImageTarget = Boolean(hoverTarget?.matches('.works-collage .section-media'))
+      const labelTarget = isWorkImageTarget
+        ? null
+        : target?.closest('.section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]') ?? null
+
+      setCursorLabel(labelTarget)
 
       if (!hoverTarget || hoverTarget === hoverTargetRef.current) {
         return
       }
 
       hoverTargetRef.current = hoverTarget
-      scaleRef.current.target = 1.28
+      scaleRef.current.target = labelTarget ? 1 : 1.28
       cursor.classList.add('is-hover')
       scheduleCursor()
 
-      if (hoverTarget.matches('.works-collage .section-media')) {
+      if (isWorkImageTarget) {
         cursor.classList.add('is-hidden')
       } else {
         cursor.classList.remove('is-hidden')
@@ -1431,8 +1373,9 @@ function CustomCursor() {
       }
 
       hoverTargetRef.current = null
+      setCursorLabel(null)
       scaleRef.current.target = 1
-      cursor.classList.remove('is-hover', 'is-hidden')
+      cursor.classList.remove('is-hover', 'is-hidden', 'has-label')
       scheduleCursor()
     }
 
@@ -1520,6 +1463,7 @@ function InteractiveSection({
       <button
         className={`portfolio-section ${section.className}`}
         type="button"
+        data-cursor-label={section.id === 'losnij' ? 'about' : section.title}
         onClick={() => openSection(section.id)}
         ref={(node) => {
           setSectionRef(section.id, node)
@@ -1638,7 +1582,9 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
   return (
     <div className={`section-inner ${isExpandedView ? 'is-expanded-view' : ''}`}>
       <h1 data-title={section.title}>
-        {section.title}
+        <span className="section-title-text" data-zoom-text={section.title}>
+          {section.title}
+        </span>
         {section.id === 'losnij' && (
           <span className="section-mark" aria-label="Signature mark">
             S
@@ -1654,7 +1600,6 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
           <div className="losnij-cover-info" aria-label="Portfolio cover information">
             <CoverInfoGroup title="Issue" items={['진솔 포트폴리오', 'UI/UX · Web Design', '2026 Edition']} />
             <CoverInfoGroup title="Focus" items={['UI/UX Design', 'Web Design', 'Visual Direction', 'Brand Experience']} />
-            <CoverInfoGroup title="Approach" items={['구조를 정리하고,', '분위기를 설계하며,', '흐름을 다듬습니다.']} />
             <CoverInfoGroup title="Contact" items={['Email', 'GitHub', 'Resume']} />
           </div>
         </>

@@ -68,36 +68,28 @@ const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}assets/${fil
 
 const works: WorkItem[] = [
   {
+    src: assetPath('work000.png'),
+    title: 'ARCHE',
+    subtitle: '패션 아카이브 앱 컨셉 디자인',
+    category: 'Fashion Archive App Concept',
+    role: 'UI/UX · Mobile App · Archive',
+    className: 'work-feature',
+  },
+  {
     src: assetPath('work01.png'),
-    title: 'Simmons',
-    subtitle: 'Global Brand Website Redesign',
-    category: 'Global Website Renewal',
+    title: 'SIMMONS',
+    subtitle: '글로벌 브랜드 웹사이트 리디자인',
+    category: 'Global Brand Website Redesign',
     role: 'UI/UX · Branding · Web',
-    className: 'work-wide',
+    className: 'work-medium',
   },
   {
     src: assetPath('work02.png'),
-    title: 'Juchap',
-    subtitle: 'AI Liquor Pairing App',
-    category: 'Pairing Community App',
-    role: 'Mobile App · UX/UI',
-    className: 'work-large',
-  },
-  {
-    src: assetPath('work03.webp'),
-    title: 'Hospital',
-    subtitle: 'Medical Service Website Redesign',
-    category: 'Hospital Website Renewal',
-    role: 'Web · Information Architecture',
-    className: 'work-stack',
-  },
-  {
-    src: assetPath('work000.png'),
-    title: 'ARCHE',
-    subtitle: 'Personal Fashion Archive App',
-    category: 'Fashion Curation App',
-    role: 'Mobile App · Archive · Curation',
-    className: 'work-small',
+    title: 'JUHAP',
+    subtitle: '주류 페어링 앱 UX/UI 디자인',
+    category: 'Liquor Pairing App UX/UI',
+    role: 'Mobile App · UX/UI · Pairing',
+    className: 'work-tall',
   },
 ]
 
@@ -117,7 +109,7 @@ const sections: PortfolioSection[] = [
   {
     id: 'more',
     title: 'Index',
-    intro: 'Everything we imagine can be made.',
+    intro: 'Quiet but Clear.',
     className: 'column-more',
   },
 ]
@@ -1660,9 +1652,9 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
             <img src={assetPath('main-person.png')} alt="LOSNIJ portrait" />
           </figure>
           <div className="losnij-cover-info" aria-label="Portfolio cover information">
-            <CoverInfoGroup title="Issue" items={['Selected Portfolio', 'UI/UX Designer', '2026 Edition']} />
-            <CoverInfoGroup title="Focus" items={['UI/UX Design', 'Web Design', 'Visual Direction', 'Interaction']} />
-            <CoverInfoGroup title="Approach" items={['Clear Structure', 'Quiet Mood', 'Useful Interaction', 'Detailed Finish']} />
+            <CoverInfoGroup title="Issue" items={['진솔 포트폴리오', 'UI/UX · Web Design', '2026 Edition']} />
+            <CoverInfoGroup title="Focus" items={['UI/UX Design', 'Web Design', 'Visual Direction', 'Brand Experience']} />
+            <CoverInfoGroup title="Approach" items={['구조를 정리하고,', '분위기를 설계하며,', '흐름을 다듬습니다.']} />
             <CoverInfoGroup title="Contact" items={['Email', 'GitHub', 'Resume']} />
           </div>
         </>
@@ -1683,7 +1675,14 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
           <figure className="section-media more-media">
             <img src={assetPath('more.png')} alt="More work" />
           </figure>
-          <p data-zoom-text={section.intro}>{section.intro}</p>
+          <p className="index-closing-copy">
+            <span className="index-closing-en" data-zoom-text={section.intro}>
+              {section.intro}
+            </span>
+            <span className="index-closing-ko" data-zoom-text="조용하지만 분명한 화면을 디자인합니다.">
+              조용하지만 분명한 화면을 디자인합니다.
+            </span>
+          </p>
         </>
       )}
     </div>

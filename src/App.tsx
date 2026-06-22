@@ -1,5 +1,4 @@
-import { type CSSProperties, type PointerEvent, type RefObject, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { type CSSProperties, type PointerEvent, type RefObject, type UIEvent, useEffect, useRef, useState } from 'react'
 
 type SectionId = 'losnij' | 'works' | 'more'
 
@@ -156,6 +155,9 @@ function App() {
   const [isContactClosing, setIsContactClosing] = useState(false)
   const [isIndexCollapsing, setIsIndexCollapsing] = useState(false)
   const [isSectionScrollingToTop, setIsSectionScrollingToTop] = useState(false)
+  const [activeWork, setActiveWork] = useState<WorkItem | null>(null)
+  const [isWorkDetailVisible, setIsWorkDetailVisible] = useState(false)
+  const [isWorkDetailClosing, setIsWorkDetailClosing] = useState(false)
   const [introPhase, setIntroPhase] = useState<'title' | 'panel' | 'complete'>('title')
   const setSectionRef = (id: SectionId, node: HTMLButtonElement | null) => {
     sectionRefs.current[id] = node
@@ -281,6 +283,10 @@ function App() {
       return
     }
 
+    setActiveWork(null)
+    setIsWorkDetailVisible(false)
+    setIsWorkDetailClosing(false)
+
     const scrollTop = scrollRef.current?.scrollTop ?? 0
     const compensatedTransform =
       scrollTop > 0
@@ -351,6 +357,34 @@ function App() {
   const openContact = () => {
     setIsContactClosing(false)
     setIsContactOpen(true)
+  }
+
+  const openWorkDetail = (work: WorkItem) => {
+    if (activeSection?.id !== 'works' || !isExpanded || isClosing) {
+      return
+    }
+
+    setActiveWork(work)
+    setIsWorkDetailClosing(false)
+    setIsWorkDetailVisible(false)
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        setIsWorkDetailVisible(true)
+      })
+    })
+  }
+
+  const closeWorkDetail = () => {
+    if (!activeWork) {
+      return
+    }
+
+    setIsWorkDetailClosing(true)
+    setIsWorkDetailVisible(false)
+    window.setTimeout(() => {
+      setActiveWork(null)
+      setIsWorkDetailClosing(false)
+    }, 720)
   }
 
   const handleZoomScroll = () => {
@@ -591,7 +625,7 @@ function App() {
               style={overlayStyle}
             >
               <main className="main-panel zoom-panel" aria-hidden="true">
-                <PanelContent isExpandedView={isExpanded && !isClosing} />
+                <PanelContent isExpandedView={isExpanded && !isClosing} onWorkOpen={openWorkDetail} />
               </main>
             </div>
             <div
@@ -619,6 +653,9 @@ function App() {
               ) : activeSection.id === 'more' ? (
                 <IndexDetailPage
                   isVisible={isExpanded && isSettled && !isClosing}
+                  onContact={openContact}
+                  onNavigate={navigateToSection}
+                  onTop={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
                   pageRef={morePageRef}
                 />
               ) : (
@@ -638,7 +675,7 @@ function App() {
             type="button"
             aria-label="Close section"
             data-cursor-label="Menu"
-            onClick={closeSection}
+            onClick={activeWork ? closeWorkDetail : closeSection}
           >
             <span className="section-close-icon" aria-hidden="true">
               <span />
@@ -646,6 +683,24 @@ function App() {
               <span />
             </span>
           </button>
+          {activeSection.id === 'works' && activeWork && (
+            <>
+              <button
+                className={`work-detail-backdrop ${isWorkDetailVisible ? 'is-visible' : ''} ${
+                  isWorkDetailClosing ? 'is-closing' : ''
+                }`}
+                type="button"
+                aria-label="Close project detail"
+                data-cursor-label="Close"
+                onClick={closeWorkDetail}
+              />
+              <WorkDetailPage
+                work={activeWork}
+                isVisible={isWorkDetailVisible}
+                isClosing={isWorkDetailClosing}
+              />
+            </>
+          )}
         </>
       )}
       <ContactModal isClosing={isContactClosing} isOpen={isContactOpen} onClose={closeContact} />
@@ -653,18 +708,185 @@ function App() {
   )
 }
 
+function WorkDetailPage({
+  isClosing,
+  isVisible,
+  work,
+}: {
+  isClosing: boolean
+  isVisible: boolean
+  work: WorkItem
+}) {
+  const [isFull, setIsFull] = useState(false)
+
+  const handleScroll = (event: UIEvent<HTMLElement>) => {
+    setIsFull(event.currentTarget.scrollTop > 6)
+  }
+
+  const isSimmons = work.title === 'SIMMONS'
+
+  return (
+    <article
+      className={`work-rising-page ${isVisible ? 'is-visible' : ''} ${isClosing ? 'is-closing' : ''} ${
+        isFull ? 'is-full' : ''
+      }`}
+      onWheel={(event) => {
+        event.stopPropagation()
+      }}
+    >
+      <div className="work-rising-scroll" onScroll={handleScroll}>
+        {isSimmons ? (
+          <SimmonsWorkDetail />
+        ) : (
+          <>
+            <header className="work-rising-header">
+              <h2>{work.title}</h2>
+            </header>
+            <div className="work-rising-hero">
+              <p>{work.subtitle}</p>
+            </div>
+            <figure className="work-rising-media">
+              <img src={work.src} alt={work.title} />
+            </figure>
+            <section className="work-rising-copy">
+              <span>{work.category}</span>
+              <p>{work.role}</p>
+              <p>
+                프로젝트의 구조, 화면 흐름, 시각 방향을 정리하는 상세 페이지입니다. 이미지와 설명이 하나의 페이지처럼
+                아래에서 위로 올라오며, 선택한 프로젝트에 집중할 수 있게 구성했습니다.
+              </p>
+            </section>
+          </>
+        )}
+      </div>
+    </article>
+  )
+}
+
+function SimmonsWorkDetail() {
+  const simmonsScreens = [
+    '스크린샷 2026-06-23 오전 2.08.38 1.png',
+    '스크린샷 2026-06-23 오전 4.04.23 1.png',
+    '스크린샷 2026-06-23 오전 2.08.56 1.png',
+    '스크린샷 2026-06-23 오전 4.04.34 1.png',
+    '스크린샷 2026-06-23 오전 2.09.18 1.png',
+    '스크린샷 2026-06-23 오전 4.04.41 1.png',
+    '스크린샷 2026-06-23 오전 2.09.08 1.png',
+    '스크린샷 2026-06-23 오전 4.04.51 1.png',
+  ]
+
+  return (
+    <div className="simmons-detail">
+      <header className="simmons-detail-header">
+        <h2>SIMMONS Global Brand Website Redesign</h2>
+        <p>시몬스 글로벌 브랜드 웹사이트 리디자인</p>
+      </header>
+
+      <div className="simmons-detail-meta" aria-label="Project information">
+        <span>팀프로젝트</span>
+        <span>Duration&nbsp;&nbsp;2026 . 02 - 2026 . 03</span>
+        <nav aria-label="Project links">
+          <a href="https://www.simmons.co.kr/" target="_blank" rel="noreferrer">
+            웹사이트보기↗
+          </a>
+          <a href={import.meta.env.BASE_URL}>기획서보기↗</a>
+        </nav>
+      </div>
+
+      <figure className="simmons-detail-hero">
+        <img src={assetPath('simmons-detail-hero.png')} alt="SIMMONS Offline experience hero" />
+      </figure>
+
+      <section className="simmons-detail-overview">
+        <div className="simmons-overview-copy">
+          <h3>Project Overview</h3>
+          <p>
+            시몬스의 브랜드 헤리티지와 기술력을 해외 사용자에게 전달하기 위한 글로벌 웹사이트 리디자인
+            프로젝트입니다. 브랜드가 가진 고급스러운 이미지와 신뢰감을 디지털 화면 안에서 자연스럽게 경험할 수
+            있도록 정보 구조와 비주얼 흐름을 재정리했습니다.
+          </p>
+        </div>
+        <div className="simmons-credit-list">
+          <strong>PROJECT CREDIT</strong>
+          <dl>
+            <div>
+              <dt>ROLE</dt>
+              <dd>UI Design / Visual Direction / Page Design</dd>
+            </div>
+            <div>
+              <dt>TOOLS</dt>
+              <dd>Figma / Photoshop / Illustrator</dd>
+            </div>
+            <div>
+              <dt>CONTRIBUTION</dt>
+              <dd>
+                기획부터 오프라인 페이지와 이벤트 페이지 디자인을 담당했으며, 이미지 배치와 로고, 타이포그래피,
+                여백을 중심으로 브랜드 무드가 자연스럽게 전달되도록 화면을 구성했습니다.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section className="simmons-strategy">
+        <figure>
+          <img src={assetPath('image.png')} alt="Close-up hand pressing soft fabric" />
+        </figure>
+        <div>
+          <h3>Brand Strategy</h3>
+          <p>
+            시몬스가 가진 브랜드 자산을 단순히 제품 정보로 전달하기보다, 브랜드의 분위기와 철학이 함께 느껴지는 웹
+            경험으로 확장하고자 했습니다.
+          </p>
+          <p>
+            브랜드의 헤리티지, 수면 기술, 프리미엄 이미지를 중심으로 키워드를 정리하고, 해외 사용자가 쉽게 이해할
+            수 있는 콘텐츠 흐름을 설계했습니다.
+          </p>
+        </div>
+      </section>
+
+      <section className="simmons-key-experience" aria-label="Key Screen and Experience">
+        <h3>Key Screen &amp; Experience</h3>
+        <div className="simmons-key-rails" aria-hidden="true">
+          {[0, 1, 2].map((railIndex) => (
+            <div className={`simmons-key-rail simmons-key-rail-${railIndex + 1}`} key={railIndex}>
+              {Array.from({ length: 8 }, (_, index) => simmonsScreens[(index + railIndex * 2) % 6]).map(
+                (screen, index) => (
+                  <figure className="simmons-key-shot" key={`${railIndex}-${screen}-${index}`}>
+                    <img src={assetPath(screen)} alt="" />
+                  </figure>
+                ),
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
+
 function IndexDetailPage({
   isVisible,
+  onContact,
+  onNavigate,
+  onTop,
   pageRef,
 }: {
   isVisible: boolean
+  onContact: () => void
+  onNavigate: (id: SectionId) => void
+  onTop: () => void
   pageRef: RefObject<HTMLElement | null>
 }) {
-  return createPortal(
+  return (
     <article className={`more-scroll-page ${isVisible ? 'is-visible' : ''}`} ref={pageRef}>
       <div className="archive-photo-stage" aria-hidden="true" />
-    </article>,
-    document.body,
+      <PortfolioFooter
+        onContact={onContact}
+        onNavigate={onNavigate}
+        onTop={onTop}
+      />
+    </article>
   )
 }
 
@@ -860,10 +1082,10 @@ function PortfolioFooter({
         </section>
       </div>
 
-      <div className="portfolio-footer-marquee" aria-label="Thank you for visiting">
+      <div className="portfolio-footer-marquee" aria-label="LOSNIJ portfolio">
         <div>
-          <span>THANK YOU FOR VISITING</span>
-          <span>THANK YOU FOR VISITING</span>
+          <span>LOSNIJ PORTFOLIO</span>
+          <span>LOSNIJ PORTFOLIO</span>
         </div>
       </div>
 
@@ -1041,11 +1263,16 @@ function CustomCursor() {
       position.targetX = event.clientX
       position.targetY = event.clientY
 
-      const hoverTarget = target?.closest('a, button, .works-collage .section-media, [role="button"]') ?? null
+      const hoverTarget = target?.closest('a, button, .work-detail-backdrop[data-cursor-label], .works-collage .section-media, [role="button"]') ?? null
       const isWorkImageTarget = Boolean(hoverTarget?.matches('.works-collage .section-media'))
-      const labelTarget = isWorkImageTarget
-        ? null
-        : target?.closest('.section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]') ?? null
+      const isClickableWorkImage = Boolean(hoverTarget?.matches('.works-collage .section-media.is-clickable[data-cursor-label]'))
+      const labelTarget = isClickableWorkImage
+        ? (hoverTarget as Element)
+        : isWorkImageTarget
+          ? null
+          : target?.closest(
+              '.work-detail-backdrop[data-cursor-label], .section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]',
+            ) ?? null
 
       setCursorLabel(labelTarget)
 
@@ -1056,7 +1283,7 @@ function CustomCursor() {
           scaleRef.current.target = labelTarget ? 1 : 1.28
           cursor.classList.add('is-hover')
 
-          if (isWorkImageTarget) {
+          if (isWorkImageTarget && !isClickableWorkImage) {
             cursor.classList.add('is-hidden')
           } else {
             cursor.classList.remove('is-hidden')
@@ -1097,11 +1324,16 @@ function CustomCursor() {
 
     const handleMouseOver = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target : null
-      const hoverTarget = target?.closest('a, button, .works-collage .section-media, [role="button"]')
+      const hoverTarget = target?.closest('a, button, .work-detail-backdrop[data-cursor-label], .works-collage .section-media, [role="button"]') ?? null
       const isWorkImageTarget = Boolean(hoverTarget?.matches('.works-collage .section-media'))
-      const labelTarget = isWorkImageTarget
-        ? null
-        : target?.closest('.section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]') ?? null
+      const isClickableWorkImage = Boolean(hoverTarget?.matches('.works-collage .section-media.is-clickable[data-cursor-label]'))
+      const labelTarget = isClickableWorkImage
+        ? hoverTarget
+        : isWorkImageTarget
+          ? null
+          : target?.closest(
+              '.work-detail-backdrop[data-cursor-label], .section-close[data-cursor-label], .main-panel:not(.zoom-panel) .portfolio-section[data-cursor-label]',
+            ) ?? null
 
       setCursorLabel(labelTarget)
 
@@ -1114,7 +1346,7 @@ function CustomCursor() {
       cursor.classList.add('is-hover')
       scheduleCursor()
 
-      if (isWorkImageTarget) {
+      if (isWorkImageTarget && !isClickableWorkImage) {
         cursor.classList.add('is-hidden')
       } else {
         cursor.classList.remove('is-hidden')
@@ -1176,10 +1408,12 @@ function PanelContent({
   isExpandedView = false,
   openSection,
   setSectionRef,
+  onWorkOpen,
 }: {
   isExpandedView?: boolean
   openSection?: (id: SectionId) => void
   setSectionRef?: (id: SectionId, node: HTMLButtonElement | null) => void
+  onWorkOpen?: (work: WorkItem) => void
 }) {
   return (
     <div className="book-pages">
@@ -1189,6 +1423,7 @@ function PanelContent({
           section={sections[0]}
           openSection={openSection}
           setSectionRef={setSectionRef}
+          onWorkOpen={onWorkOpen}
         />
       </section>
       <section className="book-page book-page-right">
@@ -1197,12 +1432,14 @@ function PanelContent({
           section={sections[1]}
           openSection={openSection}
           setSectionRef={setSectionRef}
+          onWorkOpen={onWorkOpen}
         />
         <InteractiveSection
           isExpandedView={isExpandedView}
           section={sections[2]}
           openSection={openSection}
           setSectionRef={setSectionRef}
+          onWorkOpen={onWorkOpen}
         />
       </section>
     </div>
@@ -1214,11 +1451,13 @@ function InteractiveSection({
   section,
   openSection,
   setSectionRef,
+  onWorkOpen,
 }: {
   isExpandedView: boolean
   section: PortfolioSection
   openSection?: (id: SectionId) => void
   setSectionRef?: (id: SectionId, node: HTMLButtonElement | null) => void
+  onWorkOpen?: (work: WorkItem) => void
 }) {
   if (openSection && setSectionRef) {
     return (
@@ -1231,19 +1470,19 @@ function InteractiveSection({
           setSectionRef(section.id, node)
         }}
       >
-        <SectionContent isExpandedView={isExpandedView} section={section} />
+        <SectionContent isExpandedView={isExpandedView} onWorkOpen={onWorkOpen} section={section} />
       </button>
     )
   }
 
   return (
     <div className={`portfolio-section ${section.className}`}>
-      <SectionContent isExpandedView={isExpandedView} section={section} />
+      <SectionContent isExpandedView={isExpandedView} onWorkOpen={onWorkOpen} section={section} />
     </div>
   )
 }
 
-function WorkProject({ work, index }: { work: WorkItem; index: number }) {
+function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => void; work: WorkItem; index: number }) {
   const tagRef = useRef<HTMLDivElement | null>(null)
   const frameRef = useRef<number | null>(null)
   const initializedRef = useRef(false)
@@ -1315,11 +1554,23 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
 
   return (
     <figure
-      className={`section-media ${work.className}`}
+      className={`section-media ${work.className} ${onOpen ? 'is-clickable' : ''}`}
       data-num={String(index + 1).padStart(2, '0')}
       data-title={work.title}
       data-desc={work.category}
       data-keywords={work.role}
+      data-cursor-label={onOpen ? 'Click!' : undefined}
+      role={onOpen ? 'button' : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={() => onOpen?.(work)}
+      onKeyDown={(event) => {
+        if (!onOpen || (event.key !== 'Enter' && event.key !== ' ')) {
+          return
+        }
+
+        event.preventDefault()
+        onOpen(work)
+      }}
       onPointerEnter={startTracking}
       onPointerMove={updateTagPosition}
       onPointerLeave={stopTracking}
@@ -1340,7 +1591,15 @@ function WorkProject({ work, index }: { work: WorkItem; index: number }) {
   )
 }
 
-function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; section: PortfolioSection }) {
+function SectionContent({
+  isExpandedView,
+  onWorkOpen,
+  section,
+}: {
+  isExpandedView: boolean
+  onWorkOpen?: (work: WorkItem) => void
+  section: PortfolioSection
+}) {
   return (
     <div className={`section-inner ${isExpandedView ? 'is-expanded-view' : ''}`}>
       <h1 data-title={section.title}>
@@ -1369,9 +1628,10 @@ function SectionContent({ isExpandedView, section }: { isExpandedView: boolean; 
 
       {section.id === 'works' && (
         <>
+          <p className="works-expanded-label">Selected Projects</p>
           <div className="works-collage">
             {works.map((work, index) => (
-              <WorkProject work={work} index={index} key={work.title} />
+              <WorkProject onOpen={isExpandedView ? onWorkOpen : undefined} work={work} index={index} key={work.title} />
             ))}
           </div>
         </>

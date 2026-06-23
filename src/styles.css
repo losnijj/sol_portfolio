@@ -280,13 +280,14 @@ button {
 }
 
 .contact-card {
-  width: min(760px, 100%);
-  min-height: 390px;
+  width: min(620px, calc(100vw - 96px));
+  aspect-ratio: 16 / 8.4;
+  min-height: 0;
   box-sizing: border-box;
-  padding: clamp(22px, 2.8vw, 34px);
+  padding: clamp(20px, 2vw, 28px);
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: clamp(20px, 3vh, 34px);
+  gap: clamp(16px, 1.6vw, 24px);
   background:
     radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.72), transparent 25%),
     linear-gradient(180deg, #fffdfa, #f4f1eb);
@@ -317,12 +318,12 @@ button {
 
 .contact-card h2 {
   margin: 0;
-  max-width: 420px;
+  max-width: none;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(38px, 4vw, 58px);
+  font-size: clamp(30px, 3.4vw, 48px);
   font-weight: 800;
-  line-height: 0.83;
-  letter-spacing: 0;
+  line-height: 0.86;
+  letter-spacing: 0.015em;
 }
 
 .contact-card h2 span {
@@ -331,8 +332,8 @@ button {
 
 .contact-actions {
   display: grid;
-  grid-template-columns: 56px 44px;
-  min-height: 44px;
+  grid-template-columns: 46px 34px;
+  min-height: 34px;
   border: 1px dashed rgba(0, 0, 0, 0.42);
 }
 
@@ -340,9 +341,9 @@ button {
   display: grid;
   place-items: center;
   min-width: 0;
-  min-height: 44px;
+  min-height: 34px;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #000000;
@@ -353,15 +354,15 @@ button {
 }
 
 .contact-x {
-  font-size: 21px;
+  font-size: 15px;
   font-weight: 300;
 }
 
 .contact-card-body {
   align-self: end;
   display: grid;
-  grid-template-columns: 1.05fr 1.15fr 1.15fr 0.9fr;
-  gap: clamp(16px, 2.8vw, 34px);
+  grid-template-columns: 0.9fr 1.1fr 0.8fr 1.35fr;
+  gap: clamp(14px, 2vw, 28px);
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
 }
 
@@ -370,19 +371,20 @@ button {
 }
 
 .contact-card h3 {
-  margin: 0 0 8px;
+  margin: 0 0 clamp(8px, 0.7vw, 12px);
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(13px, 1vw, 18px);
-  font-weight: 700;
+  font-size: clamp(10px, 0.8vw, 13px);
+  font-weight: 650;
   line-height: 1;
   letter-spacing: 0.01em;
 }
 
 .contact-card a,
 .contact-card li,
-.contact-identity span {
+.contact-identity span,
+.contact-field-inline {
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(10px, 0.78vw, 13px);
+  font-size: clamp(9px, 0.72vw, 12px);
   font-weight: 300;
   line-height: 1.45;
   color: #000000;
@@ -390,11 +392,11 @@ button {
 }
 
 .contact-identity p {
-  margin: 0;
+  margin: 0 0 1px;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(24px, 2.3vw, 36px);
-  font-weight: 800;
-  line-height: 0.9;
+  font-size: clamp(18px, 1.65vw, 25px);
+  font-weight: 700;
+  line-height: 1;
 }
 
 .contact-card ul {
@@ -407,16 +409,27 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 2px;
+}
+
+.contact-field-inline {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: normal;
 }
 
 .contact-card-note {
   margin: 0;
-  max-width: 280px;
+  max-width: none;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
-  font-size: clamp(17px, 1.35vw, 24px);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: 0;
+  font-size: clamp(9px, 0.72vw, 12px);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 @keyframes contact-fly-in {
@@ -813,7 +826,7 @@ button {
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(24, minmax(0, 1fr));
+  grid-template-rows: repeat(28, minmax(0, 1fr));
   column-gap: var(--panel-grid-gap);
   row-gap: clamp(7px, 0.65vh, 12px);
   align-content: start;
@@ -887,8 +900,11 @@ button {
   height: 100%;
   background: #e4e0d8;
   object-fit: cover;
+  image-rendering: auto;
   transform: none;
   transform-origin: center;
+  backface-visibility: visible;
+  will-change: auto;
 }
 
 .works-collage figcaption {
@@ -919,17 +935,17 @@ button {
 
 .work-feature {
   grid-column: 1;
-  grid-row: 1 / 20;
+  grid-row: 1 / 11;
 }
 
 .work-medium {
   grid-column: 2;
-  grid-row: 1 / 11;
+  grid-row: 1 / 24;
 }
 
 .work-tall {
-  grid-column: 2;
-  grid-row: 12 / 25;
+  grid-column: 1;
+  grid-row: 13 / 29;
 }
 
 .work-wide {
@@ -1536,9 +1552,8 @@ button {
 
 .section-overlay.is-expanded.is-works .works-collage .section-media img {
   image-rendering: auto;
-  backface-visibility: hidden;
+  backface-visibility: visible;
   transform-origin: center;
-  filter: none;
 }
 
 .section-overlay.is-works .works-collage .section-media img {
@@ -1571,7 +1586,9 @@ button {
   left: var(--section-gutter);
   background: #ffffff;
   box-shadow: none;
-  transition: transform 0.96s cubic-bezier(0.14, 1, 0.22, 1);
+  transition:
+    opacity 0.28s ease,
+    transform 0.96s cubic-bezier(0.14, 1, 0.22, 1);
   will-change: transform;
 }
 
@@ -1741,7 +1758,9 @@ button {
 }
 
 .section-overlay.is-expanded.is-settled:not(.is-closing):not(.is-index-collapsing).is-more .more-media {
+  opacity: 0;
   transform: translate3d(0, calc(clamp(456px, 66.8vh, 648px) * var(--expanded-content-inverse)), 0);
+  pointer-events: none;
 }
 
 .section-overlay.is-expanded:not(.is-closing).is-more .more-media img {
@@ -1760,6 +1779,12 @@ button {
 .section-overlay.is-expanded:not(.is-closing).is-more .more-media img,
 .section-overlay.is-expanded:not(.is-closing).is-more .column-more p {
   opacity: 1;
+}
+
+.section-overlay.is-expanded.is-settled:not(.is-closing):not(.is-index-collapsing).is-more .column-more p {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease;
 }
 
 .section-overlay .zoom-panel {
@@ -2166,16 +2191,16 @@ button {
   grid-template-columns: minmax(260px, 0.42fr) minmax(360px, 0.58fr);
   grid-template-rows: auto auto 1fr;
   column-gap: clamp(32px, 5vw, 96px);
-  row-gap: clamp(18px, 1.25vw, 24px);
+  row-gap: clamp(44px, 3.6vw, 70px);
   align-items: start;
   position: relative;
-  min-height: clamp(620px, 58vh, 760px);
-  height: clamp(620px, 58vh, 760px);
+  min-height: clamp(720px, 66vh, 860px);
+  height: clamp(720px, 66vh, 860px);
   padding:
-    clamp(190px, 15.6vw, 300px)
+    clamp(330px, 24vw, 456px)
     clamp(46px, 4.2vw, 80px)
-    clamp(36px, 4vh, 58px)
-    clamp(34px, 2.6vw, 50px);
+    clamp(34px, 3.2vh, 54px)
+    clamp(54px, 4vw, 72px);
   overflow: hidden;
   background: #212121;
 }
@@ -2236,7 +2261,7 @@ button {
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
   font-size: clamp(70px, 5.2vw, 100px);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -2255,7 +2280,7 @@ button {
   grid-row: 3;
   align-self: start;
   max-width: clamp(500px, 40vw, 760px);
-  margin-top: clamp(-10px, -0.4vw, -4px);
+  margin-top: clamp(4px, 0.8vw, 16px);
   justify-self: end;
   text-align: left;
 }
@@ -2264,17 +2289,21 @@ button {
   margin: 0;
   font-size: clamp(54px, 4.1vw, 78px);
   font-weight: 600;
-  line-height: 1.5;
+  line-height: 1.05;
   letter-spacing: 0;
 }
 
 .losnij-rising-subtitle {
-  margin: 0 0 clamp(48px, 3.8vw, 72px);
+  margin: clamp(30px, 2.1vw, 42px) 0 0;
   font-size: clamp(17px, 1.18vw, 23px);
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.01em;
   word-break: keep-all;
+}
+
+.losnij-rising-copy > div {
+  margin-top: clamp(58px, 4.2vw, 84px);
 }
 
 .losnij-rising-copy p {
@@ -2287,7 +2316,11 @@ button {
 }
 
 .losnij-rising-copy p + p {
-  margin-top: clamp(16px, 1.2vw, 24px);
+  margin-top: clamp(28px, 1.9vw, 38px);
+}
+
+.losnij-rising-copy div p:last-child {
+  margin-top: clamp(58px, 4vw, 78px);
 }
 
 .losnij-section-chapter {
@@ -3459,6 +3492,12 @@ button {
   background: #fff;
 }
 
+.simmons-key-experience.is-coming-soon {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.1), transparent 34%),
+    #151515;
+}
+
 .simmons-key-stage {
   position: sticky;
   top: 0;
@@ -3506,6 +3545,10 @@ button {
   text-shadow: none;
 }
 
+.simmons-key-experience.is-coming-soon .simmons-key-stage h3 {
+  color: rgba(255, 255, 255, 0.84);
+}
+
 .simmons-more-projects {
   display: block;
   width: fit-content;
@@ -3525,6 +3568,41 @@ button {
 .simmons-more-projects:hover,
 .simmons-more-projects:focus-visible {
   opacity: 0.48;
+}
+
+.simmons-key-experience.is-coming-soon .simmons-more-projects {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.simmons-key-coming-soon {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+.simmons-key-coming-soon span {
+  font-family: var(--font-footer-display);
+  font-size: clamp(84px, 12vw, 220px);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  opacity: 0.22;
+}
+
+.simmons-key-coming-soon p {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(42px, 6vh, 76px);
+  margin: 0;
+  font-size: clamp(12px, 0.86vw, 16px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  transform: translateX(-50%);
 }
 
 .simmons-key-canvas {
@@ -4695,6 +4773,106 @@ button {
 }
 
 @media (max-width: 900px) {
+  html,
+  body,
+  #root,
+  .app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 18px;
+    box-sizing: border-box;
+  }
+
+  .main-panel-stage {
+    width: 100%;
+    height: auto;
+  }
+
+  .main-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    max-height: none;
+    height: auto;
+    aspect-ratio: auto;
+    overflow: visible;
+  }
+
+  .main-panel::before,
+  .main-panel::after,
+  .book-pages::before {
+    content: none;
+  }
+
+  .book-pages,
+  .book-page-right {
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .book-page,
+  .book-page-left,
+  .book-page-right,
+  .book-page-left .portfolio-section,
+  .portfolio-section {
+    width: 100%;
+    min-height: min(74vh, 720px);
+    overflow: hidden;
+  }
+
+  .book-page-right {
+    gap: 18px;
+    padding: 18px 0 0;
+  }
+
+  .portfolio-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.14);
+  }
+
+  .book-page-left .portfolio-section {
+    border-top: 0;
+  }
+
+  .section-inner {
+    min-height: inherit;
+    padding: 16px;
+  }
+
+  .column-losnij .section-inner {
+    padding: 16px;
+  }
+
+  .column-losnij,
+  .site-intro {
+    --losnij-title-size: clamp(92px, 28vw, 168px);
+  }
+
+  .column-works h1,
+  .column-more h1 {
+    font-size: clamp(58px, 18vw, 112px);
+  }
+
+  .losnij-cover-info {
+    top: auto;
+    bottom: 24px;
+    left: 18px;
+    width: min(260px, calc(100% - 36px));
+  }
+
+  .works-collage {
+    min-height: 48vh;
+  }
+
   .index-page-header h2 {
     font-size: clamp(112px, 30vw, 250px);
   }

@@ -14,6 +14,7 @@ type SectionId = 'losnij' | 'works' | 'more'
 
 type WorkItem = {
   src: string
+  highResSrc?: string
   title: string
   subtitle: string
   category: string
@@ -94,6 +95,7 @@ type ProjectDetailContent = {
   strategyCopy: string[]
   keyTitle: string
   keyScreens: ProjectKeyScreen[]
+  isKeyComingSoon?: boolean
 }
 
 const PANEL_CANVAS_WIDTH = 1575
@@ -116,32 +118,35 @@ const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}assets/${fil
 
 const works: WorkItem[] = [
   {
-    src: assetPath('work000.png'),
-    title: 'ARCHE',
-    subtitle: '패션 아카이브 앱 컨셉 디자인',
-    category: 'Fashion Archive App Concept',
-    role: 'UI/UX · Mobile App · Archive',
-    className: 'work-feature',
-  },
-  {
     src: assetPath('work01.png'),
+    highResSrc: assetPath('work01@4x.png'),
     title: 'SIMMONS',
     subtitle: '글로벌 브랜드 웹사이트 리디자인',
     category: 'Global Brand Website Redesign',
     role: 'UI/UX · Branding · Web',
-    className: 'work-medium',
+    className: 'work-feature',
   },
   {
     src: assetPath('work02.png'),
+    highResSrc: assetPath('work02@4x.png'),
     title: 'JUHAP',
     subtitle: '주류 페어링 앱 UX/UI 디자인',
     category: 'Liquor Pairing App UX/UI',
     role: 'Mobile App · UX/UI · Pairing',
+    className: 'work-medium',
+  },
+  {
+    src: assetPath('work000.png'),
+    highResSrc: assetPath('work000@4x.png'),
+    title: 'ARCHE',
+    subtitle: '패션 아카이브 앱 컨셉 디자인',
+    category: 'Fashion Archive App Concept',
+    role: 'UI/UX · Mobile App · Archive',
     className: 'work-tall',
   },
 ]
 
-const keyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
+const defaultKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
   { x: '-47vw', y: '-620px', width: '16vw' },
   { x: '-13vw', y: '-555px', width: '14.2vw' },
   { x: '28vw', y: '-610px', width: '16.5vw' },
@@ -156,11 +161,31 @@ const keyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
   { x: '-58vw', y: '590px', width: '15.5vw' },
 ]
 
-const makeKeyScreens = (screens: Array<[string, string]>) =>
+const juhapKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
+  { x: '-58vw', y: '-700px', width: '13.5vw' },
+  { x: '-18vw', y: '-595px', width: '12.4vw' },
+  { x: '28vw', y: '-720px', width: '14vw' },
+  { x: '62vw', y: '-385px', width: '15.8vw' },
+  { x: '-44vw', y: '-205px', width: '13vw' },
+  { x: '7vw', y: '-70px', width: '14.6vw' },
+  { x: '48vw', y: '240px', width: '12.2vw' },
+  { x: '-56vw', y: '390px', width: '12vw' },
+  { x: '-12vw', y: '560px', width: '14.4vw' },
+  { x: '36vw', y: '735px', width: '12.8vw' },
+  { x: '-68vw', y: '845px', width: '13.6vw' },
+  { x: '66vw', y: '925px', width: '12.8vw' },
+  { x: '-28vw', y: '1040px', width: '12.8vw' },
+  { x: '17vw', y: '1160px', width: '12.2vw' },
+]
+
+const makeKeyScreens = (
+  screens: Array<[string, string]>,
+  placements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = defaultKeyScreenPlacements,
+) =>
   screens.map(([screen, ratio], index) => ({
     screen,
     ratio,
-    ...keyScreenPlacements[index],
+    ...placements[index],
   }))
 
 const projectDetails: Record<string, ProjectDetailContent> = {
@@ -169,7 +194,7 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     subtitle: '아르케 개인 패션 아카이브 앱',
     meta: '개인 프로젝트',
     duration: 'Duration  2026',
-    hero: 'work000.png',
+    hero: 'ar-hero.png',
     heroAlt: 'ARCHE fashion archive concept hero',
     role: 'Concept Planning / UI Design / Visual Direction',
     tools: 'Figma / Photoshop',
@@ -182,7 +207,7 @@ const projectDetails: Record<string, ProjectDetailContent> = {
       'ARCHE는 개인의 옷장과 취향을 기록하는 패션 아카이브 앱 컨셉 디자인 프로젝트입니다.',
       '사용자가 보유한 옷을 단순히 저장하는 것을 넘어, 스타일 취향과 착용 기록을 함께 정리하며 자신의 패션 흐름을 이해할 수 있도록 기획했습니다.',
     ],
-    strategyImage: 'work001.png',
+    strategyImage: 'ar00.webp',
     strategyAlt: 'ARCHE archive visual direction',
     strategyTitle: 'Brand Strategy',
     strategyCopy: [
@@ -190,20 +215,8 @@ const projectDetails: Record<string, ProjectDetailContent> = {
       '옷장, 착용 기록, 스타일 이미지가 하나의 아카이브처럼 정리될 수 있도록 서비스 방향을 잡았고, 차분하면서도 감도 있는 패션 브랜드 무드를 화면 안에 담고자 했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
-    keyScreens: makeKeyScreens([
-      ['work000.png', '1080 / 1349'],
-      ['work001.png', '1080 / 1350'],
-      ['work03.webp', '1333 / 2000'],
-      ['tag1.png', '1024 / 1536'],
-      ['tag2.png', '1024 / 1536'],
-      ['tag3.png', '1024 / 1536'],
-      ['tag4.png', '1024 / 1536'],
-      ['ork000.png', '964 / 1261'],
-      ['bg2.png', '1692 / 1128'],
-      ['bg3.png', '1672 / 941'],
-      ['more.png', '332 / 566'],
-      ['more1.png', '312 / 554'],
-    ]),
+    keyScreens: [],
+    isKeyComingSoon: true,
   },
   SIMMONS: {
     title: 'SIMMONS Global Brand Website Redesign',
@@ -250,7 +263,7 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     subtitle: '주합 AI 주류 페어링 앱',
     meta: '팀프로젝트',
     duration: 'Duration  2026 . 04 - 2026 . 05',
-    hero: 'work02.png',
+    hero: 'ju-hero.jpg',
     heroAlt: 'JUHAP liquor pairing app hero',
     role: 'UI/UX Design / Visual Direction',
     tools: 'Figma / Photoshop',
@@ -263,7 +276,7 @@ const projectDetails: Record<string, ProjectDetailContent> = {
       'JUHAP은 사용자의 취향과 상황에 맞는 술과 안주 조합을 제안하는 AI 주류 페어링 앱입니다.',
       '술을 고르는 과정에서 느끼는 어려움을 줄이고, 추천·랭킹·커뮤니티 기능을 통해 사용자가 더 쉽고 재미있게 취향을 발견할 수 있도록 기획했습니다.',
     ],
-    strategyImage: 'tag01.png',
+    strategyImage: 'ju1.jpg',
     strategyAlt: 'JUHAP visual strategy',
     strategyTitle: 'Brand Strategy',
     strategyCopy: [
@@ -271,20 +284,21 @@ const projectDetails: Record<string, ProjectDetailContent> = {
       '술과 안주를 함께 즐기는 상황을 중심으로 서비스 키워드를 정리하고, 추천 기능과 커뮤니티 요소가 자연스럽게 연결되는 흐름을 설계했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
-    keyScreens: makeKeyScreens([
-      ['work02.png', '1080 / 1350'],
-      ['tag01.png', '1289 / 1934'],
-      ['tag02.png', '1289 / 1934'],
-      ['tag03.png', '1289 / 1934'],
-      ['bg2.png', '1692 / 1128'],
-      ['bg3.png', '1672 / 941'],
-      ['work000.png', '1080 / 1349'],
-      ['work001.png', '1080 / 1350'],
-      ['more.png', '332 / 566'],
-      ['more1.png', '312 / 554'],
-      ['ork000.png', '964 / 1261'],
-      ['work03.webp', '1333 / 2000'],
-    ]),
+    keyScreens: makeKeyScreens(
+      [
+        ['01.png', '240 / 240'],
+        ['02.png', '233 / 233'],
+        ['07.png', '650 / 1226'],
+        ['08.png', '476 / 696'],
+        ['09.png', '420 / 419'],
+        ['0010.png', '656 / 1088'],
+        ['0011.png', '610 / 1170'],
+        ['0012.png', '574 / 1304'],
+        ['013.png', '670 / 1014'],
+        ['014.png', '636 / 1346'],
+      ],
+      juhapKeyScreenPlacements,
+    ),
   },
 }
 
@@ -422,7 +436,6 @@ function App() {
     }
 
     if (
-      activeSection.id !== 'more' &&
       isSettled &&
       !isSectionScrollingToTop &&
       (scrollRef.current?.scrollTop ?? 0) > 0
@@ -1288,7 +1301,10 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
         </div>
       </section>
 
-      <section className="simmons-key-experience" aria-label="Key Screen and Experience">
+      <section
+        className={`simmons-key-experience ${detail.isKeyComingSoon ? 'is-coming-soon' : ''}`}
+        aria-label="Key Screen and Experience"
+      >
         <div
           ref={keyStageRef}
           className={`simmons-key-stage ${isDraggingKeyStage ? 'is-dragging' : ''}`}
@@ -1322,26 +1338,33 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
               [ MORE PROJECTS ]
             </button>
           </div>
-          <div className="simmons-key-canvas" aria-hidden="true">
-            {[-1, 0, 1].map((xOffset) =>
-              [-1, 0, 1].map((yOffset) =>
-                detail.keyScreens.map((shot) => (
-                  <figure
-                    className="simmons-key-shot"
-                    key={`${xOffset}-${yOffset}-${shot.screen}`}
-                    style={{
-                      '--shot-x': `calc(${shot.x} + ${xOffset * SIMMONS_KEY_LOOP_X}px)`,
-                      '--shot-y': `calc(${shot.y} + ${yOffset * SIMMONS_KEY_LOOP_Y}px)`,
-                      '--shot-width': shot.width,
-                      '--shot-ratio': shot.ratio,
-                    } as SimmonsKeyShotStyle}
-                  >
-                    <img src={assetPath(shot.screen)} alt="" draggable="false" />
-                  </figure>
-                )),
-              ),
-            ).flat(2)}
-          </div>
+          {detail.isKeyComingSoon ? (
+            <div className="simmons-key-coming-soon" aria-hidden="true">
+              <span>COMING SOON</span>
+              <p>Key screens are being prepared.</p>
+            </div>
+          ) : (
+            <div className="simmons-key-canvas" aria-hidden="true">
+              {[-1, 0, 1].map((xOffset) =>
+                [-1, 0, 1].map((yOffset) =>
+                  detail.keyScreens.map((shot) => (
+                    <figure
+                      className="simmons-key-shot"
+                      key={`${xOffset}-${yOffset}-${shot.screen}`}
+                      style={{
+                        '--shot-x': `calc(${shot.x} + ${xOffset * SIMMONS_KEY_LOOP_X}px)`,
+                        '--shot-y': `calc(${shot.y} + ${yOffset * SIMMONS_KEY_LOOP_Y}px)`,
+                        '--shot-width': shot.width,
+                        '--shot-ratio': shot.ratio,
+                      } as SimmonsKeyShotStyle}
+                    >
+                      <img src={assetPath(shot.screen)} alt="" draggable="false" />
+                    </figure>
+                  )),
+                ),
+              ).flat(2)}
+            </div>
+          )}
         </div>
       </section>
     </div>
@@ -1407,9 +1430,13 @@ function LosnijDetailPage({
               <p className="losnij-rising-subtitle">조용하지만 분명한 화면을 디자인합니다.</p>
               <div>
                 <p>losnij는 진솔의 시선과 작업 방식을 담은 개인 디자인 아카이브입니다.</p>
-                <p>브랜드의 분위기와 사용자의 흐름이 자연스럽게 만나는 화면을 고민합니다.</p>
-                <p>정보를 정리하고, 이미지를 배치하고, 작은 디테일까지 다듬으며</p>
-                <p>브랜드가 가진 감도를 디지털 경험으로 풀어내고자 합니다.</p>
+                <p>
+                  브랜드의 분위기와 사용자의 흐름이 자연스럽게 만나는 화면을 고민합니다.
+                  <br />
+                  정보를 정리하고, 이미지를 배치하고, 작은 디테일까지 다듬으며
+                  <br />
+                  브랜드가 가진 감도를 디지털 경험으로 풀어내고자 합니다.
+                </p>
                 <p>화려하게 설명하기보다, 조용하지만 분명하게 읽히는 화면을 지향합니다.</p>
               </div>
             </div>
@@ -1613,8 +1640,8 @@ function ContactModal({ isClosing, isOpen, onClose }: { isClosing: boolean; isOp
 
         <div className="contact-card-body">
           <section className="contact-identity">
-            <p>JIN SOL</p>
-            <span>UI/UX Designer</span>
+            <p>Jin Sol</p>
+            <span>진솔</span>
           </section>
 
           <section>
@@ -1623,32 +1650,28 @@ function ContactModal({ isClosing, isOpen, onClose }: { isClosing: boolean; isOp
           </section>
 
           <section>
-            <h3>FIELD</h3>
-            <ul>
-              <li>UI/UX Design</li>
-              <li>Web Design</li>
-              <li>Visual Direction</li>
-              <li>Brand Experience</li>
-            </ul>
-          </section>
-
-          <section>
             <h3>LINK</h3>
             <div className="contact-links">
-              <a href="https://github.com/" target="_blank" rel="noreferrer">
-                GitHub
-              </a>
-              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-                Instagram
-              </a>
               <a href={import.meta.env.BASE_URL} aria-label="Portfolio home">
                 Portfolio
               </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer">
+                GitHub
+              </a>
             </div>
+          </section>
+
+          <section>
+            <h3>FIELD</h3>
+            <ul className="contact-field-inline">
+              <li>Brand Design</li>
+              <li>Visual Direction</li>
+              <li>Web Design</li>
+            </ul>
           </section>
         </div>
 
-        <p className="contact-card-note">Quiet digital experiences, designed with intention.</p>
+        <p className="contact-card-note">분위기와 구조를 함께 고민하며, 브랜드가 자연스럽게 전달되는 디자인을 만듭니다.</p>
       </article>
     </div>
   )
@@ -1972,6 +1995,9 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
   const initializedRef = useRef(false)
   const boundsRef = useRef<DOMRect | null>(null)
   const positionRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
+  const detail = projectDetails[work.title]
+  const captionTitle = detail?.title ?? work.title
+  const captionSubtitle = detail?.subtitle ?? work.subtitle
 
   const stopTracking = () => {
     if (frameRef.current) {
@@ -2040,7 +2066,7 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
     <figure
       className={`section-media ${work.className} ${onOpen ? 'is-clickable' : ''}`}
       data-num={String(index + 1).padStart(2, '0')}
-      data-title={work.title}
+      data-title={captionTitle}
       data-desc={work.category}
       data-keywords={work.role}
       data-cursor-label={onOpen ? 'Click!' : undefined}
@@ -2059,13 +2085,13 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
       onPointerMove={updateTagPosition}
       onPointerLeave={stopTracking}
     >
-      <img src={work.src} alt={work.title} />
+      <img src={work.highResSrc ?? work.src} alt={captionTitle} loading="eager" decoding="sync" fetchPriority="high" />
       <figcaption>
-        <span className="work-caption-title" data-zoom-text={work.title}>
-          {work.title}
+        <span className="work-caption-title" data-zoom-text={captionTitle}>
+          {captionTitle}
         </span>
-        <span className="work-caption-subtitle" data-zoom-text={work.subtitle}>
-          {work.subtitle}
+        <span className="work-caption-subtitle" data-zoom-text={captionSubtitle}>
+          {captionSubtitle}
         </span>
       </figcaption>
       <div className="project-hover-tag" aria-hidden="true" ref={tagRef}>

@@ -83,6 +83,8 @@ type ProjectDetailContent = {
   subtitle: string
   meta: string
   duration: string
+  projectUrl?: string
+  proposalUrl?: string
   hero: string
   heroAlt: string
   role: string
@@ -223,6 +225,8 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     subtitle: '시몬스 글로벌 브랜드 웹사이트 리디자인',
     meta: '팀프로젝트',
     duration: 'Duration  2026 . 02 - 2026 . 03',
+    projectUrl: 'https://yshnada-del.github.io/simmons/',
+    proposalUrl: 'https://www.figma.com/deck/WnjfVFTOvpmgNQrW3aVJDM',
     hero: 'simmons-detail-hero.png',
     heroAlt: 'SIMMONS Offline experience hero',
     role: 'UI Design / Visual Direction / Page Design',
@@ -263,6 +267,8 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     subtitle: '주합 AI 주류 페어링 앱',
     meta: '팀프로젝트',
     duration: 'Duration  2026 . 04 - 2026 . 05',
+    projectUrl: 'https://juhap-nmuh.vercel.app',
+    proposalUrl: 'https://www.figma.com/deck/UFvEN19gtb5REMQ4ZonsMy',
     hero: 'ju-hero.jpg',
     heroAlt: 'JUHAP liquor pairing app hero',
     role: 'UI/UX Design / Visual Direction',
@@ -342,6 +348,33 @@ const aboutExperienceItems: Array<[string, string, string]> = [
   ['02', 'ARCHE', '개인의 옷장과 취향을 기록하는 패션 아카이브 앱 컨셉 디자인'],
   ['03', 'JUHAP', '상황과 취향에 맞는 술과 안주 조합을 제안하는 주류 페어링 앱 UX/UI 디자인'],
   ['04', 'LOSNIJ Portfolio', '매거진과 쇼룸 컨셉을 바탕으로 기획하고 구현한 개인 웹 포트폴리오'],
+]
+
+const archiveImages = [
+  '0128f79e-f28d-487b-b0b1-32c94f8c76fb.webp',
+  '09e51b7c-4d8a-447e-947d-3d0f86a92c74.webp',
+  '0a65b8aa-f559-4bb3-a110-22ce869f2b54.webp',
+  '14d22e77-a71d-434b-a2d5-6afb258492b7.webp',
+  '4fd8cf40-1997-4577-b339-b23a9179768b.webp',
+  '5989e4a0-ffc4-4295-8352-dd81f1fb0c37.webp',
+  '59baf4e3-96bd-4ba7-9fc8-a0e48e05e4e9.webp',
+  '613b9352-8b21-4621-896d-6fd680d21718.webp',
+  '79546ccd-97b7-434b-8e01-5607e6084d91.webp',
+  '8310de03-36b3-4d69-bede-323b69a92a2c.webp',
+  '85b58fe3-30eb-482b-91f2-16a9b5b66c03.webp',
+  '94829af3-a80f-43f5-8d0b-77a1cffa0cf9.webp',
+  '950cace7-6b9d-46ce-b839-5c64769aef39.webp',
+  '986ba3e7-0b84-4203-80a0-661e3cd2eabe.webp',
+  'a8b71e8b-5018-449c-9bde-4249290d67e3.webp',
+  'bed42b35-24d0-4468-805d-f981c1c9ed65.webp',
+  'ccf5bb7e-7e76-4f6b-b16e-4b02f696ba51.webp',
+  'd2fe28ee-57aa-49c7-bae7-0f71cf610bb6.webp',
+  'd3217e90-9eaf-41d3-af15-da7370616fde.webp',
+  'e48ee559-ae1b-4d5b-b969-bb756528ad64.webp',
+  'fcec4121-631b-4b9e-987c-64d796d6957c.webp',
+  'image 130.png',
+  '스크린샷 2026-06-23 오후 6.19.49.jpg',
+  '스크린샷 2026-06-23 오후 6.20.58.jpg',
 ]
 
 function App() {
@@ -1240,12 +1273,20 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
       <div className="simmons-detail-meta" aria-label="Project information">
         <span>{detail.meta}</span>
         <span>{detail.duration}</span>
-        <nav aria-label="Project links">
-          <a href={import.meta.env.BASE_URL}>
-            웹사이트보기↗
-          </a>
-          <a href={import.meta.env.BASE_URL}>기획서보기↗</a>
-        </nav>
+        {(detail.projectUrl || detail.proposalUrl) && (
+          <nav aria-label="Project links">
+            {detail.projectUrl && (
+              <a href={detail.projectUrl} target="_blank" rel="noreferrer">
+                프로젝트 보기↗
+              </a>
+            )}
+            {detail.proposalUrl && (
+              <a href={detail.proposalUrl} target="_blank" rel="noreferrer">
+                기획서 보기↗
+              </a>
+            )}
+          </nav>
+        )}
       </div>
 
       <figure className="simmons-detail-hero">
@@ -1386,7 +1427,20 @@ function IndexDetailPage({
 }) {
   return (
     <article className={`more-scroll-page ${isVisible ? 'is-visible' : ''}`} ref={pageRef}>
-      <div className="archive-photo-stage" aria-hidden="true" />
+      <section className="archive-photo-stage" aria-label="Archive images">
+        <div className="archive-photo-grid">
+          {archiveImages.map((image, index) => (
+            <figure className="archive-photo-item" key={image}>
+              <img
+                src={assetPath(`archive/${image}`)}
+                alt={`Archive image ${index + 1}`}
+                loading={index < 8 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      </section>
       <PortfolioFooter
         onContact={onContact}
         onNavigate={onNavigate}
@@ -1998,6 +2052,7 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
   const detail = projectDetails[work.title]
   const captionTitle = detail?.title ?? work.title
   const captionSubtitle = detail?.subtitle ?? work.subtitle
+  const hoverTag = work.title === 'JUHAP' ? 'tag03.png' : work.title === 'ARCHE' ? 'tag02.png' : `tag0${index + 1}.png`
 
   const stopTracking = () => {
     if (frameRef.current) {
@@ -2095,7 +2150,7 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
         </span>
       </figcaption>
       <div className="project-hover-tag" aria-hidden="true" ref={tagRef}>
-        <img src={assetPath(`tag0${index + 1}.png`)} alt="" />
+        <img src={assetPath(hoverTag)} alt="" />
       </div>
     </figure>
   )

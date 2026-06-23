@@ -70,6 +70,13 @@ type SimmonsKeyShotStyle = CSSProperties & {
   '--shot-ratio': string
 }
 
+type ArchiveImageStyle = CSSProperties & {
+  '--archive-x': string
+  '--archive-y': string
+  '--archive-width': string
+  '--archive-rotate': string
+}
+
 type ProjectKeyScreen = {
   screen: string
   x: string
@@ -377,6 +384,33 @@ const archiveImages = [
   '스크린샷 2026-06-23 오후 6.20.58.jpg',
 ]
 
+const archivePlacements: ArchiveImageStyle[] = [
+  { '--archive-x': '6%', '--archive-y': '0px', '--archive-width': '20%', '--archive-rotate': '0deg' },
+  { '--archive-x': '38%', '--archive-y': '76px', '--archive-width': '22%', '--archive-rotate': '0deg' },
+  { '--archive-x': '72%', '--archive-y': '8px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '10%', '--archive-y': '620px', '--archive-width': '23%', '--archive-rotate': '0deg' },
+  { '--archive-x': '45%', '--archive-y': '560px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '70%', '--archive-y': '690px', '--archive-width': '20%', '--archive-rotate': '0deg' },
+  { '--archive-x': '5%', '--archive-y': '1230px', '--archive-width': '19%', '--archive-rotate': '0deg' },
+  { '--archive-x': '34%', '--archive-y': '1320px', '--archive-width': '21%', '--archive-rotate': '0deg' },
+  { '--archive-x': '67%', '--archive-y': '1190px', '--archive-width': '23%', '--archive-rotate': '0deg' },
+  { '--archive-x': '12%', '--archive-y': '1880px', '--archive-width': '19%', '--archive-rotate': '0deg' },
+  { '--archive-x': '43%', '--archive-y': '1810px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '70%', '--archive-y': '1960px', '--archive-width': '21%', '--archive-rotate': '0deg' },
+  { '--archive-x': '5%', '--archive-y': '2500px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '33%', '--archive-y': '2570px', '--archive-width': '22%', '--archive-rotate': '0deg' },
+  { '--archive-x': '68%', '--archive-y': '2460px', '--archive-width': '20%', '--archive-rotate': '0deg' },
+  { '--archive-x': '11%', '--archive-y': '3140px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '42%', '--archive-y': '3050px', '--archive-width': '21%', '--archive-rotate': '0deg' },
+  { '--archive-x': '72%', '--archive-y': '3180px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '6%', '--archive-y': '3710px', '--archive-width': '20%', '--archive-rotate': '0deg' },
+  { '--archive-x': '36%', '--archive-y': '3810px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+  { '--archive-x': '66%', '--archive-y': '3680px', '--archive-width': '22%', '--archive-rotate': '0deg' },
+  { '--archive-x': '12%', '--archive-y': '4340px', '--archive-width': '17%', '--archive-rotate': '0deg' },
+  { '--archive-x': '41%', '--archive-y': '4260px', '--archive-width': '20%', '--archive-rotate': '0deg' },
+  { '--archive-x': '72%', '--archive-y': '4380px', '--archive-width': '18%', '--archive-rotate': '0deg' },
+]
+
 function App() {
   const [mainCanvasScale, setMainCanvasScale] = useState(getMainCanvasScale)
   const panelRef = useRef<HTMLElement | null>(null)
@@ -680,6 +714,19 @@ function App() {
           card.style.setProperty('--service-primary-reveal', reveal(0.22, 0.48).toFixed(4))
           card.style.setProperty('--service-secondary-reveal', reveal(0.34, 0.52).toFixed(4))
         })
+
+        const copyLines = Array.from(scrollRef.current.querySelectorAll<HTMLElement>('.losnij-copy-line'))
+        const scrollRect = scrollRef.current.getBoundingClientRect()
+        const start = scrollRect.top + scrollRect.height * 0.82
+        const end = scrollRect.top + scrollRect.height * 0.42
+
+        copyLines.forEach((line) => {
+          const lineRect = line.getBoundingClientRect()
+          const lineCenter = lineRect.top + lineRect.height * 0.5
+          const progress = Math.min(Math.max((start - lineCenter) / (start - end), 0), 1)
+
+          line.style.setProperty('--copy-progress', progress.toFixed(4))
+        })
       } else {
         scrollRef.current.classList.remove('is-losnij-cover-pinned')
       }
@@ -804,6 +851,12 @@ function App() {
     .filter(Boolean)
     .join(' ')
   const appStyle: AppStyle = { '--main-canvas-scale': mainCanvasScale }
+  const detailCanvasOffset =
+    activeSection && isExpanded
+      ? activeSection.id === 'more'
+        ? activeSection.expandedHeight
+        : activeSection.expandedHeight
+      : '100vh'
 
   return (
     <div className={appClassName} style={appStyle}>
@@ -869,7 +922,7 @@ function App() {
               style={overlayStyle}
             >
               <main className="main-panel zoom-panel" aria-hidden="true">
-                <PanelContent isExpandedView={isExpanded && !isClosing} onWorkOpen={openWorkDetail} />
+                <PanelContent isExpandedView={isExpanded && (!isClosing || activeSection.id === 'more')} onWorkOpen={openWorkDetail} />
               </main>
             </div>
             <div
@@ -878,9 +931,9 @@ function App() {
               } ${activeSection.id === 'works' ? 'has-works-detail' : ''
               }`}
               style={{
-                marginTop: isExpanded ? activeSection.expandedHeight : '100vh',
+                marginTop: detailCanvasOffset,
                 minHeight:
-                  activeSection.id === 'losnij' || activeSection.id === 'works'
+                  activeSection.id === 'losnij' || activeSection.id === 'works' || activeSection.id === 'more'
                     ? 'auto'
                     : isExpanded
                       ? Math.max(window.innerHeight, 720)
@@ -970,8 +1023,30 @@ function WorkDetailPage({
   const smoothScrollFrameRef = useRef<number | null>(null)
   const smoothScrollTargetRef = useRef(0)
 
+  const updateOverviewReveal = () => {
+    const container = scrollContainerRef.current
+
+    if (!container) {
+      return
+    }
+
+    const lines = Array.from(container.querySelectorAll<HTMLElement>('.simmons-overview-line'))
+    const containerRect = container.getBoundingClientRect()
+    const start = containerRect.top + containerRect.height * 0.78
+    const end = containerRect.top + containerRect.height * 0.36
+
+    lines.forEach((line) => {
+      const lineRect = line.getBoundingClientRect()
+      const lineCenter = lineRect.top + lineRect.height * 0.5
+      const progress = Math.min(Math.max((start - lineCenter) / (start - end), 0), 1)
+
+      line.style.setProperty('--overview-progress', progress.toFixed(4))
+    })
+  }
+
   const handleScroll = (event: UIEvent<HTMLElement>) => {
     setIsFull(event.currentTarget.scrollTop > 6)
+    updateOverviewReveal()
   }
 
   const stopSmoothScroll = () => {
@@ -1057,7 +1132,14 @@ function WorkDetailPage({
     smoothScrollFrameRef.current = window.requestAnimationFrame(scrollToTop)
   }
 
-  useEffect(() => stopSmoothScroll, [])
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(updateOverviewReveal)
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      stopSmoothScroll()
+    }
+  }, [work.title])
 
   const projectDetail = projectDetails[work.title]
 
@@ -1320,12 +1402,12 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
 
       <section className="simmons-detail-overview">
         <h3>Project Overview</h3>
-        <p>
-          {detail.overview.map((line, index) => (
-            <Fragment key={line}>
-              {index > 0 && <br />}
-              {line}
-            </Fragment>
+        <p className="simmons-overview-copy">
+          {detail.overview.map((line) => (
+            <span className="simmons-overview-line" key={line}>
+              <span>{line}</span>
+              <span aria-hidden="true">{line}</span>
+            </span>
           ))}
         </p>
       </section>
@@ -1428,18 +1510,7 @@ function IndexDetailPage({
   return (
     <article className={`more-scroll-page ${isVisible ? 'is-visible' : ''}`} ref={pageRef}>
       <section className="archive-photo-stage" aria-label="Archive images">
-        <div className="archive-photo-grid">
-          {archiveImages.map((image, index) => (
-            <figure className="archive-photo-item" key={image}>
-              <img
-                src={assetPath(`archive/${image}`)}
-                alt={`Archive image ${index + 1}`}
-                loading={index < 8 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
-            </figure>
-          ))}
-        </div>
+        <ArchiveImageGrid className="archive-detail-grid" />
       </section>
       <PortfolioFooter
         onContact={onContact}
@@ -1447,6 +1518,36 @@ function IndexDetailPage({
         onTop={onTop}
       />
     </article>
+  )
+}
+
+function ArchiveImageGrid({ className = 'archive-photo-grid' }: { className?: string }) {
+  return (
+    <div className={className}>
+      {archiveImages.map((image, index) => (
+        <figure className="archive-photo-item" key={image} style={archivePlacements[index]}>
+          <img
+            src={assetPath(`archive/${image}`)}
+            alt={`Archive image ${index + 1}`}
+            loading={index < 8 ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+function AboutRevealCopy({ className = '', lines }: { className?: string; lines: string[] }) {
+  return (
+    <p className={`losnij-copy-flow ${className}`.trim()}>
+      {lines.map((line) => (
+        <span className="losnij-copy-line" key={line}>
+          <span>{line}</span>
+          <span aria-hidden="true">{line}</span>
+        </span>
+      ))}
+    </p>
   )
 }
 
@@ -1462,8 +1563,54 @@ function LosnijDetailPage({
   onNext: () => void
   onTop: () => void
 }) {
+  const aboutRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const about = aboutRef.current
+
+    if (!about) {
+      return
+    }
+
+    const revealItems = Array.from(about.querySelectorAll<HTMLElement>('.losnij-scroll-reveal'))
+
+    if (!revealItems.length) {
+      return
+    }
+
+    revealItems.forEach((item) => item.classList.remove('is-visible'))
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealItems.forEach((item) => item.classList.add('is-visible'))
+      return
+    }
+
+    const scrollRoot = about.closest<HTMLElement>('.zoom-scroll')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return
+          }
+
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      {
+        root: scrollRoot,
+        rootMargin: '0px 0px -8% 0px',
+        threshold: 0.1,
+      },
+    )
+
+    revealItems.forEach((item) => observer.observe(item))
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <article className="losnij-about">
+    <article className="losnij-about" ref={aboutRef}>
       <section className="losnij-rising-page">
         <header className="losnij-rising-header" aria-hidden="true" />
 
@@ -1472,54 +1619,64 @@ function LosnijDetailPage({
             <p className="losnij-rising-masthead" aria-hidden="true">
               About me
             </p>
-            <div className="losnij-rising-chapter">
+            <div className="losnij-rising-chapter losnij-scroll-reveal">
               <span>CHAPTER 1</span>
             </div>
-            <div className="losnij-rising-left">
+            <div className="losnij-rising-left losnij-scroll-reveal">
               <h2>Identity</h2>
               <span aria-hidden="true" />
             </div>
             <div className="losnij-rising-copy">
-              <h3>Quiet but Clear</h3>
-              <p className="losnij-rising-subtitle">조용하지만 분명한 화면을 디자인합니다.</p>
+              <h3 className="losnij-scroll-reveal">Quiet but Clear</h3>
+              <p className="losnij-rising-subtitle losnij-scroll-reveal">조용하지만 분명한 화면을 디자인합니다.</p>
               <div>
-                <p>losnij는 진솔의 시선과 작업 방식을 담은 개인 디자인 아카이브입니다.</p>
-                <p>
-                  브랜드의 분위기와 사용자의 흐름이 자연스럽게 만나는 화면을 고민합니다.
-                  <br />
-                  정보를 정리하고, 이미지를 배치하고, 작은 디테일까지 다듬으며
-                  <br />
-                  브랜드가 가진 감도를 디지털 경험으로 풀어내고자 합니다.
-                </p>
-                <p>화려하게 설명하기보다, 조용하지만 분명하게 읽히는 화면을 지향합니다.</p>
+                <AboutRevealCopy
+                  className="losnij-scroll-reveal"
+                  lines={['losnij는 진솔의 시선과 작업 방식을 담은 개인 디자인 아카이브입니다.']}
+                />
+                <AboutRevealCopy
+                  className="losnij-scroll-reveal"
+                  lines={[
+                    '브랜드의 분위기와 사용자의 흐름이 자연스럽게 만나는 화면을 고민합니다.',
+                    '정보를 정리하고, 이미지를 배치하고, 작은 디테일까지 다듬으며',
+                    '브랜드가 가진 감도를 디지털 경험으로 풀어내고자 합니다.',
+                  ]}
+                />
+                <AboutRevealCopy
+                  className="losnij-scroll-reveal"
+                  lines={['화려하게 설명하기보다, 조용하지만 분명하게 읽히는 화면을 지향합니다.']}
+                />
               </div>
             </div>
           </div>
 
           <section className="losnij-tools-section">
-            <div className="losnij-section-chapter">
+            <div className="losnij-section-chapter losnij-scroll-reveal">
               <span>CHAPTER 2</span>
             </div>
-            <div className="losnij-section-left">
+            <div className="losnij-section-left losnij-scroll-reveal">
               <h2>Tools</h2>
               <span aria-hidden="true" />
             </div>
             <div className="losnij-section-copy">
-              <h3>Tool &amp; Focus</h3>
-              <p>
-                생각을 화면으로 정리하기 위한 도구와 방식들입니다.<br />
-                결과보다 과정, 장식보다 구조를 우선하며<br />
-                브랜드의 감도를 디지털 경험으로 연결합니다.
-              </p>
+              <h3 className="losnij-scroll-reveal">Tool &amp; Focus</h3>
+              <AboutRevealCopy
+                className="losnij-scroll-reveal"
+                lines={[
+                  '생각을 화면으로 정리하기 위한 도구와 방식들입니다.',
+                  '결과보다 과정, 장식보다 구조를 우선하며',
+                  '브랜드의 감도를 디지털 경험으로 연결합니다.',
+                ]}
+              />
             </div>
 
             <div className="losnij-focus-list">
-              <div className="losnij-list-heading">
+              <div className="losnij-list-heading losnij-scroll-reveal">
                 <span>FOCUS</span>
               </div>
               <div className="losnij-focus-grid">
                 {aboutFocusItems.map(([title, body]) => (
-                  <div key={title}>
+                  <div className="losnij-scroll-reveal" key={title}>
                     <h4>{title}</h4>
                     {body.split('\n').map((line) => (
                       <p key={line}>{line}</p>
@@ -1530,11 +1687,11 @@ function LosnijDetailPage({
             </div>
 
             <div className="losnij-tool-list">
-              <div className="losnij-list-heading">
+              <div className="losnij-list-heading losnij-scroll-reveal">
                 <span>TOOLS</span>
               </div>
               {aboutToolRows.map(([label, tools]) => (
-                <div className="losnij-tool-row" key={`${label}-${tools.map(([name]) => name).join('-')}`}>
+                <div className="losnij-tool-row losnij-scroll-reveal" key={`${label}-${tools.map(([name]) => name).join('-')}`}>
                   <strong>{label}</strong>
                   <div>
                     {tools.map(([name, icon]) => (
@@ -1552,24 +1709,27 @@ function LosnijDetailPage({
           </section>
 
           <section className="losnij-experience-section">
-            <div className="losnij-section-chapter">
+            <div className="losnij-section-chapter losnij-scroll-reveal">
               <span>CHAPTER 3</span>
             </div>
-            <div className="losnij-section-left">
+            <div className="losnij-section-left losnij-scroll-reveal">
               <h2>Experience</h2>
               <span aria-hidden="true" />
             </div>
             <div className="losnij-section-copy">
-              <h3>Selected Project</h3>
-              <p>
-                구조와 분위기를 함께 다루는 작업들을 통해<br />
-                브랜드와 무드, 콘텐츠 흐름, 화면의 밀도를<br />
-                정리하는 방식을 쌓아왔습니다.
-              </p>
+              <h3 className="losnij-scroll-reveal">Selected Project</h3>
+              <AboutRevealCopy
+                className="losnij-scroll-reveal"
+                lines={[
+                  '구조와 분위기를 함께 다루는 작업들을 통해',
+                  '브랜드와 무드, 콘텐츠 흐름, 화면의 밀도를',
+                  '정리하는 방식을 쌓아왔습니다.',
+                ]}
+              />
             </div>
             <div className="losnij-project-list">
               {aboutExperienceItems.map(([number, title, body]) => (
-                <div className="losnij-project-row" key={number}>
+                <div className="losnij-project-row losnij-scroll-reveal" key={number}>
                   <div>
                     <span>{number}</span>
                     <strong>{title}</strong>
@@ -1612,13 +1772,13 @@ function PortfolioFooter({
     <footer className="portfolio-footer">
       <div className="portfolio-footer-links">
         <section>
-          <p>(FOLLOW)</p>
+          <p>(Follow)</p>
           <div>
-            <a className="portfolio-footer-menu-item" data-label="INSTAGRAM" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-              <span>INSTAGRAM</span>
+            <a className="portfolio-footer-menu-item" data-label="Instagram" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+              <span>Instagram</span>
             </a>
-            <a className="portfolio-footer-menu-item" data-label="EMAIL" href="mailto:wlsthf796@naver.com">
-              <span>EMAIL</span>
+            <a className="portfolio-footer-menu-item" data-label="Email" href="mailto:wlsthf796@naver.com">
+              <span>Email</span>
             </a>
           </div>
         </section>
@@ -1628,19 +1788,19 @@ function PortfolioFooter({
         </button>
 
         <section className="portfolio-footer-navigation">
-          <p>(NAVIGATION)</p>
+          <p>(Navigation)</p>
           <div>
-            <button className="portfolio-footer-menu-item" data-label="ABOUT" type="button" onClick={() => onNavigate('losnij')}>
-              <span>ABOUT</span>
+            <button className="portfolio-footer-menu-item" data-label="About" type="button" onClick={() => onNavigate('losnij')}>
+              <span>About</span>
             </button>
-            <button className="portfolio-footer-menu-item" data-label="WORKS" type="button" onClick={() => onNavigate('works')}>
-              <span>WORKS</span>
+            <button className="portfolio-footer-menu-item" data-label="Works" type="button" onClick={() => onNavigate('works')}>
+              <span>Works</span>
             </button>
-            <button className="portfolio-footer-menu-item" data-label="ARCHIVE" type="button" onClick={() => onNavigate('more')}>
-              <span>ARCHIVE</span>
+            <button className="portfolio-footer-menu-item" data-label="Archive" type="button" onClick={() => onNavigate('more')}>
+              <span>Archive</span>
             </button>
-            <button className="portfolio-footer-menu-item" data-label="CONTACT" type="button" onClick={onContact}>
-              <span>CONTACT</span>
+            <button className="portfolio-footer-menu-item" data-label="Contact" type="button" onClick={onContact}>
+              <span>Contact</span>
             </button>
           </div>
         </section>
@@ -2140,7 +2300,7 @@ function WorkProject({ onOpen, work, index }: { onOpen?: (work: WorkItem) => voi
       onPointerMove={updateTagPosition}
       onPointerLeave={stopTracking}
     >
-      <img src={work.highResSrc ?? work.src} alt={captionTitle} loading="eager" decoding="sync" fetchPriority="high" />
+      <img src={work.src} alt={captionTitle} loading="eager" decoding="async" fetchPriority={onOpen ? 'high' : 'auto'} />
       <figcaption>
         <span className="work-caption-title" data-zoom-text={captionTitle}>
           {captionTitle}

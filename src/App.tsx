@@ -1,4 +1,14 @@
-import { type CSSProperties, type PointerEvent, type RefObject, type UIEvent, useEffect, useRef, useState } from 'react'
+import {
+  Fragment,
+  type CSSProperties,
+  type PointerEvent,
+  type RefObject,
+  type UIEvent,
+  type WheelEvent as ReactWheelEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 type SectionId = 'losnij' | 'works' | 'more'
 
@@ -45,6 +55,47 @@ type AppStyle = CSSProperties & {
   '--main-canvas-scale'?: number
 }
 
+type SimmonsKeyStageStyle = CSSProperties & {
+  '--simmons-pan-x': string
+  '--simmons-pan-y': string
+  '--simmons-hover-x': string
+  '--simmons-hover-y': string
+}
+
+type SimmonsKeyShotStyle = CSSProperties & {
+  '--shot-x': string
+  '--shot-y': string
+  '--shot-width': string
+  '--shot-ratio': string
+}
+
+type ProjectKeyScreen = {
+  screen: string
+  x: string
+  y: string
+  width: string
+  ratio: string
+}
+
+type ProjectDetailContent = {
+  title: string
+  subtitle: string
+  meta: string
+  duration: string
+  hero: string
+  heroAlt: string
+  role: string
+  tools: string
+  contribution: string[]
+  overview: string[]
+  strategyImage: string
+  strategyAlt: string
+  strategyTitle: string
+  strategyCopy: string[]
+  keyTitle: string
+  keyScreens: ProjectKeyScreen[]
+}
+
 const PANEL_CANVAS_WIDTH = 1575
 const PANEL_CANVAS_HEIGHT = (PANEL_CANVAS_WIDTH * 7.9) / 16
 
@@ -89,6 +140,153 @@ const works: WorkItem[] = [
     className: 'work-tall',
   },
 ]
+
+const keyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
+  { x: '-47vw', y: '-620px', width: '16vw' },
+  { x: '-13vw', y: '-555px', width: '14.2vw' },
+  { x: '28vw', y: '-610px', width: '16.5vw' },
+  { x: '52vw', y: '-390px', width: '18.2vw' },
+  { x: '-55vw', y: '-260px', width: '15.5vw' },
+  { x: '-24vw', y: '-125px', width: '17.2vw' },
+  { x: '16vw', y: '-80px', width: '16.2vw' },
+  { x: '44vw', y: '120px', width: '13.2vw' },
+  { x: '-40vw', y: '215px', width: '12.8vw' },
+  { x: '-2vw', y: '365px', width: '12.2vw' },
+  { x: '34vw', y: '430px', width: '17.2vw' },
+  { x: '-58vw', y: '590px', width: '15.5vw' },
+]
+
+const makeKeyScreens = (screens: Array<[string, string]>) =>
+  screens.map(([screen, ratio], index) => ({
+    screen,
+    ratio,
+    ...keyScreenPlacements[index],
+  }))
+
+const projectDetails: Record<string, ProjectDetailContent> = {
+  ARCHE: {
+    title: 'ARCHE Personal Fashion Archive App',
+    subtitle: '아르케 개인 패션 아카이브 앱',
+    meta: '개인 프로젝트',
+    duration: 'Duration  2026',
+    hero: 'work000.png',
+    heroAlt: 'ARCHE fashion archive concept hero',
+    role: 'Concept Planning / UI Design / Visual Direction',
+    tools: 'Figma / Photoshop',
+    contribution: [
+      '브랜드 콘셉트 기획부터 서비스 구조, UI 디자인까지 전반을 직접 설계했습니다.',
+      '디지털 옷장, 스타일 DNA, 착용 기록 등 핵심 기능이 감성적인 패션 아카이브 경험으로',
+      '이어질 수 있도록 무드, 정보 구조, 화면 흐름을 중심으로 구성했습니다.',
+    ],
+    overview: [
+      'ARCHE는 개인의 옷장과 취향을 기록하는 패션 아카이브 앱 컨셉 디자인 프로젝트입니다.',
+      '사용자가 보유한 옷을 단순히 저장하는 것을 넘어, 스타일 취향과 착용 기록을 함께 정리하며 자신의 패션 흐름을 이해할 수 있도록 기획했습니다.',
+    ],
+    strategyImage: 'work001.png',
+    strategyAlt: 'ARCHE archive visual direction',
+    strategyTitle: 'Brand Strategy',
+    strategyCopy: [
+      'ARCHE는 패션을 소비하는 방식보다, 개인의 취향을 기록하고 쌓아가는 경험에 초점을 두었습니다.',
+      '옷장, 착용 기록, 스타일 이미지가 하나의 아카이브처럼 정리될 수 있도록 서비스 방향을 잡았고, 차분하면서도 감도 있는 패션 브랜드 무드를 화면 안에 담고자 했습니다.',
+    ],
+    keyTitle: 'Key Screen & Experience',
+    keyScreens: makeKeyScreens([
+      ['work000.png', '1080 / 1349'],
+      ['work001.png', '1080 / 1350'],
+      ['work03.webp', '1333 / 2000'],
+      ['tag1.png', '1024 / 1536'],
+      ['tag2.png', '1024 / 1536'],
+      ['tag3.png', '1024 / 1536'],
+      ['tag4.png', '1024 / 1536'],
+      ['ork000.png', '964 / 1261'],
+      ['bg2.png', '1692 / 1128'],
+      ['bg3.png', '1672 / 941'],
+      ['more.png', '332 / 566'],
+      ['more1.png', '312 / 554'],
+    ]),
+  },
+  SIMMONS: {
+    title: 'SIMMONS Global Brand Website Redesign',
+    subtitle: '시몬스 글로벌 브랜드 웹사이트 리디자인',
+    meta: '팀프로젝트',
+    duration: 'Duration  2026 . 02 - 2026 . 03',
+    hero: 'simmons-detail-hero.png',
+    heroAlt: 'SIMMONS Offline experience hero',
+    role: 'UI Design / Visual Direction / Page Design',
+    tools: 'Figma / Photoshop / Illustrator',
+    contribution: [
+      '기획부터 오프라인 페이지와 이벤트 페이지 디자인을 담당했으며, 이미지 배치와 로고,',
+      '타이포그래피, 여백을 중심으로 브랜드 무드가 자연스럽게 전달되도록 화면을 구성했습니다.',
+    ],
+    overview: [
+      '시몬스의 브랜드 헤리티지와 기술력을 해외 사용자에게 전달하기 위한 글로벌 웹사이트 리디자인 프로젝트입니다.',
+      '브랜드가 가진 고급스러운 이미지와 신뢰감을 디지털 화면 안에서 자연스럽게 경험할 수 있도록 정보 구조와 비주얼 흐름을 재정리했습니다.',
+    ],
+    strategyImage: 'image.png',
+    strategyAlt: 'Close-up hand pressing soft fabric',
+    strategyTitle: 'Brand Strategy',
+    strategyCopy: [
+      '시몬스가 가진 브랜드 자산을 단순히 제품 정보로 전달하기보다, 브랜드의 분위기와 철학이 함께 느껴지는 웹 경험으로 확장하고자 했습니다.',
+      '브랜드의 헤리티지, 수면 기술, 프리미엄 이미지를 중심으로 키워드를 정리하고, 해외 사용자가 쉽게 이해할 수 있는 콘텐츠 흐름을 설계했습니다.',
+    ],
+    keyTitle: 'Key Screen & Experience',
+    keyScreens: makeKeyScreens([
+      ['001.png', '465 / 566'],
+      ['002.png', '968 / 1106'],
+      ['003.png', '636 / 619'],
+      ['004.png', '1860 / 1004'],
+      ['005.png', '522 / 522'],
+      ['006.png', '1550 / 986'],
+      ['007.png', '1438 / 1082'],
+      ['008.png', '1008 / 1210'],
+      ['009.png', '557 / 636'],
+      ['010.png', '842 / 1258'],
+      ['011.png', '1828 / 1382'],
+      ['012.png', '946 / 946'],
+    ]),
+  },
+  JUHAP: {
+    title: 'JUHAP AI Liquor Pairing App',
+    subtitle: '주합 AI 주류 페어링 앱',
+    meta: '팀프로젝트',
+    duration: 'Duration  2026 . 04 - 2026 . 05',
+    hero: 'work02.png',
+    heroAlt: 'JUHAP liquor pairing app hero',
+    role: 'UI/UX Design / Visual Direction',
+    tools: 'Figma / Photoshop',
+    contribution: [
+      '기획서 일부 구성에 참여하고, 주요 기능 화면의 UI 디자인을 담당했습니다.',
+      '메인, 랭킹, 투표, AI챗봇 등 서비스의 핵심 화면을 중심으로',
+      '정보 구조와 사용 흐름, 비주얼 무드가 자연스럽게 이어지도록 화면을 구성했습니다.',
+    ],
+    overview: [
+      'JUHAP은 사용자의 취향과 상황에 맞는 술과 안주 조합을 제안하는 AI 주류 페어링 앱입니다.',
+      '술을 고르는 과정에서 느끼는 어려움을 줄이고, 추천·랭킹·커뮤니티 기능을 통해 사용자가 더 쉽고 재미있게 취향을 발견할 수 있도록 기획했습니다.',
+    ],
+    strategyImage: 'tag01.png',
+    strategyAlt: 'JUHAP visual strategy',
+    strategyTitle: 'Brand Strategy',
+    strategyCopy: [
+      'JUHAP은 단순히 술 정보를 제공하는 앱이 아니라, 사용자의 취향과 순간에 맞는 조합을 발견하는 경험에 초점을 두었습니다.',
+      '술과 안주를 함께 즐기는 상황을 중심으로 서비스 키워드를 정리하고, 추천 기능과 커뮤니티 요소가 자연스럽게 연결되는 흐름을 설계했습니다.',
+    ],
+    keyTitle: 'Key Screen & Experience',
+    keyScreens: makeKeyScreens([
+      ['work02.png', '1080 / 1350'],
+      ['tag01.png', '1289 / 1934'],
+      ['tag02.png', '1289 / 1934'],
+      ['tag03.png', '1289 / 1934'],
+      ['bg2.png', '1692 / 1128'],
+      ['bg3.png', '1672 / 941'],
+      ['work000.png', '1080 / 1349'],
+      ['work001.png', '1080 / 1350'],
+      ['more.png', '332 / 566'],
+      ['more1.png', '312 / 554'],
+      ['ork000.png', '964 / 1261'],
+      ['work03.webp', '1333 / 2000'],
+    ]),
+  },
+}
 
 const sections: PortfolioSection[] = [
   {
@@ -631,11 +829,12 @@ function App() {
             <div
               className={`zoom-detail-canvas ${activeSection.id === 'losnij' ? 'has-losnij-detail' : ''} ${
                 activeSection.id === 'more' ? 'has-index-detail' : ''
+              } ${activeSection.id === 'works' ? 'has-works-detail' : ''
               }`}
               style={{
                 marginTop: isExpanded ? activeSection.expandedHeight : '100vh',
                 minHeight:
-                  activeSection.id === 'losnij'
+                  activeSection.id === 'losnij' || activeSection.id === 'works'
                     ? 'auto'
                     : isExpanded
                       ? Math.max(window.innerHeight, 720)
@@ -698,6 +897,7 @@ function App() {
                 work={activeWork}
                 isVisible={isWorkDetailVisible}
                 isClosing={isWorkDetailClosing}
+                onMoreProjects={closeWorkDetail}
               />
             </>
           )}
@@ -711,19 +911,109 @@ function App() {
 function WorkDetailPage({
   isClosing,
   isVisible,
+  onMoreProjects,
   work,
 }: {
   isClosing: boolean
   isVisible: boolean
+  onMoreProjects: () => void
   work: WorkItem
 }) {
   const [isFull, setIsFull] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const smoothScrollFrameRef = useRef<number | null>(null)
+  const smoothScrollTargetRef = useRef(0)
 
   const handleScroll = (event: UIEvent<HTMLElement>) => {
     setIsFull(event.currentTarget.scrollTop > 6)
   }
 
-  const isSimmons = work.title === 'SIMMONS'
+  const stopSmoothScroll = () => {
+    if (smoothScrollFrameRef.current) {
+      window.cancelAnimationFrame(smoothScrollFrameRef.current)
+      smoothScrollFrameRef.current = null
+    }
+  }
+
+  const animateSmoothScroll = () => {
+    const container = scrollContainerRef.current
+
+    if (!container) {
+      smoothScrollFrameRef.current = null
+      return
+    }
+
+    const next = container.scrollTop + (smoothScrollTargetRef.current - container.scrollTop) * 0.13
+    container.scrollTop = next
+
+    if (Math.abs(smoothScrollTargetRef.current - next) < 0.5) {
+      container.scrollTop = smoothScrollTargetRef.current
+      smoothScrollFrameRef.current = null
+      return
+    }
+
+    smoothScrollFrameRef.current = window.requestAnimationFrame(animateSmoothScroll)
+  }
+
+  const handleDetailWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    const container = scrollContainerRef.current
+
+    if (!container) return
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const maxScroll = container.scrollHeight - container.clientHeight
+    const currentTarget = smoothScrollFrameRef.current ? smoothScrollTargetRef.current : container.scrollTop
+    smoothScrollTargetRef.current = Math.max(0, Math.min(maxScroll, currentTarget + event.deltaY))
+
+    if (!smoothScrollFrameRef.current) {
+      smoothScrollFrameRef.current = window.requestAnimationFrame(animateSmoothScroll)
+    }
+  }
+
+  const returnToMoreProjects = () => {
+    const container = scrollContainerRef.current
+
+    stopSmoothScroll()
+
+    if (!container || container.scrollTop <= 4) {
+      onMoreProjects()
+      return
+    }
+
+    const initialScrollTop = container.scrollTop
+    let startedAt: number | null = null
+    const duration = 820
+
+    const scrollToTop = (now: number) => {
+      startedAt ??= now
+      const progress = Math.min((now - startedAt) / duration, 1)
+      const easedProgress = 1 - (1 - progress) ** 3
+
+      if (!scrollContainerRef.current) {
+        onMoreProjects()
+        return
+      }
+
+      scrollContainerRef.current.scrollTop = initialScrollTop * (1 - easedProgress)
+
+      if (progress < 1) {
+        smoothScrollFrameRef.current = window.requestAnimationFrame(scrollToTop)
+        return
+      }
+
+      smoothScrollFrameRef.current = null
+      scrollContainerRef.current.scrollTop = 0
+      onMoreProjects()
+    }
+
+    smoothScrollFrameRef.current = window.requestAnimationFrame(scrollToTop)
+  }
+
+  useEffect(() => stopSmoothScroll, [])
+
+  const projectDetail = projectDetails[work.title]
 
   return (
     <article
@@ -734,9 +1024,14 @@ function WorkDetailPage({
         event.stopPropagation()
       }}
     >
-      <div className="work-rising-scroll" onScroll={handleScroll}>
-        {isSimmons ? (
-          <SimmonsWorkDetail />
+      <div
+        className={`work-rising-scroll ${projectDetail ? 'has-simmons-detail' : ''}`}
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        onWheel={handleDetailWheel}
+      >
+        {projectDetail ? (
+          <ProjectWorkDetail detail={projectDetail} onMoreProjects={returnToMoreProjects} />
         ) : (
           <>
             <header className="work-rising-header">
@@ -763,30 +1058,177 @@ function WorkDetailPage({
   )
 }
 
-function SimmonsWorkDetail() {
-  const simmonsScreens = [
-    '스크린샷 2026-06-23 오전 2.08.38 1.png',
-    '스크린샷 2026-06-23 오전 4.04.23 1.png',
-    '스크린샷 2026-06-23 오전 2.08.56 1.png',
-    '스크린샷 2026-06-23 오전 4.04.34 1.png',
-    '스크린샷 2026-06-23 오전 2.09.18 1.png',
-    '스크린샷 2026-06-23 오전 4.04.41 1.png',
-    '스크린샷 2026-06-23 오전 2.09.08 1.png',
-    '스크린샷 2026-06-23 오전 4.04.51 1.png',
-  ]
+function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailContent; onMoreProjects: () => void }) {
+  const SIMMONS_KEY_LOOP_X = 1800
+  const SIMMONS_KEY_LOOP_Y = 1360
+  const dragStateRef = useRef<{ startX: number; startY: number; x: number; y: number } | null>(null)
+  const keyStageRef = useRef<HTMLDivElement | null>(null)
+  const keyStagePositionRef = useRef({ x: 0, y: 0 })
+  const keyStageTargetRef = useRef({ x: 0, y: 0 })
+  const keyStageFrameRef = useRef<number | null>(null)
+  const keyStageHoverRef = useRef({ x: 0, y: 0 })
+  const keyStageHoverTargetRef = useRef({ x: 0, y: 0 })
+  const keyStageHoverFrameRef = useRef<number | null>(null)
+  const [isDraggingKeyStage, setIsDraggingKeyStage] = useState(false)
+
+  const wrapKeyStage = (value: number, loop: number) => {
+    const wrapped = value % loop
+    return wrapped > loop / 2
+      ? wrapped - loop
+      : wrapped < -loop / 2
+        ? wrapped + loop
+        : wrapped
+  }
+
+  const paintKeyStage = () => {
+    const stage = keyStageRef.current
+
+    if (!stage) return
+
+    stage.style.setProperty('--simmons-pan-x', `${keyStagePositionRef.current.x}px`)
+    stage.style.setProperty('--simmons-pan-y', `${keyStagePositionRef.current.y}px`)
+    stage.style.setProperty('--simmons-hover-x', `${keyStageHoverRef.current.x}px`)
+    stage.style.setProperty('--simmons-hover-y', `${keyStageHoverRef.current.y}px`)
+  }
+
+  const animateKeyStage = () => {
+    const position = keyStagePositionRef.current
+    const xDelta = wrapKeyStage(keyStageTargetRef.current.x - position.x, SIMMONS_KEY_LOOP_X)
+    const yDelta = wrapKeyStage(keyStageTargetRef.current.y - position.y, SIMMONS_KEY_LOOP_Y)
+
+    keyStagePositionRef.current = {
+      x: wrapKeyStage(position.x + xDelta * 0.24, SIMMONS_KEY_LOOP_X),
+      y: wrapKeyStage(position.y + yDelta * 0.24, SIMMONS_KEY_LOOP_Y),
+    }
+    paintKeyStage()
+
+    if (Math.abs(xDelta) < 0.16 && Math.abs(yDelta) < 0.16) {
+      keyStagePositionRef.current = keyStageTargetRef.current
+      paintKeyStage()
+      keyStageFrameRef.current = null
+      return
+    }
+
+    keyStageFrameRef.current = window.requestAnimationFrame(animateKeyStage)
+  }
+
+  const animateKeyStageHover = () => {
+    const position = keyStageHoverRef.current
+    keyStageHoverRef.current = {
+      x: position.x + (keyStageHoverTargetRef.current.x - position.x) * 0.2,
+      y: position.y + (keyStageHoverTargetRef.current.y - position.y) * 0.2,
+    }
+    paintKeyStage()
+
+    if (
+      Math.abs(keyStageHoverTargetRef.current.x - keyStageHoverRef.current.x) < 0.12 &&
+      Math.abs(keyStageHoverTargetRef.current.y - keyStageHoverRef.current.y) < 0.12
+    ) {
+      keyStageHoverRef.current = keyStageHoverTargetRef.current
+      paintKeyStage()
+      keyStageHoverFrameRef.current = null
+      return
+    }
+
+    keyStageHoverFrameRef.current = window.requestAnimationFrame(animateKeyStageHover)
+  }
+
+  const moveKeyStageHover = (x: number, y: number) => {
+    keyStageHoverTargetRef.current = { x, y }
+
+    if (!keyStageHoverFrameRef.current) {
+      keyStageHoverFrameRef.current = window.requestAnimationFrame(animateKeyStageHover)
+    }
+  }
+
+  const moveKeyStage = (xDelta: number, yDelta: number) => {
+    keyStageTargetRef.current = {
+      x: wrapKeyStage(keyStageTargetRef.current.x + xDelta, SIMMONS_KEY_LOOP_X),
+      y: wrapKeyStage(keyStageTargetRef.current.y + yDelta, SIMMONS_KEY_LOOP_Y),
+    }
+
+    if (!keyStageFrameRef.current) {
+      keyStageFrameRef.current = window.requestAnimationFrame(animateKeyStage)
+    }
+  }
+
+  const handleKeyStageWheel = (event: ReactWheelEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    moveKeyStage(-event.deltaX, -event.deltaY)
+  }
+
+  const handleKeyStagePointerDown = (event: PointerEvent<HTMLElement>) => {
+    dragStateRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      x: keyStagePositionRef.current.x,
+      y: keyStagePositionRef.current.y,
+    }
+    setIsDraggingKeyStage(true)
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const handleKeyStagePointerMove = (event: PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    moveKeyStageHover(
+      ((event.clientX - rect.left) / rect.width - 0.5) * 24,
+      ((event.clientY - rect.top) / rect.height - 0.5) * 18,
+    )
+
+    const dragState = dragStateRef.current
+
+    if (!dragState) return
+
+    const next = {
+      x: wrapKeyStage(dragState.x + event.clientX - dragState.startX, SIMMONS_KEY_LOOP_X),
+      y: wrapKeyStage(dragState.y + event.clientY - dragState.startY, SIMMONS_KEY_LOOP_Y),
+    }
+    keyStageTargetRef.current = next
+    keyStagePositionRef.current = next
+    paintKeyStage()
+  }
+
+  const handleKeyStagePointerLeave = () => {
+    if (!dragStateRef.current) {
+      moveKeyStageHover(0, 0)
+    }
+  }
+
+  const stopKeyStageDrag = (event: PointerEvent<HTMLElement>) => {
+    dragStateRef.current = null
+    setIsDraggingKeyStage(false)
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  useEffect(
+    () => () => {
+      if (keyStageFrameRef.current) {
+        window.cancelAnimationFrame(keyStageFrameRef.current)
+      }
+
+      if (keyStageHoverFrameRef.current) {
+        window.cancelAnimationFrame(keyStageHoverFrameRef.current)
+      }
+    },
+    [],
+  )
 
   return (
     <div className="simmons-detail">
       <header className="simmons-detail-header">
-        <h2>SIMMONS Global Brand Website Redesign</h2>
-        <p>시몬스 글로벌 브랜드 웹사이트 리디자인</p>
+        <h2>{detail.title}</h2>
+        <p>{detail.subtitle}</p>
       </header>
 
       <div className="simmons-detail-meta" aria-label="Project information">
-        <span>팀프로젝트</span>
-        <span>Duration&nbsp;&nbsp;2026 . 02 - 2026 . 03</span>
+        <span>{detail.meta}</span>
+        <span>{detail.duration}</span>
         <nav aria-label="Project links">
-          <a href="https://www.simmons.co.kr/" target="_blank" rel="noreferrer">
+          <a href={import.meta.env.BASE_URL}>
             웹사이트보기↗
           </a>
           <a href={import.meta.env.BASE_URL}>기획서보기↗</a>
@@ -794,71 +1236,112 @@ function SimmonsWorkDetail() {
       </div>
 
       <figure className="simmons-detail-hero">
-        <img src={assetPath('simmons-detail-hero.png')} alt="SIMMONS Offline experience hero" />
+        <img src={assetPath(detail.hero)} alt={detail.heroAlt} />
       </figure>
 
+      <section className="simmons-credit-list">
+        <strong>PROJECT CREDIT</strong>
+        <dl>
+          <div>
+            <dt>ROLE</dt>
+            <dd>{detail.role}</dd>
+          </div>
+          <div>
+            <dt>TOOLS</dt>
+            <dd>{detail.tools}</dd>
+          </div>
+          <div>
+            <dt>CONTRIBUTION</dt>
+            <dd>
+              {detail.contribution.map((line, index) => (
+                <Fragment key={line}>
+                  {index > 0 && <br />}
+                  {line}
+                </Fragment>
+              ))}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
       <section className="simmons-detail-overview">
-        <div className="simmons-overview-copy">
-          <h3>Project Overview</h3>
-          <p>
-            시몬스의 브랜드 헤리티지와 기술력을 해외 사용자에게 전달하기 위한 글로벌 웹사이트 리디자인
-            프로젝트입니다. 브랜드가 가진 고급스러운 이미지와 신뢰감을 디지털 화면 안에서 자연스럽게 경험할 수
-            있도록 정보 구조와 비주얼 흐름을 재정리했습니다.
-          </p>
-        </div>
-        <div className="simmons-credit-list">
-          <strong>PROJECT CREDIT</strong>
-          <dl>
-            <div>
-              <dt>ROLE</dt>
-              <dd>UI Design / Visual Direction / Page Design</dd>
-            </div>
-            <div>
-              <dt>TOOLS</dt>
-              <dd>Figma / Photoshop / Illustrator</dd>
-            </div>
-            <div>
-              <dt>CONTRIBUTION</dt>
-              <dd>
-                기획부터 오프라인 페이지와 이벤트 페이지 디자인을 담당했으며, 이미지 배치와 로고, 타이포그래피,
-                여백을 중심으로 브랜드 무드가 자연스럽게 전달되도록 화면을 구성했습니다.
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <h3>Project Overview</h3>
+        <p>
+          {detail.overview.map((line, index) => (
+            <Fragment key={line}>
+              {index > 0 && <br />}
+              {line}
+            </Fragment>
+          ))}
+        </p>
       </section>
 
       <section className="simmons-strategy">
         <figure>
-          <img src={assetPath('image.png')} alt="Close-up hand pressing soft fabric" />
+          <img src={assetPath(detail.strategyImage)} alt={detail.strategyAlt} />
         </figure>
         <div>
-          <h3>Brand Strategy</h3>
-          <p>
-            시몬스가 가진 브랜드 자산을 단순히 제품 정보로 전달하기보다, 브랜드의 분위기와 철학이 함께 느껴지는 웹
-            경험으로 확장하고자 했습니다.
-          </p>
-          <p>
-            브랜드의 헤리티지, 수면 기술, 프리미엄 이미지를 중심으로 키워드를 정리하고, 해외 사용자가 쉽게 이해할
-            수 있는 콘텐츠 흐름을 설계했습니다.
-          </p>
+          <h3>{detail.strategyTitle}</h3>
+          {detail.strategyCopy.map((copy) => (
+            <p key={copy}>{copy}</p>
+          ))}
         </div>
       </section>
 
       <section className="simmons-key-experience" aria-label="Key Screen and Experience">
-        <h3>Key Screen &amp; Experience</h3>
-        <div className="simmons-key-rails" aria-hidden="true">
-          {[0, 1, 2].map((railIndex) => (
-            <div className={`simmons-key-rail simmons-key-rail-${railIndex + 1}`} key={railIndex}>
-              {Array.from({ length: 8 }, (_, index) => simmonsScreens[(index + railIndex * 2) % 6]).map(
-                (screen, index) => (
-                  <figure className="simmons-key-shot" key={`${railIndex}-${screen}-${index}`}>
-                    <img src={assetPath(screen)} alt="" />
+        <div
+          ref={keyStageRef}
+          className={`simmons-key-stage ${isDraggingKeyStage ? 'is-dragging' : ''}`}
+          onWheel={handleKeyStageWheel}
+          onWheelCapture={handleKeyStageWheel}
+          onPointerDown={handleKeyStagePointerDown}
+          onPointerMove={handleKeyStagePointerMove}
+          onPointerLeave={handleKeyStagePointerLeave}
+          onPointerUp={stopKeyStageDrag}
+          onPointerCancel={stopKeyStageDrag}
+          style={{
+            '--simmons-pan-x': '0px',
+            '--simmons-pan-y': '0px',
+            '--simmons-hover-x': '0px',
+            '--simmons-hover-y': '0px',
+          } as SimmonsKeyStageStyle}
+        >
+          <div className="simmons-key-title">
+            <h3>{detail.keyTitle}</h3>
+            <button
+              className="simmons-more-projects"
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                onMoreProjects()
+              }}
+              onPointerDown={(event) => {
+                event.stopPropagation()
+              }}
+            >
+              [ MORE PROJECTS ]
+            </button>
+          </div>
+          <div className="simmons-key-canvas" aria-hidden="true">
+            {[-1, 0, 1].map((xOffset) =>
+              [-1, 0, 1].map((yOffset) =>
+                detail.keyScreens.map((shot) => (
+                  <figure
+                    className="simmons-key-shot"
+                    key={`${xOffset}-${yOffset}-${shot.screen}`}
+                    style={{
+                      '--shot-x': `calc(${shot.x} + ${xOffset * SIMMONS_KEY_LOOP_X}px)`,
+                      '--shot-y': `calc(${shot.y} + ${yOffset * SIMMONS_KEY_LOOP_Y}px)`,
+                      '--shot-width': shot.width,
+                      '--shot-ratio': shot.ratio,
+                    } as SimmonsKeyShotStyle}
+                  >
+                    <img src={assetPath(shot.screen)} alt="" draggable="false" />
                   </figure>
-                ),
-              )}
-            </div>
-          ))}
+                )),
+              ),
+            ).flat(2)}
+          </div>
         </div>
       </section>
     </div>
@@ -1072,8 +1555,8 @@ function PortfolioFooter({
             <button className="portfolio-footer-menu-item" data-label="WORKS" type="button" onClick={() => onNavigate('works')}>
               <span>WORKS</span>
             </button>
-            <button className="portfolio-footer-menu-item" data-label="INDEX" type="button" onClick={() => onNavigate('more')}>
-              <span>INDEX</span>
+            <button className="portfolio-footer-menu-item" data-label="ARCHIVE" type="button" onClick={() => onNavigate('more')}>
+              <span>ARCHIVE</span>
             </button>
             <button className="portfolio-footer-menu-item" data-label="CONTACT" type="button" onClick={onContact}>
               <span>CONTACT</span>
@@ -1082,17 +1565,17 @@ function PortfolioFooter({
         </section>
       </div>
 
-      <div className="portfolio-footer-marquee" aria-label="LOSNIJ portfolio">
+      <div className="portfolio-footer-marquee" aria-label="SOL portfolio">
         <div>
-          <span>LOSNIJ PORTFOLIO</span>
-          <span>LOSNIJ PORTFOLIO</span>
+          <span>SOL PORTFOLIO</span>
+          <span>SOL PORTFOLIO</span>
         </div>
       </div>
 
       <div className="portfolio-footer-meta">
         <div>
           <span>SEOUL, KR</span>
-          <span>LOSNIJ PORTFOLIO</span>
+          <span>SOL PORTFOLIO</span>
         </div>
         <span>©2026 ALL RIGHTS RESERVED</span>
       </div>
@@ -1253,8 +1736,9 @@ function CustomCursor() {
     const handlePointerMove = (event: globalThis.PointerEvent) => {
       const target = document.elementFromPoint(event.clientX, event.clientY)
       const isCursorArea = Boolean(target?.closest('.app, .contact-modal, .more-scroll-page'))
+      const shouldUseNativeCursor = Boolean(target?.closest('.simmons-key-stage'))
 
-      if (!isCursorArea) {
+      if (!isCursorArea || shouldUseNativeCursor) {
         hideCursor()
         return
       }

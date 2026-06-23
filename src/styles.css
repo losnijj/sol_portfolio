@@ -728,7 +728,7 @@ button {
   flex-direction: column;
   gap: clamp(22px, 3.4vh, 44px);
   color: #000000;
-  font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
+  font-family: 'Afacad Flux', Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
   text-align: left;
   mix-blend-mode: normal;
 }
@@ -1808,6 +1808,10 @@ button {
   background: #ffffff;
 }
 
+.zoom-detail-canvas.has-works-detail .zoom-detail-placeholder {
+  min-height: 0;
+}
+
 .losnij-about {
   position: relative;
   z-index: 3;
@@ -2357,7 +2361,7 @@ button {
     clamp(38px, 2.6vw, 50px)
     clamp(46px, 4.2vw, 80px)
     clamp(64px, 5.4vw, 104px)
-    clamp(34px, 2.6vw, 50px);
+    clamp(46px, 4.2vw, 80px);
 }
 
 .losnij-tools-section {
@@ -2415,7 +2419,8 @@ button {
 .losnij-focus-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(34px, 3.8vw, 72px);
+  column-gap: clamp(44px, 4.8vw, 92px);
+  padding-inline: clamp(6px, 0.9vw, 18px);
 }
 
 .losnij-focus-grid h4 {
@@ -2440,7 +2445,8 @@ button {
   grid-template-columns: clamp(86px, 4.6vw, 92px) 1fr;
   gap: clamp(30px, 4.4vw, 86px);
   align-items: center;
-  min-height: clamp(58px, 4.4vw, 84px);
+  min-height: clamp(76px, 5.4vw, 104px);
+  padding-block: clamp(5px, 0.7vw, 12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.52);
 }
 
@@ -2818,9 +2824,9 @@ button {
 
 .portfolio-footer-links {
   position: relative;
-  min-height: clamp(280px, 37vh, 390px);
+  min-height: clamp(230px, 31vh, 328px);
   box-sizing: border-box;
-  padding: clamp(34px, 4vw, 72px) clamp(22px, 3vw, 58px) clamp(28px, 3.5vw, 62px);
+  padding: clamp(28px, 3.2vw, 58px) clamp(22px, 3vw, 58px) clamp(20px, 2.4vw, 44px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 30px;
@@ -2830,10 +2836,10 @@ button {
 .portfolio-footer-links::after {
   content: '';
   position: absolute;
-  top: calc(clamp(34px, 4vw, 72px) + clamp(12px, 0.92vw, 18px) + clamp(18px, 2vw, 32px));
+  top: calc(clamp(28px, 3.2vw, 58px) + clamp(10px, 0.72vw, 14px) + clamp(14px, 1.5vw, 24px));
   right: clamp(22px, 3vw, 58px);
   left: clamp(22px, 3vw, 58px);
-  border-top: 4px solid #111111;
+  border-top: 2px solid #111111;
 }
 
 .portfolio-footer-links section {
@@ -2842,9 +2848,9 @@ button {
 
 .portfolio-footer-links p {
   margin: 0;
-  padding-bottom: clamp(18px, 2vw, 32px);
-  font-size: clamp(14px, 1.05vw, 20px);
-  font-weight: 600;
+  padding-bottom: clamp(14px, 1.5vw, 24px);
+  font-size: clamp(12px, 0.86vw, 16px);
+  font-weight: 480;
   line-height: 1;
 }
 
@@ -2852,8 +2858,8 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(16px, 1.35vw, 26px);
-  padding-top: clamp(22px, 2vw, 34px);
+  gap: clamp(13px, 1.08vw, 21px);
+  padding-top: clamp(17px, 1.48vw, 26px);
 }
 
 .portfolio-footer a,
@@ -2864,10 +2870,10 @@ button {
 
 .portfolio-footer-links section a,
 .portfolio-footer-navigation button {
-  font-size: clamp(22px, 2.2vw, 42px);
-  font-weight: 650;
+  font-size: clamp(18px, 1.78vw, 34px);
+  font-weight: 560;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
 }
 
 .portfolio-footer-top:hover,
@@ -2912,16 +2918,20 @@ button {
 .portfolio-footer-top {
   align-self: end;
   padding: 0 0 2px;
-  font-size: clamp(18px, 1.45vw, 28px);
-  font-weight: 650;
+  font-size: clamp(14px, 1.1vw, 21px);
+  font-weight: 520;
   line-height: 1;
   transition: opacity 0.24s ease;
 }
 
 .portfolio-footer-marquee {
   display: flex;
-  min-height: clamp(196px, 18vw, 346px);
-  align-items: center;
+  min-height: clamp(168px, 16.6vw, 316px);
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: clamp(8px, 1vw, 18px);
+  padding-bottom: clamp(2px, 0.35vw, 8px);
+  box-sizing: border-box;
   overflow: hidden;
   background: #ffffff;
   color: #000000;
@@ -2929,27 +2939,32 @@ button {
 
 .portfolio-footer-marquee div {
   display: flex;
-  width: max-content;
+  width: 100%;
   align-items: center;
+  justify-content: center;
   animation: none;
   transform: none;
   will-change: auto;
 }
 
 .portfolio-footer-marquee span {
-  display: block;
-  padding: 0 clamp(18px, 1.8vw, 34px);
+  display: none;
+  padding: 0;
   font-family: var(--font-footer-display);
-  font-size: clamp(132px, 16.4vw, 315px);
-  font-weight: 650;
+  font-size: clamp(128px, 16.7vw, 320px);
+  font-weight: 620;
   line-height: 0.9;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.045em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
+.portfolio-footer-marquee span:first-child {
+  display: block;
+}
+
 .portfolio-footer-meta {
-  padding: clamp(13px, 1.18vw, 20px) clamp(22px, 3vw, 58px) clamp(15px, 1.3vw, 22px);
+  padding: clamp(13px, 1.18vw, 20px) clamp(22px, 3vw, 58px) clamp(6px, 0.52vw, 10px);
   display: flex;
   justify-content: space-between;
   gap: 24px;
@@ -2958,7 +2973,7 @@ button {
   color: #111111;
   font-size: clamp(11px, 0.82vw, 15px);
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.2;
 }
 
 .portfolio-footer-meta div {
@@ -3148,6 +3163,10 @@ button {
   -webkit-overflow-scrolling: touch;
 }
 
+.work-rising-scroll.has-simmons-detail {
+  padding-bottom: 0;
+}
+
 .work-rising-page.is-visible {
   transform: translate3d(0, 0, 0);
 }
@@ -3228,8 +3247,8 @@ button {
 }
 
 .simmons-detail {
-  min-height: 330vh;
-  padding-bottom: clamp(80px, 10vw, 180px);
+  min-height: 0;
+  padding-bottom: 0;
   color: #000000;
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
 }
@@ -3300,50 +3319,53 @@ button {
 
 .simmons-detail-overview {
   display: grid;
-  grid-template-columns: minmax(420px, 817px) minmax(520px, 890px);
-  justify-content: space-between;
-  gap: clamp(110px, 10vw, 210px);
-  margin: clamp(110px, 11vw, 210px) 0 0;
-  padding-bottom: clamp(130px, 13vw, 250px);
+  justify-items: center;
+  gap: clamp(58px, 5.8vw, 112px);
+  min-height: clamp(620px, 58vw, 1040px);
+  margin: clamp(120px, 11vw, 210px) 0 0;
+  align-content: center;
+  text-align: center;
 }
 
 .simmons-detail-overview h3 {
   margin: 0;
-  font-size: clamp(34px, 2.7vw, 52px);
+  font-size: clamp(36px, 2.8vw, 56px);
   font-weight: 600;
-  line-height: 0.96;
+  line-height: 1;
   letter-spacing: 0.004em;
 }
 
-.simmons-overview-copy {
-  display: flex;
-  min-height: clamp(270px, 19.48vw, 374px);
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.simmons-overview-copy p,
 .simmons-credit-list,
 .simmons-credit-list dl,
 .simmons-credit-list dt,
 .simmons-credit-list dd {
   margin: 0;
   font-size: clamp(19px, 1.25vw, 24px);
-  font-weight: 400;
+  font-weight: 360;
   line-height: 1.48;
   letter-spacing: 0.01em;
   word-break: keep-all;
 }
 
-.simmons-overview-copy p,
-.simmons-credit-list dl div:last-child dd {
+.simmons-detail-overview p {
+  margin: 0;
+  max-width: 1450px;
+  font-size: clamp(20px, 1.35vw, 28px);
   font-weight: 400;
+  line-height: 1.58;
+  letter-spacing: 0.004em;
+  word-break: keep-all;
+}
+
+.simmons-credit-list dl div:last-child dd {
+  font-weight: 340;
   letter-spacing: 0.004em;
 }
 
 .simmons-credit-list {
   display: block;
-  padding-top: clamp(28px, 2.25vw, 43px);
+  margin-top: clamp(24px, 2vw, 40px);
+  padding: 0 clamp(12px, 1vw, 20px);
 }
 
 .simmons-credit-list strong,
@@ -3360,14 +3382,14 @@ button {
 
 .simmons-credit-list dl {
   display: grid;
-  gap: clamp(26px, 2.85vw, 54px);
+  gap: clamp(18px, 1.9vw, 34px);
   margin-top: clamp(36px, 3.4vw, 64px);
 }
 
 .simmons-credit-list dl div {
   display: grid;
-  grid-template-columns: clamp(120px, 10.8vw, 206px) 1fr;
-  gap: clamp(36px, 4vw, 76px);
+  grid-template-columns: clamp(92px, 7vw, 134px) 1fr;
+  gap: clamp(18px, 2vw, 34px);
 }
 
 .simmons-credit-list dl div:last-child {
@@ -3380,8 +3402,8 @@ button {
 
 .simmons-strategy {
   display: grid;
-  grid-template-columns: minmax(320px, 0.51fr) minmax(320px, 0.49fr);
-  gap: clamp(44px, 6vw, 116px);
+  grid-template-columns: minmax(320px, 0.5fr) minmax(320px, 0.5fr);
+  gap: clamp(28px, 3.4vw, 64px);
   align-items: stretch;
   margin-top: 0;
 }
@@ -3425,148 +3447,150 @@ button {
 
 .simmons-key-experience {
   position: relative;
-  min-height: clamp(1700px, 170vw, 3200px);
-  margin-top: clamp(130px, 12vw, 230px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  width: calc(100% + (clamp(16px, 1.35vw, 28px) * 2));
+  margin-top: clamp(72px, 7vw, 140px);
+  margin-left: calc(clamp(16px, 1.35vw, 28px) * -1);
+  margin-right: calc(clamp(16px, 1.35vw, 28px) * -1);
   overflow: hidden;
+  background: #fff;
 }
 
-.simmons-key-experience h3 {
+.simmons-key-stage {
   position: sticky;
-  z-index: 6;
-  top: 48%;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  cursor: grab !important;
+  touch-action: none;
+  user-select: none;
+}
+
+.simmons-key-stage *,
+.simmons-key-stage.is-dragging,
+.simmons-key-stage.is-dragging * {
+  cursor: grab !important;
+}
+
+.simmons-key-stage.is-dragging,
+.simmons-key-stage.is-dragging * {
+  cursor: grabbing !important;
+}
+
+.simmons-key-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: 100%;
+  max-width: 1360px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: auto;
+}
+
+.simmons-key-stage h3 {
   margin: 0;
-  color: rgba(0, 0, 0, 0.82);
-  font-size: clamp(48px, 5.6vw, 108px);
+  color: #050505;
+  font-size: clamp(42px, 5.2vw, 92px);
   font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.06em;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
   text-align: center;
   text-transform: uppercase;
-  mix-blend-mode: multiply;
-  pointer-events: none;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
 }
 
-.simmons-key-rails {
+.simmons-more-projects {
+  display: block;
+  width: fit-content;
+  margin: clamp(18px, 1.7vw, 32px) auto 0;
+  padding: 8px 10px;
+  color: #050505;
+  font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
+  font-size: clamp(13px, 0.9vw, 17px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: auto;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease;
+}
+
+.simmons-more-projects:hover,
+.simmons-more-projects:focus-visible {
+  opacity: 0.48;
+}
+
+.simmons-key-canvas {
   position: absolute;
-  inset: -8% 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 0.92fr 0.9fr 0.94fr;
-  gap: clamp(56px, 9vw, 172px);
-  align-items: start;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-}
-
-.simmons-key-rail {
-  display: grid;
-  gap: clamp(180px, 20vw, 380px);
+  transform: translate3d(
+    calc(var(--simmons-pan-x) + var(--simmons-hover-x)),
+    calc(var(--simmons-pan-y) + var(--simmons-hover-y)),
+    0
+  );
   will-change: transform;
 }
 
-.simmons-key-rail-1 {
-  padding-top: clamp(0px, 1vw, 20px);
-  animation: simmonsRailUp 28s linear infinite;
-}
-
-.simmons-key-rail-2 {
-  padding-top: clamp(260px, 26vw, 500px);
-  animation: simmonsRailDown 34s linear infinite;
-}
-
-.simmons-key-rail-3 {
-  padding-top: clamp(130px, 14vw, 270px);
-  animation: simmonsRailUp 31s linear infinite;
-}
-
 .simmons-key-shot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(150px, var(--shot-width), 360px);
+  aspect-ratio: var(--shot-ratio);
   margin: 0;
   overflow: hidden;
-  background: #f3f1ec;
+  background: transparent;
+  transform: translate3d(var(--shot-x), var(--shot-y), 0) translate(-50%, -50%);
 }
 
 .simmons-key-shot img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  pointer-events: none;
 }
 
-.simmons-key-rail-1 .simmons-key-shot:nth-child(odd),
-.simmons-key-rail-3 .simmons-key-shot:nth-child(even) {
-  width: min(29vw, 560px);
-  aspect-ratio: 900 / 506;
+.simmons-key-shot:nth-child(3n + 2) {
+  z-index: 2;
 }
 
-.simmons-key-rail-1 .simmons-key-shot:nth-child(even),
-.simmons-key-rail-2 .simmons-key-shot:nth-child(odd),
-.simmons-key-rail-3 .simmons-key-shot:nth-child(odd) {
-  width: min(34vw, 650px);
-  aspect-ratio: 900 / 508;
-}
-
-.simmons-key-rail-2 .simmons-key-shot:nth-child(even) {
-  width: min(24vw, 460px);
-  aspect-ratio: 900 / 563;
-}
-
-.simmons-key-rail-1 .simmons-key-shot:nth-child(3n + 2) {
-  justify-self: end;
-}
-
-.simmons-key-rail-2 .simmons-key-shot:nth-child(3n + 1) {
-  justify-self: center;
-}
-
-.simmons-key-rail-3 .simmons-key-shot:nth-child(3n) {
-  justify-self: end;
-}
-
-@keyframes simmonsRailUp {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(0, -33.333%, 0);
-  }
-}
-
-@keyframes simmonsRailDown {
-  from {
-    transform: translate3d(0, -33.333%, 0);
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-  }
+.simmons-key-shot:nth-child(4n) {
+  z-index: 3;
 }
 
 @media (max-width: 760px) {
   .simmons-key-experience {
-    min-height: 1900px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
     margin-top: 96px;
   }
 
-  .simmons-key-experience h3 {
-    top: 42%;
-    font-size: clamp(40px, 15vw, 72px);
-    letter-spacing: -0.07em;
+  .simmons-key-title {
+    max-width: 94vw;
   }
 
-  .simmons-key-rails {
-    inset: -4% -42%;
-    grid-template-columns: repeat(3, minmax(220px, 1fr));
-    gap: 48px;
+  .simmons-key-stage h3 {
+    font-size: clamp(34px, 12vw, 58px);
+    letter-spacing: -0.075em;
   }
 
-  .simmons-key-rail {
-    gap: 220px;
-  }
-
-  .simmons-key-rail-1 .simmons-key-shot:nth-child(n),
-  .simmons-key-rail-2 .simmons-key-shot:nth-child(n),
-  .simmons-key-rail-3 .simmons-key-shot:nth-child(n) {
-    width: min(74vw, 360px);
+  .simmons-key-shot:nth-child(n) {
+    width: clamp(150px, calc(var(--shot-width) * 1.35), 280px);
   }
 }
 
@@ -4908,7 +4932,7 @@ button {
   }
 
   .portfolio-footer-meta {
-    padding: 14px 18px;
+    padding: 14px 18px 7px;
     flex-wrap: wrap;
     gap: 8px 16px;
     font-size: 10px;

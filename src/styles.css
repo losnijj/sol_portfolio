@@ -1815,7 +1815,7 @@ button {
 .archive-detail-grid {
   position: absolute;
   z-index: 1;
-  top: calc(var(--overlay-works-top) + 8px);
+  top: calc(var(--overlay-works-top) + 10px);
   left: calc(42px * var(--expanded-content-inverse));
   width: calc((100% - (84px * var(--expanded-content-inverse))) / var(--expanded-content-inverse));
   min-height: 4900px;
@@ -3030,19 +3030,20 @@ button {
 .portfolio-footer-navigation button {
   font-size: clamp(16px, 1.56vw, 30px);
   font-weight: 560;
-  line-height: 1;
+  line-height: 1.12;
   letter-spacing: 0.025em;
 }
 
 .portfolio-footer-top:hover,
 .portfolio-footer-top:focus-visible {
-  opacity: 0.46;
+  opacity: 1;
 }
 
 .portfolio-footer-menu-item {
   position: relative;
   display: block;
   overflow: hidden;
+  padding-bottom: 0.08em;
 }
 
 .portfolio-footer-menu-item::after,
@@ -3075,11 +3076,11 @@ button {
 
 .portfolio-footer-top {
   align-self: end;
-  padding: 0 0 2px;
-  font-size: clamp(14px, 1.1vw, 21px);
-  font-weight: 520;
-  line-height: 1;
-  letter-spacing: 0.04em;
+  padding: 0 0 0.08em;
+  font-size: clamp(15px, 1.18vw, 23px);
+  font-weight: 760;
+  line-height: 1.12;
+  letter-spacing: 0.035em;
   transition: opacity 0.24s ease;
 }
 
@@ -3548,7 +3549,7 @@ button {
   display: block;
   width: fit-content;
   max-width: 100%;
-  color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.36);
 }
 
 .simmons-overview-line > span {
@@ -3556,14 +3557,14 @@ button {
 }
 
 .simmons-overview-line > span:first-child {
-  opacity: calc(0.14 + (var(--overview-progress) * 0.46));
+  opacity: calc(0.5 + (var(--overview-progress) * 0.18));
 }
 
 .simmons-overview-line > span:last-child {
   position: absolute;
   inset: 0;
   color: #000000;
-  clip-path: inset(0 calc((1 - var(--overview-progress)) * 100%) 0 0);
+  clip-path: inset(calc((1 - var(--overview-progress)) * 100%) 0 0 0);
   pointer-events: none;
 }
 

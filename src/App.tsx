@@ -1772,7 +1772,7 @@ function PortfolioFooter({
     <footer className="portfolio-footer">
       <div className="portfolio-footer-links">
         <section>
-          <p>(Follow)</p>
+          <p>(FOLLOW)</p>
           <div>
             <a className="portfolio-footer-menu-item" data-label="Instagram" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
               <span>Instagram</span>
@@ -1783,12 +1783,12 @@ function PortfolioFooter({
           </div>
         </section>
 
-        <button className="portfolio-footer-top" type="button" onClick={onTop}>
-          BACK TO TOP
+        <button className="portfolio-footer-top portfolio-footer-menu-item" data-label="[ BACK TO TOP ]" type="button" onClick={onTop}>
+          <span>[ BACK TO TOP ]</span>
         </button>
 
         <section className="portfolio-footer-navigation">
-          <p>(Navigation)</p>
+          <p>(NAVIGATION)</p>
           <div>
             <button className="portfolio-footer-menu-item" data-label="About" type="button" onClick={() => onNavigate('losnij')}>
               <span>About</span>
@@ -2375,6 +2375,9 @@ function SectionContent({
               조용하지만 분명한 화면을 디자인합니다.
             </span>
           </p>
+          {isExpandedView && (
+            <ArchiveImageGrid className="archive-expanded-grid" />
+          )}
         </>
       )}
     </div>

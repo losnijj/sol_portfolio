@@ -1287,7 +1287,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: 10;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1933,9 +1933,9 @@ button {
 .zoom-detail-canvas {
   position: relative;
   z-index: 0;
-  width: 100vw;
-  min-width: 100vw;
-  max-width: none;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   margin-right: auto;
   margin-left: auto;
@@ -2259,8 +2259,8 @@ button {
 
 .losnij-rising-content {
   box-sizing: border-box;
-  width: calc(100% - 2px);
-  margin-left: 2px;
+  width: 100%;
+  margin-left: 0;
   padding: 0;
   background: #212121;
   position: relative;
@@ -5540,8 +5540,8 @@ button {
   }
 
   .zoom-detail-canvas {
-    width: 100vw;
-    min-width: 100vw;
+    width: 100%;
+    min-width: 100%;
   }
 
   .losnij-about-hero,

@@ -171,20 +171,15 @@ const defaultKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio
 ]
 
 const juhapKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
-  { x: '-62vw', y: '-690px', width: '12.4vw' },
-  { x: '-28vw', y: '-560px', width: '11.5vw' },
-  { x: '8vw', y: '-705px', width: '12.4vw' },
-  { x: '48vw', y: '-520px', width: '13.8vw' },
-  { x: '-49vw', y: '-320px', width: '11.6vw' },
-  { x: '-8vw', y: '-160px', width: '12.6vw' },
-  { x: '34vw', y: '60px', width: '11.2vw' },
-  { x: '62vw', y: '300px', width: '10.8vw' },
-  { x: '-58vw', y: '260px', width: '12.4vw' },
-  { x: '-20vw', y: '520px', width: '11.4vw' },
-  { x: '20vw', y: '685px', width: '11.6vw' },
-  { x: '56vw', y: '825px', width: '10.8vw' },
-  { x: '-50vw', y: '900px', width: '11.2vw' },
-  { x: '-6vw', y: '1060px', width: '10.8vw' },
+  { x: '-60vw', y: '-650px', width: '12.6vw' },
+  { x: '-18vw', y: '-560px', width: '12.4vw' },
+  { x: '25vw', y: '-690px', width: '12.8vw' },
+  { x: '58vw', y: '-410px', width: '13.8vw' },
+  { x: '-45vw', y: '-210px', width: '11.8vw' },
+  { x: '4vw', y: '-35px', width: '13vw' },
+  { x: '47vw', y: '245px', width: '11.6vw' },
+  { x: '-56vw', y: '365px', width: '12.4vw' },
+  { x: '-13vw', y: '610px', width: '12.8vw' },
 ]
 
 const makeKeyScreens = (
@@ -300,7 +295,6 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     keyScreens: makeKeyScreens(
       [
         ['01.png', '240 / 240'],
-        ['02.png', '233 / 233'],
         ['07.png', '650 / 1226'],
         ['08.png', '476 / 696'],
         ['09.png', '420 / 419'],
@@ -682,8 +676,9 @@ function App() {
 
       if (activeSection.id === 'losnij') {
         const coverPinStart = Math.max(activeSection.expandedHeight - window.innerHeight, 0)
+        const detailStart = Math.max(activeSection.expandedHeight - window.innerHeight * 0.5, window.innerHeight * 0.5)
         const isCoverPinned = scrollRef.current.scrollTop >= coverPinStart
-        const innerScroll = Math.max(scrollRef.current.scrollTop - activeSection.expandedHeight, 0)
+        const innerScroll = Math.max(scrollRef.current.scrollTop - detailStart, 0)
 
         scrollRef.current.style.setProperty('--losnij-info-scroll', `${Math.min(scrollRef.current.scrollTop, coverPinStart)}px`)
         scrollRef.current.style.setProperty('--losnij-cover-pin-offset', `${coverPinStart}px`)
@@ -854,8 +849,10 @@ function App() {
   const detailCanvasOffset =
     activeSection && isExpanded
       ? activeSection.id === 'more'
-        ? Math.min(activeSection.expandedHeight, Math.max(280, window.innerHeight * 0.34))
-        : activeSection.expandedHeight
+        ? Math.min(activeSection.expandedHeight, Math.max(330, window.innerHeight * 0.38))
+        : activeSection.id === 'losnij'
+          ? Math.max(activeSection.expandedHeight - window.innerHeight * 0.5, window.innerHeight * 0.5)
+          : activeSection.expandedHeight
       : '100vh'
 
   return (

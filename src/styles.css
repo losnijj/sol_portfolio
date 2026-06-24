@@ -331,13 +331,51 @@ button {
 }
 
 .contact-actions {
+  position: relative;
   display: grid;
   grid-template-columns: 46px 34px;
   min-height: 34px;
   border: 1px dashed rgba(0, 0, 0, 0.42);
+  background: transparent;
+  overflow: hidden;
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.contact-actions::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  height: 2px;
+  background: #000000;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.contact-actions::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  z-index: 0;
+  border: 1px solid transparent;
+  pointer-events: none;
+  transform: scale(1.08, 0.84);
+  opacity: 0;
+  transition:
+    border-color 0.24s ease,
+    opacity 0.24s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .contact-actions button {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   min-width: 0;
@@ -346,11 +384,55 @@ button {
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.04em;
+  background: transparent;
   color: #000000;
+  transition:
+    letter-spacing 0.24s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .contact-actions button + button {
   border-left: 1px dashed rgba(0, 0, 0, 0.42);
+  transition:
+    border-color 0.24s ease,
+    border-left-style 0.24s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-actions:has(button:hover),
+.contact-actions:has(button:focus-visible) {
+  border-color: #000000;
+  border-style: solid;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.92);
+}
+
+.contact-actions:has(button:hover)::before,
+.contact-actions:has(button:focus-visible)::before {
+  transform: scaleX(1);
+}
+
+.contact-actions:has(button:hover) button + button,
+.contact-actions:has(button:focus-visible) button + button {
+  border-left-color: #000000;
+  border-left-style: solid;
+}
+
+.contact-actions:has(button:hover)::after,
+.contact-actions:has(button:focus-visible)::after {
+  border-color: rgba(0, 0, 0, 0.18);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.contact-actions:has(button:hover) button:first-child,
+.contact-actions:has(button:focus-visible) button:first-child {
+  letter-spacing: 0.12em;
+  transform: translateX(1px);
+}
+
+.contact-actions:has(button:hover) .contact-x,
+.contact-actions:has(button:focus-visible) .contact-x {
+  transform: translateX(-1px) scale(0.94);
 }
 
 .contact-x {
@@ -1811,11 +1893,10 @@ button {
   transition: opacity 0.24s ease;
 }
 
-.archive-expanded-grid,
 .archive-detail-grid {
   position: absolute;
   z-index: 1;
-  top: calc(var(--overlay-works-top) + 10px);
+  top: 0;
   left: calc(42px * var(--expanded-content-inverse));
   width: calc((100% - (84px * var(--expanded-content-inverse))) / var(--expanded-content-inverse));
   min-height: 4900px;
@@ -1832,10 +1913,6 @@ button {
   left: clamp(42px, 4.6vw, 88px);
   width: calc(100% - clamp(84px, 9.2vw, 176px));
   transform: translateZ(0);
-}
-
-.section-overlay.is-closing.is-more .archive-expanded-grid {
-  opacity: 0;
 }
 
 .section-overlay .zoom-panel {
@@ -3803,7 +3880,7 @@ button {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(150px, var(--shot-width), 360px);
+  width: clamp(148px, var(--shot-width), 350px);
   aspect-ratio: var(--shot-ratio);
   margin: 0;
   overflow: hidden;
@@ -3927,7 +4004,7 @@ button {
 
 .archive-photo-stage {
   position: relative;
-  height: 4860px;
+  height: 5100px;
   min-height: 0;
   padding: 0;
   background: #ffffff;
@@ -3948,7 +4025,6 @@ button {
   backface-visibility: hidden;
 }
 
-.archive-expanded-grid .archive-photo-item,
 .archive-detail-grid .archive-photo-item {
   position: absolute;
   left: var(--archive-x);
@@ -3968,8 +4044,7 @@ button {
 }
 
 @media (max-width: 1100px) {
-  .archive-photo-grid,
-  .archive-expanded-grid {
+  .archive-photo-grid {
     column-count: 4;
   }
 }
@@ -3981,8 +4056,7 @@ button {
     padding: 0;
   }
 
-  .archive-photo-grid,
-  .archive-expanded-grid {
+  .archive-photo-grid {
     column-count: 2;
     column-gap: 10px;
   }
@@ -4002,6 +4076,18 @@ button {
   z-index: 3;
   background: #ffffff;
   transform: none;
+}
+
+.zoom-scroll.is-index-open:not(.is-settled) .zoom-detail-canvas.has-index-detail,
+.zoom-scroll.is-index-open.is-closing .zoom-detail-canvas.has-index-detail,
+.section-overlay.is-index-collapsing ~ .zoom-detail-canvas.has-index-detail {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.zoom-scroll.is-index-open.is-expanded.is-settled:not(.is-closing) .section-overlay:not(.is-index-collapsing) ~ .zoom-detail-canvas.has-index-detail {
+  opacity: 1;
+  visibility: visible;
 }
 
 .index-page-header {

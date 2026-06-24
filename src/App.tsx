@@ -156,35 +156,35 @@ const works: WorkItem[] = [
 ]
 
 const defaultKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
-  { x: '-47vw', y: '-620px', width: '16vw' },
-  { x: '-13vw', y: '-555px', width: '14.2vw' },
-  { x: '28vw', y: '-610px', width: '16.5vw' },
-  { x: '52vw', y: '-390px', width: '18.2vw' },
-  { x: '-55vw', y: '-260px', width: '15.5vw' },
-  { x: '-24vw', y: '-125px', width: '17.2vw' },
-  { x: '16vw', y: '-80px', width: '16.2vw' },
-  { x: '44vw', y: '120px', width: '13.2vw' },
-  { x: '-40vw', y: '215px', width: '12.8vw' },
-  { x: '-2vw', y: '365px', width: '12.2vw' },
-  { x: '34vw', y: '430px', width: '17.2vw' },
-  { x: '-58vw', y: '590px', width: '15.5vw' },
+  { x: '-58vw', y: '-640px', width: '14vw' },
+  { x: '-25vw', y: '-515px', width: '13vw' },
+  { x: '14vw', y: '-650px', width: '14.5vw' },
+  { x: '54vw', y: '-455px', width: '15.2vw' },
+  { x: '-46vw', y: '-250px', width: '13.2vw' },
+  { x: '-8vw', y: '-120px', width: '14.2vw' },
+  { x: '33vw', y: '35px', width: '13.6vw' },
+  { x: '66vw', y: '195px', width: '12vw' },
+  { x: '-61vw', y: '270px', width: '12.2vw' },
+  { x: '-24vw', y: '445px', width: '11.8vw' },
+  { x: '18vw', y: '570px', width: '14vw' },
+  { x: '52vw', y: '735px', width: '12.8vw' },
 ]
 
 const juhapKeyScreenPlacements: Array<Omit<ProjectKeyScreen, 'screen' | 'ratio'>> = [
-  { x: '-58vw', y: '-700px', width: '13.5vw' },
-  { x: '-18vw', y: '-595px', width: '12.4vw' },
-  { x: '28vw', y: '-720px', width: '14vw' },
-  { x: '62vw', y: '-385px', width: '15.8vw' },
-  { x: '-44vw', y: '-205px', width: '13vw' },
-  { x: '7vw', y: '-70px', width: '14.6vw' },
-  { x: '48vw', y: '240px', width: '12.2vw' },
-  { x: '-56vw', y: '390px', width: '12vw' },
-  { x: '-12vw', y: '560px', width: '14.4vw' },
-  { x: '36vw', y: '735px', width: '12.8vw' },
-  { x: '-68vw', y: '845px', width: '13.6vw' },
-  { x: '66vw', y: '925px', width: '12.8vw' },
-  { x: '-28vw', y: '1040px', width: '12.8vw' },
-  { x: '17vw', y: '1160px', width: '12.2vw' },
+  { x: '-62vw', y: '-690px', width: '12.4vw' },
+  { x: '-28vw', y: '-560px', width: '11.5vw' },
+  { x: '8vw', y: '-705px', width: '12.4vw' },
+  { x: '48vw', y: '-520px', width: '13.8vw' },
+  { x: '-49vw', y: '-320px', width: '11.6vw' },
+  { x: '-8vw', y: '-160px', width: '12.6vw' },
+  { x: '34vw', y: '60px', width: '11.2vw' },
+  { x: '62vw', y: '300px', width: '10.8vw' },
+  { x: '-58vw', y: '260px', width: '12.4vw' },
+  { x: '-20vw', y: '520px', width: '11.4vw' },
+  { x: '20vw', y: '685px', width: '11.6vw' },
+  { x: '56vw', y: '825px', width: '10.8vw' },
+  { x: '-50vw', y: '900px', width: '11.2vw' },
+  { x: '-6vw', y: '1060px', width: '10.8vw' },
 ]
 
 const makeKeyScreens = (
@@ -379,9 +379,9 @@ const archiveImages = [
   'd3217e90-9eaf-41d3-af15-da7370616fde.webp',
   'e48ee559-ae1b-4d5b-b969-bb756528ad64.webp',
   'fcec4121-631b-4b9e-987c-64d796d6957c.webp',
-  'image 130.png',
-  '스크린샷 2026-06-23 오후 6.19.49.jpg',
-  '스크린샷 2026-06-23 오후 6.20.58.jpg',
+  'image-130.png',
+  'archive-screen-01.jpg',
+  'archive-screen-02.jpg',
 ]
 
 const archivePlacements: ArchiveImageStyle[] = [
@@ -854,7 +854,7 @@ function App() {
   const detailCanvasOffset =
     activeSection && isExpanded
       ? activeSection.id === 'more'
-        ? activeSection.expandedHeight
+        ? Math.min(activeSection.expandedHeight, Math.max(280, window.innerHeight * 0.34))
         : activeSection.expandedHeight
       : '100vh'
 
@@ -1187,8 +1187,8 @@ function WorkDetailPage({
 }
 
 function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailContent; onMoreProjects: () => void }) {
-  const SIMMONS_KEY_LOOP_X = 1800
-  const SIMMONS_KEY_LOOP_Y = 1360
+  const SIMMONS_KEY_LOOP_X = 2100
+  const SIMMONS_KEY_LOOP_Y = 1650
   const dragStateRef = useRef<{ startX: number; startY: number; x: number; y: number } | null>(null)
   const keyStageRef = useRef<HTMLDivElement | null>(null)
   const keyStagePositionRef = useRef({ x: 0, y: 0 })
@@ -2375,9 +2375,6 @@ function SectionContent({
               조용하지만 분명한 화면을 디자인합니다.
             </span>
           </p>
-          {isExpandedView && (
-            <ArchiveImageGrid className="archive-expanded-grid" />
-          )}
         </>
       )}
     </div>

@@ -444,7 +444,7 @@ button {
   align-self: center;
   display: grid;
   grid-template-columns: 1fr 1.16fr 0.82fr 1.24fr;
-  align-items: end;
+  align-items: start;
   gap: clamp(16px, 2.15vw, 32px);
   font-family: Pretendard, Inter, 'Segoe UI', Arial, sans-serif;
   transform: translateY(clamp(6px, 0.7vw, 11px));
@@ -3645,6 +3645,64 @@ button {
   pointer-events: none;
 }
 
+.simmons-cx-point {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.34fr) minmax(320px, 0.66fr);
+  gap: clamp(28px, 4vw, 78px);
+  align-items: start;
+  margin-top: clamp(28px, 3vw, 56px);
+  padding: clamp(58px, 6vw, 112px) clamp(12px, 1vw, 20px) 0;
+}
+
+.simmons-cx-point h3,
+.simmons-process-card h3 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+}
+
+.simmons-cx-point p,
+.simmons-process-card p {
+  margin: 0;
+  max-width: 920px;
+  font-size: clamp(19px, 1.25vw, 24px);
+  font-weight: 400;
+  line-height: 1.56;
+  letter-spacing: 0.01em;
+  word-break: keep-all;
+}
+
+.simmons-process-card p {
+  max-width: 780px;
+  color: #444444;
+  font-size: clamp(16px, 1.06vw, 20.5px);
+  line-height: 1.76;
+}
+
+.simmons-cx-point p + p {
+  grid-column: 2;
+  margin-top: clamp(18px, 1.6vw, 30px);
+}
+
+.simmons-process-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2vw, 36px);
+  margin: clamp(74px, 7vw, 132px) 0 clamp(110px, 10vw, 190px);
+  padding: 0 clamp(12px, 1vw, 20px);
+}
+
+.simmons-process-card {
+  display: grid;
+  align-content: start;
+  gap: clamp(22px, 2.1vw, 40px);
+  min-height: clamp(300px, 23vw, 430px);
+  padding-top: clamp(22px, 2.2vw, 42px);
+  border-top: 1px solid #000000;
+}
+
 .simmons-credit-list dl div:last-child dd {
   font-weight: 340;
   letter-spacing: 0.004em;
@@ -3905,6 +3963,76 @@ button {
 }
 
 @media (max-width: 760px) {
+  .simmons-detail-header h2 {
+    font-size: clamp(32px, 10vw, 48px);
+  }
+
+  .simmons-detail-header p {
+    font-size: clamp(18px, 5.4vw, 26px);
+    line-height: 1.18;
+  }
+
+  .simmons-detail-meta {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 48px;
+    line-height: 1.2;
+  }
+
+  .simmons-detail-meta nav {
+    justify-content: flex-start;
+  }
+
+  .simmons-detail-overview {
+    gap: 32px;
+    min-height: auto;
+    margin-top: 96px;
+    padding: 72px 0;
+    text-align: left;
+    justify-items: start;
+  }
+
+  .simmons-detail-overview p {
+    font-size: clamp(17px, 4.6vw, 21px);
+    line-height: 1.62;
+  }
+
+  .simmons-cx-point {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 0;
+    padding-top: 36px;
+  }
+
+  .simmons-cx-point p + p {
+    grid-column: auto;
+    margin-top: 0;
+  }
+
+  .simmons-process-list {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    margin: 68px 0 92px;
+  }
+
+  .simmons-process-card {
+    min-height: 0;
+  }
+
+  .simmons-process-card p {
+    max-width: 34em;
+    font-size: clamp(15px, 4vw, 17.5px);
+    line-height: 1.76;
+  }
+
+  .simmons-strategy {
+    grid-template-columns: 1fr;
+  }
+
+  .simmons-strategy > div {
+    justify-content: flex-start;
+  }
+
   .simmons-key-experience {
     min-height: 100vh;
     min-height: 100dvh;
@@ -5199,6 +5327,18 @@ button {
     bottom: 24px;
     left: 18px;
     width: min(260px, calc(100% - 36px));
+    gap: 14px;
+  }
+
+  .losnij-cover-group:nth-child(1)::after,
+  .losnij-cover-group:nth-child(2)::after {
+    margin-top: 13px;
+  }
+
+  .losnij-cover-group:nth-child(3) {
+    position: relative;
+    bottom: auto;
+    left: auto;
   }
 
   .works-collage {

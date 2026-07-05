@@ -85,6 +85,11 @@ type ProjectKeyScreen = {
   ratio: string
 }
 
+type ProjectProcessItem = {
+  title: string
+  body: string
+}
+
 type ProjectDetailContent = {
   title: string
   subtitle: string
@@ -98,6 +103,8 @@ type ProjectDetailContent = {
   tools: string
   contribution: string[]
   overview: string[]
+  cxPoint?: string[]
+  processItems?: ProjectProcessItem[]
   strategyImage: string
   strategyAlt: string
   strategyTitle: string
@@ -195,28 +202,46 @@ const makeKeyScreens = (
 const projectDetails: Record<string, ProjectDetailContent> = {
   ARCHE: {
     title: 'ARCHE Personal Fashion Archive App',
-    subtitle: '아르케 개인 패션 아카이브 앱',
+    subtitle: '구매 이후의 패션 경험과 취향 기록을 고민한 개인 패션 아카이브 앱',
     meta: '개인 프로젝트',
     duration: 'Duration  2026',
     hero: 'ar-hero.png',
     heroAlt: 'ARCHE fashion archive concept hero',
-    role: 'Concept Planning / UI Design / Visual Direction',
+    role: 'Concept Planning / User Flow / UI Design',
     tools: 'Figma / Photoshop',
     contribution: [
-      '브랜드 콘셉트 기획부터 서비스 구조, UI 디자인까지 전반을 직접 설계했습니다.',
-      '디지털 옷장, 스타일 DNA, 착용 기록 등 핵심 기능이 감성적인 패션 아카이브 경험으로',
-      '이어질 수 있도록 무드, 정보 구조, 화면 흐름을 중심으로 구성했습니다.',
+      '브랜드 콘셉트 기획부터 서비스 구조, 사용자 흐름, UI 디자인까지 전반을 직접 설계했습니다.',
+      '디지털 옷장, 스타일 DNA, 착용 기록 등 핵심 기능이 사용자의 취향을 기록하고 활용하는 경험으로 이어질 수 있도록',
+      '정보 구조와 화면 흐름을 구성했습니다.',
     ],
     overview: [
       'ARCHE는 개인의 옷장과 취향을 기록하는 패션 아카이브 앱 컨셉 디자인 프로젝트입니다.',
       '사용자가 보유한 옷을 단순히 저장하는 것을 넘어, 스타일 취향과 착용 기록을 함께 정리하며 자신의 패션 흐름을 이해할 수 있도록 기획했습니다.',
     ],
+    cxPoint: [
+      '패션 경험이 구매 순간에서 끝나는 것이 아니라, 옷을 기록하고 착용하고 다시 활용하는 과정까지 이어질 수 있도록 서비스 흐름을 정리했습니다.',
+      '사용자가 자신의 취향과 소비 패턴을 자연스럽게 이해하고, 구매한 옷을 더 잘 활용할 수 있는 경험에 집중했습니다.',
+    ],
+    processItems: [
+      {
+        title: 'Problem',
+        body: '옷은 많지만 매일 무엇을 입을지 고민하거나, 구매한 옷을 충분히 활용하지 못하는 상황이 반복될 수 있다고 판단했습니다.',
+      },
+      {
+        title: 'Approach',
+        body: '디지털 옷장, 스타일 DNA, 착용 기록 기능을 중심으로 사용자가 자신의 옷과 취향을 기록하고, 패션 소비와 착용 흐름을 쉽게 파악할 수 있도록 구조를 설계했습니다.',
+      },
+      {
+        title: 'Outcome',
+        body: '사용자가 자신의 취향을 더 잘 이해하고, 구매 이후에도 옷을 지속적으로 활용하며 개인의 패션 경험을 쌓아갈 수 있는 앱 경험을 목표로 설계했습니다.',
+      },
+    ],
     strategyImage: 'ar00.webp',
     strategyAlt: 'ARCHE archive visual direction',
-    strategyTitle: 'Brand Strategy',
+    strategyTitle: 'Brand & Customer Strategy',
     strategyCopy: [
-      'ARCHE는 패션을 소비하는 방식보다, 개인의 취향을 기록하고 쌓아가는 경험에 초점을 두었습니다.',
-      '옷장, 착용 기록, 스타일 이미지가 하나의 아카이브처럼 정리될 수 있도록 서비스 방향을 잡았고, 차분하면서도 감도 있는 패션 브랜드 무드를 화면 안에 담고자 했습니다.',
+      'ARCHE는 패션을 단순히 소비하는 방식보다, 개인의 취향을 기록하고 쌓아가는 경험에 초점을 두었습니다.',
+      '옷장, 착용 기록, 스타일 이미지가 하나의 아카이브처럼 정리될 수 있도록 서비스 방향을 잡았고, 사용자가 자신의 패션 취향을 자연스럽게 이해할 수 있도록 차분하면서도 감도 있는 브랜드 무드를 화면 안에 담고자 했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
     keyScreens: [],
@@ -224,29 +249,48 @@ const projectDetails: Record<string, ProjectDetailContent> = {
   },
   SIMMONS: {
     title: 'SIMMONS Global Brand Website Redesign',
-    subtitle: '시몬스 글로벌 브랜드 웹사이트 리디자인',
+    subtitle: '브랜드 정보를 고객이 자연스럽게 이해하도록 정리한 글로벌 웹사이트 리디자인',
     meta: '팀프로젝트',
     duration: 'Duration  2026 . 02 - 2026 . 03',
     projectUrl: 'https://yshnada-del.github.io/simmons/',
     proposalUrl: 'https://www.figma.com/deck/WnjfVFTOvpmgNQrW3aVJDM',
     hero: 'simmons-detail-hero.png',
     heroAlt: 'SIMMONS Offline experience hero',
-    role: 'UI Design / Visual Direction / Page Design',
+    role: 'Information Structure / UI Design / Brand Experience',
     tools: 'Figma / Photoshop / Illustrator',
     contribution: [
-      '기획부터 오프라인 페이지와 이벤트 페이지 디자인을 담당했으며, 이미지 배치와 로고,',
-      '타이포그래피, 여백을 중심으로 브랜드 무드가 자연스럽게 전달되도록 화면을 구성했습니다.',
+      '기획 단계에서 브랜드 키워드와 콘텐츠 흐름을 정리하고, 오프라인 페이지와 이벤트 페이지 디자인을 담당했습니다.',
+      '이미지 배치, 타이포그래피, 여백을 활용해 시몬스의 브랜드 무드가 자연스럽게 전달되도록 구성했으며,',
+      '사용자가 브랜드 정보를 단계적으로 이해할 수 있는 화면 흐름을 고민했습니다.',
     ],
     overview: [
       '시몬스의 브랜드 헤리티지와 기술력을 해외 사용자에게 전달하기 위한 글로벌 웹사이트 리디자인 프로젝트입니다.',
-      '브랜드가 가진 고급스러운 이미지와 신뢰감을 디지털 화면 안에서 자연스럽게 경험할 수 있도록 정보 구조와 비주얼 흐름을 재정리했습니다.',
+      '브랜드를 처음 접하는 고객이 시몬스의 가치와 이미지를 자연스럽게 이해할 수 있도록 정보 구조, 콘텐츠 우선순위, 비주얼 흐름을 재정리했습니다.',
+    ],
+    cxPoint: [
+      '브랜드를 처음 접하는 사용자가 시몬스의 헤리티지, 기술력, 프리미엄 이미지를 자연스럽게 이해할 수 있도록 정보 우선순위와 콘텐츠 흐름을 정리했습니다.',
+      '단순히 시각적으로 고급스러운 화면을 만드는 것보다, 고객이 브랜드를 신뢰하게 되는 정보 전달 방식에 집중했습니다.',
+    ],
+    processItems: [
+      {
+        title: 'Problem',
+        body: '시몬스가 가진 헤리티지와 기술력은 강하지만, 해외 사용자가 브랜드의 가치와 정보를 한눈에 이해하기에는 콘텐츠의 우선순위와 탐색 흐름이 더 명확해야 한다고 판단했습니다.',
+      },
+      {
+        title: 'Approach',
+        body: '브랜드 키워드를 헤리티지, 수면 기술, 프리미엄 경험으로 정리하고, 사용자가 단계적으로 브랜드를 이해할 수 있도록 페이지 구조와 콘텐츠 흐름을 재구성했습니다.',
+      },
+      {
+        title: 'Outcome',
+        body: '브랜드의 고급스러운 이미지를 유지하면서도 사용자가 필요한 정보를 자연스럽게 탐색하고, 시몬스의 가치를 더 쉽게 이해할 수 있는 웹 경험을 목표로 설계했습니다.',
+      },
     ],
     strategyImage: 'image.png',
     strategyAlt: 'Close-up hand pressing soft fabric',
-    strategyTitle: 'Brand Strategy',
+    strategyTitle: 'Brand & Customer Strategy',
     strategyCopy: [
-      '시몬스가 가진 브랜드 자산을 단순히 제품 정보로 전달하기보다, 브랜드의 분위기와 철학이 함께 느껴지는 웹 경험으로 확장하고자 했습니다.',
-      '브랜드의 헤리티지, 수면 기술, 프리미엄 이미지를 중심으로 키워드를 정리하고, 해외 사용자가 쉽게 이해할 수 있는 콘텐츠 흐름을 설계했습니다.',
+      '시몬스가 가진 브랜드 자산을 단순한 제품 정보로 전달하기보다, 고객이 브랜드의 분위기와 철학을 자연스럽게 이해할 수 있는 웹 경험으로 확장하고자 했습니다.',
+      '브랜드의 헤리티지, 수면 기술, 프리미엄 이미지를 중심으로 핵심 키워드를 정리하고, 해외 사용자가 브랜드 정보를 단계적으로 이해할 수 있도록 콘텐츠 우선순위와 탐색 흐름을 설계했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
     keyScreens: makeKeyScreens([
@@ -266,30 +310,48 @@ const projectDetails: Record<string, ProjectDetailContent> = {
   },
   JUHAP: {
     title: 'JUHAP AI Liquor Pairing App',
-    subtitle: '주합 AI 주류 페어링 앱',
+    subtitle: '취향과 상황에 맞는 선택 흐름을 설계한 AI 주류 페어링 앱',
     meta: '팀프로젝트',
     duration: 'Duration  2026 . 04 - 2026 . 05',
     projectUrl: 'https://juhap-nmuh.vercel.app',
     proposalUrl: 'https://www.figma.com/deck/UFvEN19gtb5REMQ4ZonsMy',
     hero: 'ju-hero.jpg',
     heroAlt: 'JUHAP liquor pairing app hero',
-    role: 'UI/UX Design / Visual Direction',
+    role: 'User Flow / UI/UX Design / Service Experience',
     tools: 'Figma / Photoshop',
     contribution: [
-      '기획서 일부 구성에 참여하고, 주요 기능 화면의 UI 디자인을 담당했습니다.',
-      '메인, 랭킹, 투표, AI챗봇 등 서비스의 핵심 화면을 중심으로',
-      '정보 구조와 사용 흐름, 비주얼 무드가 자연스럽게 이어지도록 화면을 구성했습니다.',
+      '기획서 일부 구성에 참여하고, 메인, 랭킹, 투표, AI 챗봇 등 주요 기능 화면의 UI 디자인을 담당했습니다.',
+      '사용자가 술과 안주를 고르는 과정에서 느낄 수 있는 선택의 어려움을 줄일 수 있도록 정보 구조와 사용 흐름을 정리했으며,',
+      '추천 기능과 커뮤니티 요소가 자연스럽게 이어지도록 화면을 구성했습니다.',
     ],
     overview: [
       'JUHAP은 사용자의 취향과 상황에 맞는 술과 안주 조합을 제안하는 AI 주류 페어링 앱입니다.',
-      '술을 고르는 과정에서 느끼는 어려움을 줄이고, 추천·랭킹·커뮤니티 기능을 통해 사용자가 더 쉽고 재미있게 취향을 발견할 수 있도록 기획했습니다.',
+      '술을 고르는 과정에서 느끼는 선택의 어려움을 줄이고, 추천·랭킹·투표·커뮤니티 기능을 통해 사용자가 더 쉽고 재미있게 취향을 발견할 수 있도록 기획했습니다.',
+    ],
+    cxPoint: [
+      '사용자가 술과 안주를 고를 때 느끼는 막막함을 줄이고, 취향과 상황에 맞는 선택을 더 쉽게 할 수 있도록 추천 흐름과 정보 우선순위를 정리했습니다.',
+      '단순히 다양한 기능을 나열하는 것보다, 사용자가 탐색하고 비교하고 결정하는 과정이 자연스럽게 이어지는 경험에 집중했습니다.',
+    ],
+    processItems: [
+      {
+        title: 'Problem',
+        body: '술과 안주를 선택할 때 사용자는 자신의 취향, 상황, 음식 조합을 한 번에 고려해야 하며, 선택지가 많을수록 결정이 어려워질 수 있다고 판단했습니다.',
+      },
+      {
+        title: 'Approach',
+        body: '추천, 랭킹, 투표, AI 챗봇 기능을 중심으로 사용자가 원하는 조합을 빠르게 탐색하고 비교할 수 있도록 핵심 기능의 우선순위와 사용 흐름을 정리했습니다.',
+      },
+      {
+        title: 'Outcome',
+        body: '사용자가 취향과 상황에 맞는 조합을 더 쉽게 발견하고, 커뮤니티를 통해 다른 사람의 선택을 참고하며 즐겁게 탐색할 수 있는 앱 경험을 목표로 설계했습니다.',
+      },
     ],
     strategyImage: 'ju1.jpg',
     strategyAlt: 'JUHAP visual strategy',
-    strategyTitle: 'Brand Strategy',
+    strategyTitle: 'Brand & Customer Strategy',
     strategyCopy: [
-      'JUHAP은 단순히 술 정보를 제공하는 앱이 아니라, 사용자의 취향과 순간에 맞는 조합을 발견하는 경험에 초점을 두었습니다.',
-      '술과 안주를 함께 즐기는 상황을 중심으로 서비스 키워드를 정리하고, 추천 기능과 커뮤니티 요소가 자연스럽게 연결되는 흐름을 설계했습니다.',
+      'JUHAP은 단순히 술 정보를 제공하는 앱이 아니라, 사용자가 자신의 취향과 상황에 맞는 조합을 발견하는 경험에 초점을 두었습니다.',
+      '술과 안주를 함께 즐기는 순간을 중심으로 서비스 키워드를 정리하고, 추천 기능과 커뮤니티 요소가 자연스럽게 연결될 수 있도록 정보 구조와 탐색 흐름을 설계했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
     keyScreens: makeKeyScreens(
@@ -331,10 +393,10 @@ const sections: PortfolioSection[] = [
 ]
 
 const aboutFocusItems: Array<[string, string]> = [
-  ['Brand Experience', '브랜드의 본질을 정의하고\n일관된 경험으로 설계합니다.'],
-  ['Visual Direction', '무드와 톤을 설정하고\n시각 언어로 구체화합니다.'],
-  ['Editorial Layout', '정보의 흐름을 구조화하여\n가독성과 리듬을 만듭니다.'],
-  ['Digital Interface', '사용자 중심의 인터페이스로\n직관적인 경험을 만듭니다.'],
+  ['Brand Experience', '브랜드의 분위기와 기준이 일관되게 전달되도록 고민합니다.'],
+  ['Customer Perspective', '고객의 입장에서 필요한 정보와 불편한 흐름을 살핍니다.'],
+  ['Content Flow', '정보의 우선순위를 정리해 자연스럽게 읽히는 흐름을 만듭니다.'],
+  ['Digital Interface', '사용자가 쉽게 이해하고 행동할 수 있는 화면을 설계합니다.'],
 ]
 
 const aboutToolRows: Array<[string, Array<[string, string]>]> = [
@@ -345,10 +407,10 @@ const aboutToolRows: Array<[string, Array<[string, string]>]> = [
 ]
 
 const aboutExperienceItems: Array<[string, string, string]> = [
-  ['01', 'SIMMONS', '브랜드 헤리티지와 기술력을 전달하는 글로벌 웹사이트 리디자인'],
-  ['02', 'ARCHE', '개인의 옷장과 취향을 기록하는 패션 아카이브 앱 컨셉 디자인'],
-  ['03', 'JUHAP', '상황과 취향에 맞는 술과 안주 조합을 제안하는 주류 페어링 앱 UX/UI 디자인'],
-  ['04', 'LOSNIJ Portfolio', '매거진과 쇼룸 컨셉을 바탕으로 기획하고 구현한 개인 웹 포트폴리오'],
+  ['01', 'SIMMONS', '브랜드 정보를 사용자가 자연스럽게 이해하도록 정리한 글로벌 웹사이트 리디자인'],
+  ['02', 'ARCHE', '개인의 옷장과 취향 데이터를 통해 구매 이후의 패션 경험을 고민한 앱 기획'],
+  ['03', 'JUHAP', '취향과 상황에 맞는 추천 흐름으로 선택의 어려움을 줄인 주류 페어링 앱 UX/UI'],
+  ['04', 'losnij Portfolio', '브랜드 경험과 콘텐츠 흐름을 매거진·쇼룸 콘셉트로 정리한 개인 웹 포트폴리오'],
 ]
 
 const archiveImages = [
@@ -1373,7 +1435,7 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
       </figure>
 
       <section className="simmons-credit-list">
-        <strong>PROJECT CREDIT</strong>
+        <strong>PROJECT ROLE</strong>
         <dl>
           <div>
             <dt>ROLE</dt>
@@ -1408,6 +1470,26 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
           ))}
         </p>
       </section>
+
+      {detail.cxPoint && (
+        <section className="simmons-cx-point">
+          <h3>CX Point</h3>
+          {detail.cxPoint.map((copy) => (
+            <p key={copy}>{copy}</p>
+          ))}
+        </section>
+      )}
+
+      {detail.processItems && (
+        <section className="simmons-process-list" aria-label="Problem Approach Outcome">
+          {detail.processItems.map((item) => (
+            <article className="simmons-process-card" key={item.title}>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </section>
+      )}
 
       <section className="simmons-strategy">
         <figure>
@@ -1625,7 +1707,7 @@ function LosnijDetailPage({
             </div>
             <div className="losnij-rising-copy">
               <h3 className="losnij-scroll-reveal">Quiet but Clear</h3>
-              <p className="losnij-rising-subtitle losnij-scroll-reveal">조용하지만 분명한 화면을 디자인합니다.</p>
+              <p className="losnij-rising-subtitle losnij-scroll-reveal">조용하지만 분명한 브랜드 경험을 고민합니다.</p>
               <div>
                 <AboutRevealCopy
                   className="losnij-scroll-reveal"
@@ -1634,14 +1716,14 @@ function LosnijDetailPage({
                 <AboutRevealCopy
                   className="losnij-scroll-reveal"
                   lines={[
-                    '브랜드의 분위기와 사용자의 흐름이 자연스럽게 만나는 화면을 고민합니다.',
+                    '브랜드의 분위기와 고객의 흐름이 자연스럽게 만나는 접점을 고민합니다.',
                     '정보를 정리하고, 이미지를 배치하고, 작은 디테일까지 다듬으며',
-                    '브랜드가 가진 감도를 디지털 경험으로 풀어내고자 합니다.',
+                    '브랜드가 가진 감도를 고객이 이해할 수 있는 경험으로 풀어내고자 합니다.',
                   ]}
                 />
                 <AboutRevealCopy
                   className="losnij-scroll-reveal"
-                  lines={['화려하게 설명하기보다, 조용하지만 분명하게 읽히는 화면을 지향합니다.']}
+                  lines={['화려하게 설명하기보다, 조용하지만 분명하게 전달되는 경험을 지향합니다.']}
                 />
               </div>
             </div>
@@ -1660,9 +1742,9 @@ function LosnijDetailPage({
               <AboutRevealCopy
                 className="losnij-scroll-reveal"
                 lines={[
-                  '생각을 화면으로 정리하기 위한 도구와 방식들입니다.',
+                  '고객의 흐름을 이해하고, 생각을 화면과 콘텐츠로 정리하기 위한 도구와 방식입니다.',
                   '결과보다 과정, 장식보다 구조를 우선하며',
-                  '브랜드의 감도를 디지털 경험으로 연결합니다.',
+                  '브랜드의 감도를 고객이 이해할 수 있는 디지털 경험으로 연결합니다.',
                 ]}
               />
             </div>
@@ -1718,9 +1800,9 @@ function LosnijDetailPage({
               <AboutRevealCopy
                 className="losnij-scroll-reveal"
                 lines={[
-                  '구조와 분위기를 함께 다루는 작업들을 통해',
-                  '브랜드와 무드, 콘텐츠 흐름, 화면의 밀도를',
-                  '정리하는 방식을 쌓아왔습니다.',
+                  '구조와 분위기를 함께 다루며,',
+                  '브랜드가 고객에게 전달되는 방식과',
+                  '콘텐츠 흐름을 정리해왔습니다.',
                 ]}
               />
             </div>
@@ -1875,14 +1957,14 @@ function ContactModal({ isClosing, isOpen, onClose }: { isClosing: boolean; isOp
           <section>
             <h3>FIELD</h3>
             <ul className="contact-field-inline">
-              <li>Brand Design</li>
-              <li>Visual Direction</li>
-              <li>Web Design</li>
+              <li>Customer Experience</li>
+              <li>Brand Experience</li>
+              <li>UI/UX Design</li>
             </ul>
           </section>
         </div>
 
-        <p className="contact-card-note">분위기와 구조를 함께 고민하며, 브랜드가 자연스럽게 전달되는 디자인을 만듭니다.</p>
+        <p className="contact-card-note">브랜드의 분위기와 고객의 흐름이 자연스럽게 이어지는 경험을 고민합니다.</p>
       </article>
     </div>
   )
@@ -2338,11 +2420,11 @@ function SectionContent({
       {section.id === 'losnij' && (
         <>
           <figure className="section-media portrait-media">
-            <img src={assetPath('main-person.png')} alt="LOSNIJ portrait" />
+            <img src={assetPath('main-person.png')} alt="losnij portrait" />
           </figure>
           <div className="losnij-cover-info" aria-label="Portfolio cover information">
-            <CoverInfoGroup title="2026 EDITION" items={['Jin Sol Portfolio', 'UI/UX Designer']} />
-            <CoverInfoGroup title="FOCUS" items={['Brand Experience', 'Visual Direction', 'Editorial Layout', 'Digital Interface']} />
+            <CoverInfoGroup title="2026 EDITION" items={['Jin Sol Portfolio', 'Customer Experience · UI/UX']} />
+            <CoverInfoGroup title="FOCUS" items={['Brand Experience', 'Customer Perspective', 'Content Flow', 'Digital Touchpoint']} />
             <CoverInfoGroup title="CONTACT" items={['Email', 'wlsthf796@naver.com', 'Phone', '+82 1030256909']} />
           </div>
         </>
@@ -2368,8 +2450,8 @@ function SectionContent({
             <span className="index-closing-en" data-zoom-text={section.intro}>
               {section.intro}
             </span>
-            <span className="index-closing-ko" data-zoom-text="조용하지만 분명한 화면을 디자인합니다.">
-              조용하지만 분명한 화면을 디자인합니다.
+            <span className="index-closing-ko" data-zoom-text="조용하지만 분명한 브랜드 경험을 고민합니다.">
+              조용하지만 분명한 브랜드 경험을 고민합니다.
             </span>
           </p>
         </>

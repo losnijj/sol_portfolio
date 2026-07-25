@@ -320,17 +320,16 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     role: 'UX Planning / UI Design / Design System',
     tools: 'Figma / Photoshop',
     contribution: [
-      '서비스 기획서 구성에 참여하고, 메인·랭킹·투표·AI 챗봇 등 핵심 기능의 모바일 UI 디자인을 담당했습니다.',
-      '추천과 커뮤니티 기능이 자연스럽게 연결되도록 정보 구조와 화면 흐름을 설계하고,',
-      '다크 테마 기반의 컬러와 공통 UI 요소를 정리했습니다.',
+      '서비스 기획서 구성에 참여하고, 메인·랭킹·투표·AI 챗봇 등 주요 화면의 모바일 UI 디자인을 담당했습니다.',
+      '기능 간 이동이 자연스럽게 이어지도록 정보 구조와 사용자 흐름을 정리했으며, 카드·버튼·태그 등 공통 컴포넌트를 구성해 화면 간 일관성을 높였습니다.',
     ],
     overview: [
-      'JUHAP은 사용자의 취향과 상황에 맞는 술과 안주 조합을 추천하고, 다른 사용자의 선택을 탐색할 수 있도록 기획한 주류 페어링 앱입니다.',
-      'AI 챗봇, 랭킹, 투표와 커뮤니티 기능을 하나의 사용 흐름으로 연결하고, 다크 테마 기반의 모바일 인터페이스를 설계했습니다.',
+      'JUHAP은 개인의 취향과 상황에 맞는 술과 안주 조합을 발견하고, 다른 사용자의 선택을 함께 탐색할 수 있도록 기획한 주류 페어링 앱입니다.',
+      '추천, 랭킹, 투표, 커뮤니티 기능을 하나의 흐름으로 연결해 정보 탐색에서 참여와 공유까지 자연스럽게 이어지는 경험을 설계했습니다.',
     ],
     cxPoint: [
-      '추천 결과를 확인하는 데서 끝나지 않고 랭킹, 투표, 커뮤니티 탐색으로 자연스럽게 이어지도록 핵심 기능의 정보 구조를 정리했습니다.',
-      '주류 콘텐츠의 이미지가 돋보이도록 어두운 배경과 선명한 포인트 요소를 사용하고, 카드와 버튼의 공통 규칙을 통해 화면 간 일관성을 유지했습니다.',
+      '추천 결과 확인 이후에도 랭킹, 투표, 커뮤니티 탐색으로 자연스럽게 이어질 수 있도록 핵심 기능의 정보 구조와 화면 흐름을 설계했습니다.',
+      '콘텐츠의 성격과 중요도에 따라 이미지, 텍스트, 태그의 위계를 정리하고, 반복되는 카드와 버튼 요소를 일관된 규칙으로 구성했습니다.',
     ],
     processItems: [
       {
@@ -350,8 +349,8 @@ const projectDetails: Record<string, ProjectDetailContent> = {
     strategyAlt: 'JUHAP visual strategy',
     strategyTitle: 'Service & Visual Strategy',
     strategyCopy: [
-      'JUHAP은 주류 정보를 단순히 나열하기보다, 개인의 취향에 맞는 조합을 발견하고 다른 사용자의 선택까지 탐색하는 서비스로 기획했습니다.',
-      '추천, 랭킹, 투표, 커뮤니티 기능이 하나의 흐름으로 이어지도록 정보 구조를 설계하고, 다크 테마와 이미지 중심의 카드 UI를 통해 서비스의 시각적 정체성을 구축했습니다.',
+      'JUHAP은 주류 정보를 단순히 나열하는 데서 그치지 않고, 개인의 취향에 맞는 조합을 발견하고 다른 사용자의 선택까지 확장해 탐색할 수 있는 서비스로 기획했습니다.',
+      '추천, 랭킹, 투표, 커뮤니티 기능을 하나의 흐름으로 연결하고, 주류 이미지와 간결한 정보 구성을 중심으로 직관적인 탐색 경험을 구성했습니다.',
     ],
     keyTitle: 'Key Screen & Experience',
     keyScreens: makeKeyScreens(
@@ -535,6 +534,50 @@ function App() {
 
     const sectionRect = section.getBoundingClientRect()
     const panelRect = panel.getBoundingClientRect()
+    const isMobileLayout = window.innerWidth <= 900
+
+    if (isMobileLayout) {
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+      const clipTop = Math.max(0, Math.min(sectionRect.top, viewportHeight))
+      const clipRight = Math.max(0, window.innerWidth - Math.min(sectionRect.right, window.innerWidth))
+      const clipBottom = Math.max(0, viewportHeight - Math.min(sectionRect.bottom, viewportHeight))
+      const clipLeft = Math.max(0, Math.min(sectionRect.left, window.innerWidth))
+
+      setActiveSection({
+        id,
+        sectionOffsetX: clipLeft + (window.innerWidth - clipLeft - clipRight) / 2,
+        sectionOffsetY: clipTop + (viewportHeight - clipTop - clipBottom) / 2,
+        sectionWidth: window.innerWidth,
+        sectionHeight: viewportHeight,
+        initialClipPath: `inset(${clipTop}px ${clipRight}px ${clipBottom}px ${clipLeft}px)`,
+        panelRect: {
+          left: 0,
+          top: 0,
+          width: window.innerWidth,
+          height: viewportHeight,
+        },
+        expandedTransform: 'translate3d(0, 0, 0) scale(1)',
+        expandedHeight: viewportHeight,
+        expandedScale: 1,
+      })
+      setIsClosing(false)
+      setIsSettled(false)
+      setIsIndexCollapsing(false)
+      setIsSectionScrollingToTop(false)
+      setClosingTransform(null)
+
+      if (openFrameRef.current) {
+        window.cancelAnimationFrame(openFrameRef.current)
+      }
+      openFrameRef.current = window.requestAnimationFrame(() => {
+        openFrameRef.current = window.requestAnimationFrame(() => {
+          setIsExpanded(true)
+          openFrameRef.current = null
+        })
+      })
+      return
+    }
+
     const sectionOffsetX = sectionRect.left - panelRect.left
     const sectionOffsetY = sectionRect.top - panelRect.top
     const frameLeft = id === 'losnij' ? 0 : sectionOffsetX
@@ -908,22 +951,35 @@ function App() {
     [],
   )
 
+  const isMobileLayout = typeof window !== 'undefined' && window.innerWidth <= 900
   const overlayStyle: ZoomOverlayStyle | undefined = activeSection
-    ? isExpanded
+    ? isMobileLayout
       ? {
           width: activeSection.panelRect.width,
           height: activeSection.panelRect.height,
-          transform: closingTransform ?? activeSection.expandedTransform,
-          '--zoom-scale': activeSection.expandedScale,
-          '--zoom-inverse': 1 / activeSection.expandedScale,
+          clipPath: isExpanded ? 'inset(0px)' : activeSection.initialClipPath,
+          transform: isExpanded ? 'translate3d(0, 0, 0) scale(1)' : 'translate3d(0, 0, 0) scale(0.92)',
+          transformOrigin: `${Math.min(Math.max(activeSection.sectionOffsetX, 0), window.innerWidth)}px ${
+            Math.min(Math.max(activeSection.sectionOffsetY, 0), window.innerHeight)
+          }px`,
+          '--zoom-scale': 1,
+          '--zoom-inverse': 1,
         }
-      : {
-          width: activeSection.panelRect.width,
-          height: activeSection.panelRect.height,
-          transform: `translate3d(${activeSection.panelRect.left}px, ${activeSection.panelRect.top}px, 0) scale(1)`,
-          '--zoom-scale': activeSection.expandedScale,
-          '--zoom-inverse': 1 / activeSection.expandedScale,
-        }
+      : isExpanded
+        ? {
+            width: activeSection.panelRect.width,
+            height: activeSection.panelRect.height,
+            transform: closingTransform ?? activeSection.expandedTransform,
+            '--zoom-scale': activeSection.expandedScale,
+            '--zoom-inverse': 1 / activeSection.expandedScale,
+          }
+        : {
+            width: activeSection.panelRect.width,
+            height: activeSection.panelRect.height,
+            transform: `translate3d(${activeSection.panelRect.left}px, ${activeSection.panelRect.top}px, 0) scale(1)`,
+            '--zoom-scale': activeSection.expandedScale,
+            '--zoom-inverse': 1 / activeSection.expandedScale,
+          }
     : undefined
 
   const appClassName = [
@@ -991,7 +1047,13 @@ function App() {
               } ${activeSection.id === 'more' ? 'is-more' : ''} ${isIndexCollapsing ? 'is-index-collapsing' : ''}`}
               aria-label={sections.find((section) => section.id === activeSection.id)?.title}
               onTransitionEnd={(event) => {
-                if (event.currentTarget !== event.target || event.propertyName !== 'transform') {
+                const isMobileClipTransition =
+                  window.innerWidth <= 900 && event.propertyName === 'clip-path'
+
+                if (
+                  event.currentTarget !== event.target ||
+                  (event.propertyName !== 'transform' && !isMobileClipTransition)
+                ) {
                   return
                 }
 

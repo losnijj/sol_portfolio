@@ -936,6 +936,21 @@ function App() {
     }
   }, [isContactOpen])
 
+  useEffect(() => {
+    if (!activeSection) return
+
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+    }
+  }, [activeSection])
+
   useEffect(
     () => () => {
       if (openFrameRef.current) {
@@ -1171,30 +1186,8 @@ function WorkDetailPage({
   const smoothScrollFrameRef = useRef<number | null>(null)
   const smoothScrollTargetRef = useRef(0)
 
-  const updateOverviewReveal = () => {
-    const container = scrollContainerRef.current
-
-    if (!container) {
-      return
-    }
-
-    const lines = Array.from(container.querySelectorAll<HTMLElement>('.simmons-overview-line'))
-    const containerRect = container.getBoundingClientRect()
-    const start = containerRect.top + containerRect.height * 0.78
-    const end = containerRect.top + containerRect.height * 0.36
-
-    lines.forEach((line) => {
-      const lineRect = line.getBoundingClientRect()
-      const lineCenter = lineRect.top + lineRect.height * 0.5
-      const progress = Math.min(Math.max((start - lineCenter) / (start - end), 0), 1)
-
-      line.style.setProperty('--overview-progress', progress.toFixed(4))
-    })
-  }
-
   const handleScroll = (event: UIEvent<HTMLElement>) => {
     setIsFull(event.currentTarget.scrollTop > 6)
-    updateOverviewReveal()
   }
 
   const stopSmoothScroll = () => {
@@ -1281,10 +1274,7 @@ function WorkDetailPage({
   }
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(updateOverviewReveal)
-
     return () => {
-      window.cancelAnimationFrame(frame)
       stopSmoothScroll()
     }
   }, [work.title])
@@ -1337,6 +1327,7 @@ function WorkDetailPage({
 function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailContent; onMoreProjects: () => void }) {
   const SIMMONS_KEY_LOOP_X = 2100
   const SIMMONS_KEY_LOOP_Y = 1650
+  const detailRef = useRef<HTMLDivElement | null>(null)
   const dragStateRef = useRef<{ startX: number; startY: number; x: number; y: number } | null>(null)
   const keyStageRef = useRef<HTMLDivElement | null>(null)
   const keyStagePositionRef = useRef({ x: 0, y: 0 })
@@ -1346,6 +1337,44 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
   const keyStageHoverTargetRef = useRef({ x: 0, y: 0 })
   const keyStageHoverFrameRef = useRef<number | null>(null)
   const [isDraggingKeyStage, setIsDraggingKeyStage] = useState(false)
+
+  useEffect(() => {
+    const detailElement = detailRef.current
+
+    if (!detailElement) return
+
+    const revealItems = Array.from(detailElement.querySelectorAll<HTMLElement>('.project-scroll-reveal'))
+
+    if (!revealItems.length) return
+
+    revealItems.forEach((item) => item.classList.remove('is-visible'))
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealItems.forEach((item) => item.classList.add('is-visible'))
+      return
+    }
+
+    const scrollRoot = detailElement.closest<HTMLElement>('.work-rising-scroll')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      {
+        root: scrollRoot,
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.12,
+      },
+    )
+
+    revealItems.forEach((item) => observer.observe(item))
+
+    return () => observer.disconnect()
+  }, [detail.title])
 
   const wrapKeyStage = (value: number, loop: number) => {
     const wrapped = value % loop
@@ -1494,7 +1523,7 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
   )
 
   return (
-    <div className="simmons-detail">
+    <div className="simmons-detail" ref={detailRef}>
       <header className="simmons-detail-header">
         <h2>{detail.title}</h2>
         <p>{detail.subtitle}</p>
@@ -1549,22 +1578,21 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
       </section>
 
       <section className="simmons-detail-overview">
-        <h3>Project Overview</h3>
-        <p className="simmons-overview-copy">
+        <h3 className="project-scroll-reveal">Project Overview</h3>
+        <div className="simmons-overview-copy project-scroll-reveal project-reveal-delay-1">
           {detail.overview.map((line) => (
-            <span className="simmons-overview-line" key={line}>
-              <span>{line}</span>
-              <span aria-hidden="true">{line}</span>
-            </span>
+            <p key={line}>{line}</p>
           ))}
-        </p>
+        </div>
       </section>
 
       {detail.cxPoint && (
         <section className="simmons-cx-point">
-          <h3>Design Focus</h3>
+          <h3 className="project-scroll-reveal">Design Focus</h3>
           {detail.cxPoint.map((copy) => (
-            <p key={copy}>{copy}</p>
+            <p className="project-scroll-reveal project-reveal-delay-1" key={copy}>
+              {copy}
+            </p>
           ))}
         </section>
       )}
@@ -1572,7 +1600,7 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
       {detail.processItems && (
         <section className="simmons-process-list" aria-label="Problem Approach Outcome">
           {detail.processItems.map((item) => (
-            <article className="simmons-process-card" key={item.title}>
+            <article className="simmons-process-card project-scroll-reveal" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
             </article>
@@ -1581,10 +1609,10 @@ function ProjectWorkDetail({ detail, onMoreProjects }: { detail: ProjectDetailCo
       )}
 
       <section className="simmons-strategy">
-        <figure>
+        <figure className="project-scroll-reveal project-reveal-media">
           <img src={assetPath(detail.strategyImage)} alt={detail.strategyAlt} />
         </figure>
-        <div>
+        <div className="project-scroll-reveal project-reveal-delay-1">
           <h3>{detail.strategyTitle}</h3>
           {detail.strategyCopy.map((copy) => (
             <p key={copy}>{copy}</p>
@@ -1784,7 +1812,7 @@ function LosnijDetailPage({
 
         <div className="losnij-rising-content">
           <div className="losnij-rising-body">
-            <p className="losnij-rising-masthead" aria-hidden="true">
+            <p className="losnij-rising-masthead">
               About me
             </p>
             <div className="losnij-rising-chapter losnij-scroll-reveal">
